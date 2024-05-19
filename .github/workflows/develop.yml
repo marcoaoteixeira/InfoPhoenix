@@ -34,12 +34,12 @@ jobs:
           --name github ${{ vars.NUGET_SOURCE_URL }}
 
       - name: Restore Solution
-        run: dotnet restore
+        run: dotnet restore ./InfoPhoenix.sln
 
-      - name: Build Solution
+      - name: Build Solution => Debug
         if: success()
         run: |
-          dotnet build \
+          dotnet build ./InfoPhoenix.sln \
           --configuration Debug \
           --no-restore \
           --verbosity normal
@@ -47,7 +47,7 @@ jobs:
       - name: Run Test Suite
         if: success()
         run: |
-          dotnet test \
+          dotnet test ./InfoPhoenix.sln \
           --no-restore \
           --no-build \
           --logger:"Html;LogFileName=code-coverage-log.html" \
@@ -78,5 +78,5 @@ jobs:
         if: success()
         with:
           name: test-coverage-report
-          path: "./code_coverage/coverage_report"
+          path: "./code-coverage/report"
           retention-days: 7

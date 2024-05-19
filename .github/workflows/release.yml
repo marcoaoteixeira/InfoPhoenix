@@ -1,16 +1,16 @@
-name: Release Cycle
+name: Publish Cycle
 
 on:
-  
-  release:
-    types: [published]
+  push:
+    tags:
+      - "v*.*.*"
 
 env:
-  ARTIFACTS_FOLDER_PATH: './artifacts/nupkgs'
+  OUTPUT_PATH: './release'
 
 jobs:
 
-  run_publish_build:
+  publishing:
 
     runs-on: ubuntu-latest
 
@@ -19,7 +19,7 @@ jobs:
         dotnet-version: ['8.0.x']
 
     steps:
-      - name: Get build version
+      - name: Get Build Version
         id: build
         run: |
           if [[ ${GITHUB_REF} =~ \/v(.*)$ ]]
@@ -45,20 +45,26 @@ jobs:
           --store-password-in-clear-text \
           --name github ${{ vars.NUGET_SOURCE_URL }}
 
-      - name: Create NuGet Packages
-        run: |
-          dotnet pack \
-          -p:PackageVersion=${{ steps.build.outputs.version }} \
-          --configuration Release \
-          --nologo \
-          --output ${{ env.ARTIFACTS_FOLDER_PATH }} \
-          --verbosity normal
+      - name: Restore Solution
+        run: dotnet restore ./Release.sln
 
-      - name: Publish NuGet packages
+      - name: Build Solution => Release
         if: success()
         run: |
-          cd ${{ env.ARTIFACTS_FOLDER_PATH }}
-          dotnet nuget push *.nupkg \
-          --source ${{ vars.NUGET_SOURCE_URL }} \
-          --api-key ${{ secrets.NUGET_API_KEY }} \
-          --skip-duplicate
+          dotnet build ./Release.sln \
+          -p:Version=${{ steps.build.outputs.version }} \
+          --output ${{ env.OUTPUT_PATH }} \
+          --configuration Release \
+          --no-restore \
+          --self-contained \
+          --verbosity normal
+
+      - name: Compress Files
+        if: success()
+        run: cd ${{ env.OUTPUT_PATH }}; zip -r -9 ../v${{ steps.build.outputs.version }}.zip *; cd ..
+      
+      - name: Publish release
+        use: softprops/action-gh-release@v2.0.5
+        if: success()
+        with:
+          files: v${{ steps.build.outputs.version }}.zip

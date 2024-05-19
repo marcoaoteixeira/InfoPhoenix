@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{3C3FE4F6-7CAD-4C9D-981A-56C432E84908}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.InfoPhoenix.Client", "src\Nameless.InfoPhoenix.Client\Nameless.InfoPhoenix.Client.csproj", "{0DDE3FE2-1498-4FCA-B390-A4F13E877007}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.InfoPhoenix.Core", "src\Nameless.InfoPhoenix.Core\Nameless.InfoPhoenix.Core.csproj", "{9945CE90-14C5-4C50-A850-679F5B103A02}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.InfoPhoenix.Domain", "src\Nameless.InfoPhoenix.Domain\Nameless.InfoPhoenix.Domain.csproj", "{26A1CE79-916A-401C-9295-283F8F612E6F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.InfoPhoenix.Office", "src\Nameless.InfoPhoenix.Office\Nameless.InfoPhoenix.Office.csproj", "{5D14A234-B74F-45B9-9F74-78A07597A1CE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.InfoPhoenix.UI", "src\Nameless.InfoPhoenix.UI\Nameless.InfoPhoenix.UI.csproj", "{ECCB7FBD-8757-4461-96C3-90F2B76F5057}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0DDE3FE2-1498-4FCA-B390-A4F13E877007}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0DDE3FE2-1498-4FCA-B390-A4F13E877007}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0DDE3FE2-1498-4FCA-B390-A4F13E877007}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0DDE3FE2-1498-4FCA-B390-A4F13E877007}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9945CE90-14C5-4C50-A850-679F5B103A02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9945CE90-14C5-4C50-A850-679F5B103A02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9945CE90-14C5-4C50-A850-679F5B103A02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9945CE90-14C5-4C50-A850-679F5B103A02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26A1CE79-916A-401C-9295-283F8F612E6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26A1CE79-916A-401C-9295-283F8F612E6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26A1CE79-916A-401C-9295-283F8F612E6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26A1CE79-916A-401C-9295-283F8F612E6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D14A234-B74F-45B9-9F74-78A07597A1CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D14A234-B74F-45B9-9F74-78A07597A1CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D14A234-B74F-45B9-9F74-78A07597A1CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D14A234-B74F-45B9-9F74-78A07597A1CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ECCB7FBD-8757-4461-96C3-90F2B76F5057}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECCB7FBD-8757-4461-96C3-90F2B76F5057}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECCB7FBD-8757-4461-96C3-90F2B76F5057}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ECCB7FBD-8757-4461-96C3-90F2B76F5057}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0DDE3FE2-1498-4FCA-B390-A4F13E877007} = {3C3FE4F6-7CAD-4C9D-981A-56C432E84908}
+		{9945CE90-14C5-4C50-A850-679F5B103A02} = {3C3FE4F6-7CAD-4C9D-981A-56C432E84908}
+		{26A1CE79-916A-401C-9295-283F8F612E6F} = {3C3FE4F6-7CAD-4C9D-981A-56C432E84908}
+		{5D14A234-B74F-45B9-9F74-78A07597A1CE} = {3C3FE4F6-7CAD-4C9D-981A-56C432E84908}
+		{ECCB7FBD-8757-4461-96C3-90F2B76F5057} = {3C3FE4F6-7CAD-4C9D-981A-56C432E84908}
+	EndGlobalSection
+EndGlobal
