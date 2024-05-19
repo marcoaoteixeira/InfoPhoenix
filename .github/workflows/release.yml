@@ -21,9 +21,9 @@ jobs:
       - name: Get Build Version
         id: build
         run: |
-          $GITHUB_OUTPUT = [regex]::split($GITHUB_REF, "^v(.*)$")[1]
+          $GITHUB_OUTPUT = [regex]::split($env:GITHUB_REF, "^v(.*)$")[1]
           Write-Host "Versão: v$($GITHUB_OUTPUT)"
-          Write-Host "Github ref: $($GITHUB_REF)"
+          Write-Host "Github ref: $($env:GITHUB_REF)"
 
       - name: Checkout Source Code
         uses: actions/checkout@v4.1.6
