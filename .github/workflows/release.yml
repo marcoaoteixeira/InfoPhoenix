@@ -1,9 +1,8 @@
 name: Publish Cycle
 
 on:
-  push:
-    tags:
-      - "v*.*.*"
+  release:
+    types: [published]
 
 env:
   OUTPUT_PATH: './release'
@@ -21,7 +20,9 @@ jobs:
     steps:
       - name: Get Build Version
         id: build
-        run: $GITHUB_OUTPUT = [regex]::split(${GITHUB_REF}, "^v(.*)$")[1]
+        run: |
+          $GITHUB_OUTPUT = [regex]::split(${GITHUB_REF}, "^v(.*)$")[1]
+          Write-Host "Versão: v$($GITHUB_OUTPUT)"
 
       - name: Checkout Source Code
         uses: actions/checkout@v4.1.6
