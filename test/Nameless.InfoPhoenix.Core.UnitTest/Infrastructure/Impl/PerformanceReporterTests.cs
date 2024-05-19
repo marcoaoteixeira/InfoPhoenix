@@ -1,7 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Nameless.InfoPhoenix.Utils;
 
 namespace Nameless.InfoPhoenix.Infrastructure.Impl {
     public class PerformanceReporterTests {

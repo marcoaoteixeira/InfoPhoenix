@@ -26,7 +26,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\src\Nameless.InfoPhoenix.Core\Nameless.InfoPhoenix.Core.csproj" />
-	  <ProjectReference Include="..\Nameless.InfoPhoenix.Utils\Nameless.InfoPhoenix.Utils.csproj" />
+	  <ProjectReference Include="..\Nameless.InfoPhoenix.UnitTest.Utils\Nameless.InfoPhoenix.UnitTest.Utils.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

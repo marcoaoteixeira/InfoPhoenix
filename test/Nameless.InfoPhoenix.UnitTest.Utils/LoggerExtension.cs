@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace Nameless.InfoPhoenix.Utils {
+namespace Nameless.InfoPhoenix {
     public static class LoggerExtension {
         private static readonly Func<string, bool> EmptyAssertMessage = _ => true;
 

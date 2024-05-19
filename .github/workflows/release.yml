@@ -1,0 +1,64 @@
+name: Release Cycle
+
+on:
+  
+  release:
+    types: [published]
+
+env:
+  ARTIFACTS_FOLDER_PATH: './artifacts/nupkgs'
+
+jobs:
+
+  deploy:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        dotnet-version: ['8.0.x']
+
+    steps:
+      - name: Get build version
+        id: build
+        run: |
+          if [[ ${GITHUB_REF} =~ \/v(.*)$ ]]
+          then
+            echo version=${BASH_REMATCH[1]} >> $GITHUB_OUTPUT
+          else
+            echo version='1.0.0' >> $GITHUB_OUTPUT
+          fi
+
+      - name: Checkout source code
+        uses: actions/checkout@v4.1.1
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4.0.0
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+
+      - name: Add GitHub Package Registry
+        run: |
+          dotnet nuget add source \
+          --username ${{ github.repository_owner }} \
+          --password ${{ secrets.GITHUB_TOKEN }} \
+          --store-password-in-clear-text \
+          --name github ${{ vars.NUGET_SOURCE_URL }}
+
+      - name: Pack NuGet packages
+        run: |
+          dotnet pack \
+          -p:PackageVersion=${{ steps.build.outputs.version }} \
+          --configuration Release \
+          --nologo \
+          --output ${{ env.ARTIFACTS_FOLDER_PATH }} \
+          --verbosity normal
+
+      - name: Publish NuGet packages
+        if: success()
+        run: |
+          cd ${{ env.ARTIFACTS_FOLDER_PATH }}
+          dotnet nuget push *.nupkg \
+          --source ${{ vars.NUGET_SOURCE_URL }} \
+          --api-key ${{ secrets.NUGET_API_KEY }} \
+          --skip-duplicate
