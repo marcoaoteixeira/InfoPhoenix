@@ -45,5 +45,7 @@ jobs:
 
       - name: Run tests
         if: success()
-        run: |
-          vstest.console .\bin\Debug\net6.0\Nameless.InfoPhoenix.Core.UnitTest.dll /logger:"console;verbosity=normal"
+        uses: microsoft-approved-actions/vstest@master
+        with:
+            searchFolder: .\bin\Debug\net6.0\"
+            runInParallel: true
