@@ -46,4 +46,4 @@ jobs:
       - name: Run tests
         if: success()
         run: |
-          vstest.console .\bin\Debug\net6.0\Nameless.InfoPhoenix.Tests.dll /logger:"console;verbosity=normal"
+          vstest.console .\bin\Debug\net6.0\Nameless.InfoPhoenix.Core.UnitTest.dll /logger:"console;verbosity=normal"
