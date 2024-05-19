@@ -8,18 +8,17 @@ on:
 
 jobs:
 
-  build_and_test:
+  run_develop_build:
 
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
         dotnet-version: ['8.0.x']
-        vs-version: ['17.8.5']
 
     steps:
-      - name: Checkout source code
-        uses: actions/checkout@v4.1.1
+      - name: Checkout Source Code
+        uses: actions/checkout@v4.1.6
         
       - name: Setup .NET
         uses: actions/setup-dotnet@v4.0.0
@@ -31,21 +30,58 @@ jobs:
         with:
           vs-version: ${{ matrix.vs-version }}
 
-      - name: Setup GitHub package registry for NuGet
+      - name: Setup GitHub Package Registry for NuGet
         run: |
-          dotnet nuget add source --username ${{ github.repository_owner }} --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github ${{ vars.NUGET_SOURCE_URL }}
+          dotnet nuget add source \
+          --username ${{ github.repository_owner }} \
+          --password ${{ secrets.GITHUB_TOKEN }} \
+          --store-password-in-clear-text \
+          --name github ${{ vars.NUGET_SOURCE_URL }}
 
-      - name: Restore solution
+      - name: Restore Solution
         run: dotnet restore
 
-      - name: Build solution
+      - name: Build Solution
         if: success()
         run: |
-          msbuild -t:rebuild -p:Configuration=Debug -v:normal
+          dotnet build \
+          --configuration Debug \
+          --no-restore \
+          --verbosity normal
 
-      - name: Run tests
+      - name: Run Test Suite
         if: success()
-        uses: microsoft/vstest-action@v1.0.0
+        run: |
+          dotnet test \
+          --no-restore \
+          --no-build \
+          --logger:"Html;LogFileName=code-coverage-log.html" \
+          --collect:"XPlat Code Coverage" \
+          --results-directory ./code-coverage/ \
+          --filter "Category!=RunsOnDevMachine" \
+          --settings .runsettings \
+          --verbosity detailed
+
+      - name: Prepare for Coverage Report
+        if: success()
+        run: |
+          dotnet tool install \
+          dotnet-reportgenerator-globaltool \
+          --version 5.3.0 \
+          --global
+
+      - name: Generate Coverage Report
+        if: success()
+        run: |
+          reportgenerator \
+          "-reports:./code-coverage/**/coverage.cobertura.xml" \
+          "-targetdir:./code-coverage/report" \
+          -reporttypes:Html
+
+      - name: Store Coverage Report
+        uses: actions/upload-artifact@v4.3.3
+        if: success()
         with:
-          searchFolder: .\bin\Debug\net6.0\"
-          runInParallel: true
+          name: test-coverage-report
+          path: "./code_coverage/coverage_report"
+          retention-days: 7
