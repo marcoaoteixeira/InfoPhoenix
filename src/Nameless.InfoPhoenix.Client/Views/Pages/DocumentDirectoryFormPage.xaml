@@ -1,0 +1,113 @@
+﻿<Page x:Class="Nameless.InfoPhoenix.Client.Views.Pages.DocumentDirectoryFormPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:validations="clr-namespace:Nameless.InfoPhoenix.UI.Validations;assembly=Nameless.InfoPhoenix.UI"
+      mc:Ignorable="d"
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+      x:Name="DocumentDirectoryFormPageRoot">
+
+    <StackPanel Margin="24">
+        <ui:TextBlock FontTypography="Title"
+                      Margin="0 0 0 20"
+                      Text="{Binding ElementName=DocumentDirectoryFormPageRoot, Path=ViewModel.Title, Mode=OneWay}" />
+
+        <StackPanel HorizontalAlignment="Stretch"
+                    Margin="0 0 0 10">
+            <Label Content="Rótulo"
+                   Margin="0 0 0 5"
+                   Target="{Binding ElementName=labelTextBox}"/>
+            <ui:TextBox Name="labelTextBox"
+                        Style="{StaticResource ValidationErrorStyle}"
+                        Validation.ErrorTemplate="{StaticResource ValidationTemplate}">
+                <ui:TextBox.Text>
+                    <Binding ElementName="DocumentDirectoryFormPageRoot"
+                             Mode="TwoWay"
+                             Path="ViewModel.CurrentDocumentDirectory.Label"
+                             UpdateSourceTrigger="PropertyChanged">
+                        <Binding.ValidationRules>
+                            <validations:NotEmptyValidationRule />
+                        </Binding.ValidationRules>
+                    </Binding>
+                </ui:TextBox.Text>
+            </ui:TextBox>
+        </StackPanel>
+
+        <StackPanel HorizontalAlignment="Stretch"
+                    Margin="0 0 0 10">
+            <Label Content="Caminho do Diretório"
+                   Margin="0 0 0 5"
+                   Target="{Binding ElementName=directoryPathTextBox}"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <ui:TextBox Grid.Column="0"
+                            HorizontalAlignment="Stretch"
+                            IsReadOnly="True"
+                            Name="directoryPathTextBox"
+                            Style="{StaticResource ValidationErrorStyle}"
+                            Validation.ErrorTemplate="{StaticResource ValidationTemplate}">
+                    <ui:TextBox.Text>
+                        <Binding ElementName="DocumentDirectoryFormPageRoot"
+                                 Mode="TwoWay"
+                                 Path="ViewModel.CurrentDocumentDirectory.DirectoryPath"
+                                 UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <validations:NotEmptyValidationRule />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </ui:TextBox.Text>
+                </ui:TextBox>
+                <ui:Button Command="{Binding ElementName=DocumentDirectoryFormPageRoot, Path=ViewModel.PickDirectoryPathCommand, Mode=OneTime}"
+                           Cursor="Hand"
+                           Grid.Column="1"
+                           Height="36"
+                           Icon="{ui:SymbolIcon FolderOpen16}"
+                           Margin="10 0 0 0"
+                           Width="48" />
+            </Grid>
+        </StackPanel>
+
+        <StackPanel HorizontalAlignment="Stretch"
+                    Margin="0 0 0 10">
+            <Label Content="Posição"
+                   Margin="0 0 0 5"
+                   Target="{Binding ElementName=orderNumberBox}"/>
+            <ui:NumberBox HorizontalAlignment="Left"
+                          Icon="{ui:SymbolIcon NumberSymbolSquare24}"
+                          MaxDecimalPlaces="0"
+                          Maximum="999"
+                          Minimum="0"
+                          Name="orderNumberBox"
+                          SmallChange="1"
+                          Value="{Binding ElementName=DocumentDirectoryFormPageRoot, Path=ViewModel.CurrentDocumentDirectory.Order, Mode=TwoWay}"
+                          Width="250" />
+        </StackPanel>
+
+        <WrapPanel HorizontalAlignment="Right"
+                   Margin="0 0 0 10">
+            <ui:Button Appearance="Success"
+                       Command="{Binding ElementName=DocumentDirectoryFormPageRoot, Path=ViewModel.SaveCommand, Mode=OneTime}"
+                       CommandParameter="{Binding ElementName=DocumentDirectoryFormPageRoot}"
+                       Content="Salvar"
+                       Cursor="Hand"
+                       Foreground="#F5F5F5"
+                       Icon="{ui:SymbolIcon Save20}"
+                       Padding="30 8"
+                       Margin="10 0 0 0" />
+            <ui:Button Appearance="Danger"
+                       Command="{Binding ElementName=DocumentDirectoryFormPageRoot, Path=ViewModel.CancelCommand, Mode=OneTime}"
+                       CommandParameter="{Binding ElementName=DocumentDirectoryFormPageRoot}"
+                       Content="Cancelar"
+                       Cursor="Hand"
+                       Foreground="#F5F5F5"
+                       Icon="{ui:SymbolIcon ArrowExit20}"
+                       Padding="30 8"
+                       Margin="10 0 0 0" />
+        </WrapPanel>
+    </StackPanel>
+</Page>

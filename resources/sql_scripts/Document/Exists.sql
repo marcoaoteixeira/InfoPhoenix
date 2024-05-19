@@ -1,0 +1,7 @@
+SELECT EXISTS(
+	SELECT
+		[ID]
+	FROM [Documents]
+	WHERE
+		[ID] = @ID
+) AS [EXISTS];
