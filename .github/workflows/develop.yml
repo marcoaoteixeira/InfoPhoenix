@@ -45,7 +45,7 @@ jobs:
 
       - name: Run tests
         if: success()
-        uses: microsoft-approved-actions/vstest@master
+        uses: microsoft/vstest-action@v1.0.0
         with:
-            searchFolder: .\bin\Debug\net6.0\"
-            runInParallel: true
+          searchFolder: .\bin\Debug\net6.0\"
+          runInParallel: true
