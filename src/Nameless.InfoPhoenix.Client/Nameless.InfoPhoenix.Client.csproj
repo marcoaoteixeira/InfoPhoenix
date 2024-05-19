@@ -1,16 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
+		<RootNamespace>Nameless.InfoPhoenix.Client</RootNamespace>
+		<ApplicationManifest>App.manifest</ApplicationManifest>
+		<ApplicationIcon>Resources\info_phoenix_icon.ico</ApplicationIcon>
 		<OutputType>WinExe</OutputType>
-		<TargetFramework>net6.0-windows</TargetFramework>
 		<UseWPF>true</UseWPF>
+		<EnableWindowsTargeting>true</EnableWindowsTargeting>
+		<TargetFramework>net6.0-windows</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<LangVersion>latest</LangVersion>
-		<RootNamespace>Nameless.InfoPhoenix.Client</RootNamespace>
 		<BaseOutputPath>..\..\bin</BaseOutputPath>
-		<ApplicationManifest>App.manifest</ApplicationManifest>
-		<ApplicationIcon>Resources\info_phoenix_icon.ico</ApplicationIcon>
 	</PropertyGroup>
 
 	<ItemGroup>

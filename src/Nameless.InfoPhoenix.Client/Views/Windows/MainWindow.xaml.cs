@@ -40,7 +40,7 @@ namespace Nameless.InfoPhoenix.Client.Views.Windows {
 
         public MainWindow(MainWindowViewModel viewModel,
             IAppConfigurationContext appConfigurationContext,
-            IMessageBoxService _messageBoxService,
+            IMessageBoxService messageBoxService,
             INavigationService navigationService,
             IPubSubService pubSubService,
             IPageService pageService,
@@ -48,7 +48,7 @@ namespace Nameless.InfoPhoenix.Client.Views.Windows {
             ViewModel = Guard.Against.Null(viewModel, nameof(viewModel));
 
             _appConfigurationContext = Guard.Against.Null(appConfigurationContext, nameof(appConfigurationContext));
-            _messageBoxService = Guard.Against.Null(_messageBoxService, nameof(_messageBoxService));
+            _messageBoxService = Guard.Against.Null(messageBoxService, nameof(messageBoxService));
             _navigationService = Guard.Against.Null(navigationService, nameof(navigationService));
             _pubSubService = Guard.Against.Null(pubSubService, nameof(pubSubService));
             _pageService = Guard.Against.Null(pageService, nameof(pageService));
@@ -108,9 +108,7 @@ namespace Nameless.InfoPhoenix.Client.Views.Windows {
             });
 
         private void StatusTextBlockNotificationHandler(Notification notification)
-            => Dispatcher.Invoke(() => {
-                statusTextBlock.Text = notification.Message;
-            });
+            => Dispatcher.Invoke(() => statusTextBlock.Text = notification.Message);
 
         #endregion
 
@@ -138,9 +136,7 @@ namespace Nameless.InfoPhoenix.Client.Views.Windows {
         public bool Navigate(Type pageType)
             => rootNavigationView.Navigate(pageType);
 
-        public void SetServiceProvider(IServiceProvider serviceProvider) {
-            throw new NotImplementedException();
-        }
+        public void SetServiceProvider(IServiceProvider serviceProvider) { }
 
         public void SetPageService(IPageService pageService)
             => rootNavigationView.SetPageService(pageService);

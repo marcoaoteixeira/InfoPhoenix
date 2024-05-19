@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+	  <RootNamespace>Nameless.InfoPhoenix</RootNamespace>
 	  <TargetFramework>net6.0</TargetFramework>
 	  <ImplicitUsings>enable</ImplicitUsings>
 	  <Nullable>enable</Nullable>
 	  <LangVersion>latest</LangVersion>
-	  <RootNamespace>Nameless.InfoPhoenix</RootNamespace>
 	  <BaseOutputPath>..\..\bin</BaseOutputPath>
   </PropertyGroup>
 
@@ -14,7 +14,7 @@
     <PackageReference Include="MediatR" Version="12.2.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
-    <PackageReference Include="Nameless.Core" Version="2.1.20" />
+    <PackageReference Include="Nameless.Core" Version="2.1.21" />
   </ItemGroup>
 
 </Project>

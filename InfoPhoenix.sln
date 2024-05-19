@@ -19,7 +19,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.InfoPhoenix.Office
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.InfoPhoenix.Core.UnitTest", "test\Nameless.InfoPhoenix.Core.UnitTest\Nameless.InfoPhoenix.Core.UnitTest.csproj", "{283FCD35-198A-458D-A00D-8706F7EE2303}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.InfoPhoenix.UnitTest.Utils", "test\Nameless.InfoPhoenix.UnitTest.Utils\Nameless.InfoPhoenix.UnitTest.Utils.csproj", "{C798A257-37AF-4DED-A219-6B628357B7CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.InfoPhoenix.UnitTest.Utils", "test\Nameless.InfoPhoenix.UnitTest.Utils\Nameless.InfoPhoenix.UnitTest.Utils.csproj", "{C798A257-37AF-4DED-A219-6B628357B7CA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "github", "github", "{62276000-7795-4B7E-9880-653C2C7CCC47}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{A87AEF9B-D0C1-4C48-BFE1-373A4FE12C19}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\develop.yml = .github\workflows\develop.yml
+		.github\workflows\release.yml = .github\workflows\release.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -67,6 +75,7 @@ Global
 		{AC08C0F9-ED83-43C9-B233-496E6CC063AE} = {F2A47571-E492-4067-A192-5B6EA84E3EC1}
 		{283FCD35-198A-458D-A00D-8706F7EE2303} = {05C56D7E-3734-45E9-8DC6-4EC1553BD8AD}
 		{C798A257-37AF-4DED-A219-6B628357B7CA} = {05C56D7E-3734-45E9-8DC6-4EC1553BD8AD}
+		{A87AEF9B-D0C1-4C48-BFE1-373A4FE12C19} = {62276000-7795-4B7E-9880-653C2C7CCC47}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F1AD637F-DBC1-4952-90F9-50C5E8690540}

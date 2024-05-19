@@ -38,7 +38,7 @@ namespace Nameless.InfoPhoenix.Client {
         #region Protected Override Methods
 
         protected override async void OnStartup(StartupEventArgs e) {
-            _host.Start();
+            await _host.StartAsync();
 
             // Execute bootstrap steps.
             await _host.Services
@@ -53,7 +53,9 @@ namespace Nameless.InfoPhoenix.Client {
             base.OnStartup(e);
         }
 
-        protected override void OnExit(ExitEventArgs e) {
+        protected override async void OnExit(ExitEventArgs e) {
+            await _host.StopAsync();
+
             _host.Dispose();
 
             base.OnExit(e);

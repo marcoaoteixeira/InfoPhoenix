@@ -1,10 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
+		<RootNamespace>Nameless.InfoPhoenix</RootNamespace>
 		<TargetFramework>net6.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<RootNamespace>Nameless.InfoPhoenix</RootNamespace>
+		<LangVersion>latest</LangVersion>
+		<BaseOutputPath>..\..\bin</BaseOutputPath>
 	</PropertyGroup>
 
 	<ItemGroup>
