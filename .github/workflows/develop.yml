@@ -25,11 +25,6 @@ jobs:
         with:
           dotnet-version: ${{ matrix.dotnet-version }}
 
-      - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v2
-        with:
-          vs-version: ${{ matrix.vs-version }}
-
       - name: Setup GitHub Package Registry for NuGet
         run: |
           dotnet nuget add source \
