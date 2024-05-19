@@ -6,6 +6,7 @@
 		<ApplicationIcon>Resources\info_phoenix_icon.ico</ApplicationIcon>
 		<OutputType>WinExe</OutputType>
 		<UseWPF>true</UseWPF>
+		<EnableWindowsTargeting>true</EnableWindowsTargeting>
 		<TargetFramework>net6.0-windows</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>

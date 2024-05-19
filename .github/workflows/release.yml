@@ -10,7 +10,7 @@ env:
 
 jobs:
 
-  deploy:
+  run_publish_build:
 
     runs-on: ubuntu-latest
 
@@ -29,15 +29,15 @@ jobs:
             echo version='1.0.0' >> $GITHUB_OUTPUT
           fi
 
-      - name: Checkout source code
-        uses: actions/checkout@v4.1.1
+      - name: Checkout Source Code
+        uses: actions/checkout@v4.1.6
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4.0.0
         with:
           dotnet-version: ${{ matrix.dotnet-version }}
 
-      - name: Add GitHub Package Registry
+      - name: Setup GitHub Package Registry for NuGet
         run: |
           dotnet nuget add source \
           --username ${{ github.repository_owner }} \
@@ -45,7 +45,7 @@ jobs:
           --store-password-in-clear-text \
           --name github ${{ vars.NUGET_SOURCE_URL }}
 
-      - name: Pack NuGet packages
+      - name: Create NuGet Packages
         run: |
           dotnet pack \
           -p:PackageVersion=${{ steps.build.outputs.version }} \
