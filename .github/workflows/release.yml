@@ -64,7 +64,7 @@ jobs:
         run: cd ${{ env.OUTPUT_PATH }}; zip -r -9 ../v${{ steps.build.outputs.version }}.zip *; cd ..
       
       - name: Publish release
-        use: softprops/action-gh-release@v2.0.5
+        uses: softprops/action-gh-release@v2.0.5
         if: success()
         with:
           files: v${{ steps.build.outputs.version }}.zip
