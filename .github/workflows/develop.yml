@@ -27,10 +27,10 @@ jobs:
 
       - name: Setup GitHub Package Registry for NuGet
         run: |
-          dotnet nuget add source \
-          --username ${{ github.repository_owner }} \
-          --password ${{ secrets.GITHUB_TOKEN }} \
-          --store-password-in-clear-text \
+          dotnet nuget add source `
+          --username ${{ github.repository_owner }} `
+          --password ${{ secrets.GITHUB_TOKEN }} `
+          --store-password-in-clear-text `
           --name github ${{ vars.NUGET_SOURCE_URL }}
 
       - name: Restore Solution
@@ -39,38 +39,38 @@ jobs:
       - name: Build Solution => Debug
         if: success()
         run: |
-          dotnet build ./InfoPhoenix.sln \
-          --configuration Debug \
-          --no-restore \
+          dotnet build ./InfoPhoenix.sln `
+          --configuration Debug `
+          --no-restore `
           --verbosity normal
 
       - name: Run Test Suite
         if: success()
         run: |
-          dotnet test ./InfoPhoenix.sln \
-          --no-restore \
-          --no-build \
-          --logger:"Html;LogFileName=code-coverage-log.html" \
-          --collect:"XPlat Code Coverage" \
-          --results-directory ./code-coverage/ \
-          --filter "Category!=RunsOnDevMachine" \
-          --settings .runsettings \
+          dotnet test ./InfoPhoenix.sln `
+          --no-restore `
+          --no-build `
+          --logger:"Html;LogFileName=code-coverage-log.html" `
+          --collect:"XPlat Code Coverage" `
+          --results-directory ./code-coverage/ `
+          --filter "Category!=RunsOnDevMachine" `
+          --settings .runsettings `
           --verbosity detailed
 
       - name: Prepare for Coverage Report
         if: success()
         run: |
-          dotnet tool install \
-          dotnet-reportgenerator-globaltool \
-          --version 5.3.0 \
+          dotnet tool install `
+          dotnet-reportgenerator-globaltool `
+          --version 5.3.0 `
           --global
 
       - name: Generate Coverage Report
         if: success()
         run: |
-          reportgenerator \
-          "-reports:./code-coverage/**/coverage.cobertura.xml" \
-          "-targetdir:./code-coverage/report" \
+          reportgenerator `
+          "-reports:./code-coverage/**/coverage.cobertura.xml" `
+          "-targetdir:./code-coverage/report" `
           -reporttypes:Html
 
       - name: Store Coverage Report
