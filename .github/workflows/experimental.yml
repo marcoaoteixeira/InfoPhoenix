@@ -18,14 +18,9 @@ jobs:
       - name: Get Build Version
         id: build
         run: |
-          Write-Host ${GITHUB_REF}
-          Write-Host ${{GITHUB_REF}}
-          Write-Host $GITHUB_REF
-          $BUILD_VERSION = [regex]::split(${GITHUB_REF}, "^v(.*)$")[1]
-          Write-Host $env:GITHUB_ENV
-          Write-Host ${{ env.GITHUB_ENV }}
-          Write-Output BUILD_VERSION=$BUILD_VERSION | Out-File -FilePath $env:GITHUB_ENV -Append
-          Echo BUILD_VERSION=$BUILD_VERSION >> $env:GITHUB_ENV
+          Write-Host $env:GITHUB_REF
+          $BUILD_VERSION = [regex]::split($env:GITHUB_REF, "^v(.*)$")[1]
+          Write-Output "BUILD_VERSION=$BUILD_VERSION" | Out-File -FilePath $env:GITHUB_ENV -Append
           Write-Host $BUILD_VERSION
 
       - name: Show Build Version
