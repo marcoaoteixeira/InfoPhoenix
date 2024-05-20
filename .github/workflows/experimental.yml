@@ -1,9 +1,8 @@
 name: Experimental Cycle
 
 on:
-  push:
-    tags:
-      - 'v*.*.*'
+  release:
+    types: [published]
 
 jobs:
 
@@ -19,7 +18,10 @@ jobs:
       - name: Get Build Version
         id: build
         run: |
-          $BUILD_VERSION = [regex]::split($GITHUB_REF, "^v(.*)$")[1]
+          Write-Host ${GITHUB_REF}
+          Write-Host ${{GITHUB_REF}}
+          Write-Host $GITHUB_REF
+          $BUILD_VERSION = [regex]::split(${GITHUB_REF}, "^v(.*)$")[1]
           Write-Host $env:GITHUB_ENV
           Write-Host ${{ env.GITHUB_ENV }}
           Write-Output BUILD_VERSION=$BUILD_VERSION | Out-File -FilePath $env:GITHUB_ENV -Append
