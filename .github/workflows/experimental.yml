@@ -1,0 +1,28 @@
+name: Experimental Cycle
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+
+  experimental:
+
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        dotnet-version: ['8.0.x']
+
+    steps:
+      - name: Get Build Version
+        id: build
+        run: |
+          $BUILD_VERSION = [regex]::split($GITHUB_REF, "^v(.*)$")[1]
+          Write-Output BUILD_VERSION=$BUILD_VERSION | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      - name: Show Build Version
+        run: |
+          Write-Host $env:BUILD_VERSION
+          Write-Host ${{ steps.build.outputs.version }}
