@@ -19,7 +19,6 @@ jobs:
         id: build
         run: |
           Write-Host ${GITHUB_REF}
-          Write-Host ${{GITHUB_REF}}
           Write-Host $GITHUB_REF
           $BUILD_VERSION = [regex]::split(${GITHUB_REF}, "^v(.*)$")[1]
           Write-Host $env:GITHUB_ENV
