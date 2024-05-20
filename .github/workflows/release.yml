@@ -5,8 +5,8 @@ on:
     types: [published]
 
 env:
-  OUTPUT_PATH: './release'
-  PROJECT_PATH: './src/Nameless.InfoPhoenix.Client/Nameless.InfoPhoenix.Client.csproj'
+  OUTPUT_PATH: '.\release'
+  PROJECT_PATH: '.\src\Nameless.InfoPhoenix.Client\Nameless.InfoPhoenix.Client.csproj'
 
 jobs:
 
@@ -43,7 +43,7 @@ jobs:
           --name github ${{ vars.NUGET_SOURCE_URL }}
 
       - name: Restore Solution
-        run: dotnet restore ./Release.sln
+        run: dotnet restore ${{ env.PROJECT_PATH }}
 
       - name: Build Solution => Release
         if: success()
@@ -53,6 +53,7 @@ jobs:
           -p:PublishSingleFile=True `
           --configuration Release `
           --runtime win-x64 `
+          --framework net6.0-windows `
           --output ${{ env.OUTPUT_PATH }} `
           --self-contained `
           --no-restore `
