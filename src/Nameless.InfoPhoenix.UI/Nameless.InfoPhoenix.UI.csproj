@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<RootNamespace>Nameless.InfoPhoenix.UI</RootNamespace>
 		<EnableWindowsTargeting>true</EnableWindowsTargeting>
+		<RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
 		<TargetFramework>net6.0-windows</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
