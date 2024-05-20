@@ -17,7 +17,7 @@ jobs:
     strategy:
       matrix:
         dotnet-version: ['8.0.x']
-        vs-version: ['17.x.x']
+        vs-version: ['17.8.3']
 
     steps:
       - name: Get Build Version
