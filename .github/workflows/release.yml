@@ -23,7 +23,7 @@ jobs:
         run: |
           $BUILD_VERSION = [regex]::split($env:GITHUB_REF, "v(.*)")[1]
           Write-Output BUILD_VERSION=$BUILD_VERSION | Out-File -FilePath $env:GITHUB_ENV -Append
-          Write-Host "Versão: v$(${{ env.BUILD_VERSION }})"
+          Write-Host $env:BUILD_VERSION
 
       - name: Checkout Source Code
         uses: actions/checkout@v4.1.6
