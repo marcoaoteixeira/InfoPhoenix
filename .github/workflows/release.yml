@@ -16,7 +16,8 @@ jobs:
 
     strategy:
       matrix:
-        dotnet-version: ['8.0.x']
+        dotnet-version: ['6.0.x']
+        vs-version: ['v17.8.3']
 
     steps:
       - name: Get Build Version
@@ -26,13 +27,18 @@ jobs:
           Write-Output BUILD_VERSION=$BUILD_VERSION >> $env:GITHUB_ENV
           Write-Host "v$BUILD_VERSION"
 
-      - name: Checkout Source Code
-        uses: actions/checkout@v4.1.6
-
       - name: Setup .NET
         uses: actions/setup-dotnet@v4.0.0
         with:
           dotnet-version: ${{ matrix.dotnet-version }}
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+        with:
+          vs-version: ${{ matrix.vs-version }}
+
+      - name: Checkout Source Code
+        uses: actions/checkout@v4.1.6
 
       - name: Setup GitHub Package Registry for NuGet
         run: |
