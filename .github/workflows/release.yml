@@ -74,3 +74,4 @@ jobs:
         if: success()
         with:
           files: v${{ env.BUILD_VERSION }}.zip
+          token: ${{ secrets.GITHUB_TOKEN }}
