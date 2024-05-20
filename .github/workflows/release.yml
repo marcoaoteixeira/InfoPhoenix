@@ -22,7 +22,7 @@ jobs:
         id: build
         run: |
           $BUILD_VERSION = [regex]::split($env:GITHUB_REF, "v(.*)")[1]
-          Write-Output BUILD_VERSION=$BUILD_VERSION >> $env:GITHUB_ENV
+          Write-Output BUILD_VERSION=$BUILD_VERSION | Out-File -FilePath $env:GITHUB_ENV -Append
           Write-Host "Versão: v$(${{ env.BUILD_VERSION }})"
 
       - name: Checkout Source Code
