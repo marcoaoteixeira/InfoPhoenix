@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using Microsoft.Extensions.Logging;
 using Nameless.InfoPhoenix.Client.Objects;
 using Nameless.InfoPhoenix.Client.ViewModels.Windows;
 using Nameless.InfoPhoenix.Client.Views.Pages;
@@ -44,7 +45,8 @@ namespace Nameless.InfoPhoenix.Client.Views.Windows {
             INavigationService navigationService,
             IPubSubService pubSubService,
             IPageService pageService,
-            ISnackbarService snackbarService) {
+            ISnackbarService snackbarService,
+            ILogger<MainWindow> logger) {
             ViewModel = Guard.Against.Null(viewModel, nameof(viewModel));
 
             _appConfigurationContext = Guard.Against.Null(appConfigurationContext, nameof(appConfigurationContext));
@@ -54,8 +56,11 @@ namespace Nameless.InfoPhoenix.Client.Views.Windows {
             _pageService = Guard.Against.Null(pageService, nameof(pageService));
             _snackbarService = Guard.Against.Null(snackbarService, nameof(snackbarService));
 
-            InitializeComponent();
-            Initialize();
+            try { InitializeComponent(); }
+            catch (Exception ex) { logger.LogError(ex, ex.Message); }
+
+            try { Initialize(); }
+            catch (Exception ex) { logger.LogError(ex, ex.Message); }
         }
 
         #endregion

@@ -6,6 +6,7 @@ on:
 
 env:
   OUTPUT_PATH: './release'
+  PROJECT_PATH: './src/Nameless.InfoPhoenix.Client/Nameless.InfoPhoenix.Client.csproj'
 
 jobs:
 
@@ -21,13 +22,9 @@ jobs:
       - name: Get Build Version
         id: build
         run: |
-          if [[ ${GITHUB_REF} =~ \/v(.*)$ ]]
-          then
-            echo version=${BASH_REMATCH[1]} >> $GITHUB_OUTPUT
-          else
-            echo version='1.0.0' >> $GITHUB_OUTPUT
-          fi
-        shell: bash
+          $BUILD_VERSION = [regex]::split($env:GITHUB_REF, "v(.*)")[1]
+          Write-Output BUILD_VERSION=$BUILD_VERSION >> $env:GITHUB_ENV
+          Write-Host "v$BUILD_VERSION"
 
       - name: Checkout Source Code
         uses: actions/checkout@v4.1.6
@@ -51,20 +48,22 @@ jobs:
       - name: Build Solution => Release
         if: success()
         run: |
-          dotnet build ./Release.sln `
-          -p:Version=${{ steps.build.outputs.version }} `
-          --output ${{ env.OUTPUT_PATH }} `
+          dotnet publish ${{ env.PROJECT_PATH }} `
+          -p:Version=${{ env.BUILD_VERSION }} `
+          -p:PublishSingleFile=True `
           --configuration Release `
-          --no-restore `
+          --runtime win-x64 `
+          --output ${{ env.OUTPUT_PATH }} `
           --self-contained `
+          --no-restore `
           --verbosity normal
 
       - name: Compress Files
         if: success()
-        run:  cd ${{ env.OUTPUT_PATH }};Compress-Archive * -DestinationPath ..\v${{ steps.build.outputs.version }}.zip -CompressionLevel Optimal;cd ..
+        run:  cd ${{ env.OUTPUT_PATH }};Compress-Archive * -DestinationPath ..\v${{ env.BUILD_VERSION }}.zip -CompressionLevel Optimal;cd ..
       
       - name: Publish release
         uses: softprops/action-gh-release@v2.0.5
         if: success()
         with:
-          files: v${{ steps.build.outputs.version }}.zip
+          files: v${{ env.BUILD_VERSION }}.zip

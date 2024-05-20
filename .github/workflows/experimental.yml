@@ -20,10 +20,9 @@ jobs:
         run: |
           $BUILD_VERSION = [regex]::split($env:GITHUB_REF, "v(.*)")[1]
           Write-Output "BUILD_VERSION=$BUILD_VERSION" >> $env:GITHUB_ENV
-          Write-Host $BUILD_VERSION
+          Write-Host "v$BUILD_VERSION"
 
       - name: Show Build Version
         run: |
           Write-Host $env:BUILD_VERSION
           Write-Host ${{ env.BUILD_VERSION }}
-          Write-Host ${{ steps.build.outputs.BUILD_VERSION }}
