@@ -21,9 +21,13 @@ jobs:
       - name: Get Build Version
         id: build
         run: |
-          $BUILD_VERSION = [regex]::split($env:GITHUB_REF, "v(.*)")[1]
-          Write-Output BUILD_VERSION=$BUILD_VERSION | Out-File -FilePath $env:GITHUB_ENV -Append
-          Write-Host $env:BUILD_VERSION
+          if [[ ${GITHUB_REF} =~ \/v(.*)$ ]]
+          then
+            echo version=${BASH_REMATCH[1]} >> $GITHUB_OUTPUT
+          else
+            echo version='1.0.0' >> $GITHUB_OUTPUT
+          fi
+        shell: bash
 
       - name: Checkout Source Code
         uses: actions/checkout@v4.1.6
