@@ -1,4 +1,6 @@
-﻿namespace Nameless.InfoPhoenix.UI {
+﻿using System.Windows.Xps.Packaging;
+
+namespace Nameless.InfoPhoenix.UI {
     /// <summary>
     /// This class was defined to be an entrypoint for this project assembly.
     /// 

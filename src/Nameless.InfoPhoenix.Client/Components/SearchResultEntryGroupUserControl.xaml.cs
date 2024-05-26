@@ -10,9 +10,9 @@ namespace Nameless.InfoPhoenix.Client.Components {
         public static readonly DependencyProperty SearchResultEntryGroupProperty =
             DependencyProperty.Register(
                 nameof(SearchResultEntryGroup),
-                propertyType: typeof(SearchResultEntryGroupDto),
+                propertyType: typeof(SearchResultCollectionDto),
                 ownerType: typeof(SearchResultEntryGroupUserControl),
-                typeMetadata: new PropertyMetadata(defaultValue: SearchResultEntryGroupDto.Empty)
+                typeMetadata: new PropertyMetadata(defaultValue: SearchResultCollectionDto.Empty)
             );
 
         public static readonly DependencyProperty VisualizeCommandProperty =
@@ -27,8 +27,8 @@ namespace Nameless.InfoPhoenix.Client.Components {
 
         #region Public Properties
 
-        public SearchResultEntryGroupDto SearchResultEntryGroup {
-            get => GetValue(SearchResultEntryGroupProperty) as SearchResultEntryGroupDto ?? SearchResultEntryGroupDto.Empty;
+        public SearchResultCollectionDto SearchResultEntryGroup {
+            get => GetValue(SearchResultEntryGroupProperty) as SearchResultCollectionDto ?? SearchResultCollectionDto.Empty;
             set => SetValue(SearchResultEntryGroupProperty, value);
         }
 

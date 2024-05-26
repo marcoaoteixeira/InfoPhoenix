@@ -41,6 +41,9 @@ namespace Nameless.InfoPhoenix.Client.ViewModels.Pages {
         [ObservableProperty]
         private int _searchHistoryLimit;
 
+        [ObservableProperty]
+        private bool _enableDocumentViewer;
+
         #endregion
 
         #region Public Properties
@@ -94,6 +97,13 @@ namespace Nameless.InfoPhoenix.Client.ViewModels.Pages {
             _appConfigurationContext.ConfirmBeforeExit = newValue;
         }
 
+        partial void OnEnableDocumentViewerChanged(bool oldValue, bool newValue) {
+            if (!_initialized) { return; }
+            if (oldValue == newValue) { return; }
+
+            _appConfigurationContext.EnableDocumentViewer = newValue;
+        }
+
         #endregion
 
         #region Private Methods
@@ -109,6 +119,7 @@ namespace Nameless.InfoPhoenix.Client.ViewModels.Pages {
 
             SearchHistoryLimit = _appConfigurationContext.SearchHistoryLimit;
             ConfirmBeforeExit = _appConfigurationContext.ConfirmBeforeExit;
+            EnableDocumentViewer = _appConfigurationContext.EnableDocumentViewer;
 
             _initialized = true;
         }

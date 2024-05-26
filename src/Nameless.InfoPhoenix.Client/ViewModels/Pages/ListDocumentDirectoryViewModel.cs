@@ -188,10 +188,8 @@ namespace Nameless.InfoPhoenix.Client.ViewModels.Pages {
 
         [RelayCommand]
         private Task CreateNewDocumentDirectoryAsync() {
-            _navigationService.Navigate(
-                pageType: typeof(DocumentDirectoryFormPage),
-                dataContext: null
-            );
+            _navigationService.Navigate(pageType: typeof(DocumentDirectoryFormPage),
+                                        dataContext: null);
 
             return Task.CompletedTask;
         }

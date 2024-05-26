@@ -6,6 +6,7 @@
         int SearchHistoryLimit { get; set; }
         ISet<string> SearchHistory { get; }
         bool ConfirmBeforeExit { get; set; }
+        bool EnableDocumentViewer { get; set; }
 
         #endregion
     }

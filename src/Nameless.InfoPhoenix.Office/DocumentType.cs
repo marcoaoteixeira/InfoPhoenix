@@ -2,6 +2,8 @@
     public enum DocumentType {
         Word,
 
-        RichTextFormat
+        RichTextFormat,
+
+        XPS
     }
 }

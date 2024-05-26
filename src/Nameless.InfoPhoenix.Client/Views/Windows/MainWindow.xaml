@@ -29,7 +29,7 @@
                      Grid.Row="0"
                      Title="{Binding ElementName=MainWindowRoot, Path=ViewModel.AppTitle}">
             <ui:TitleBar.Icon>
-                <ui:ImageIcon Source="pack://application:,,,/Resources/info_phoenix_icon.png" />
+                <ui:ImageIcon Source="pack://application:,,,/Resources/branding/info_phoenix_64x64.png" />
             </ui:TitleBar.Icon>
         </ui:TitleBar>
 

@@ -12,11 +12,11 @@ namespace Nameless.InfoPhoenix.Domain {
                 DocumentDirectoryPath = self.GetString(nameof(SearchResultEntryDto.DocumentDirectoryPath)),
                 DocumentDirectoryLastIndexingTime = DateTime.Parse(self.GetString(nameof(SearchResultEntryDto.DocumentDirectoryLastIndexingTime))),
 
-                DocumentID = Guid.Parse(self.GetString(nameof(SearchResultEntryDto.DocumentID))),
+                DocumentID = Guid.Parse(self.DocumentID),
+                DocumentFileName = self.GetString(nameof(SearchResultEntryDto.DocumentFileName)),
                 DocumentFilePath = self.GetString(nameof(SearchResultEntryDto.DocumentFilePath)),
                 DocumentContent = self.GetString(nameof(SearchResultEntryDto.DocumentContent)),
                 DocumentLastIndexingTime = DateTime.Parse(self.GetString(nameof(SearchResultEntryDto.DocumentLastIndexingTime))),
-                DocumentLastWriteTime = DateTime.Parse(self.GetString(nameof(SearchResultEntryDto.DocumentLastWriteTime))),
             };
 
         #endregion

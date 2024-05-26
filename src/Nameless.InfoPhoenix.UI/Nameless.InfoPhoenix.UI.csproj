@@ -5,6 +5,7 @@
 		<EnableWindowsTargeting>true</EnableWindowsTargeting>
 		<RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
 		<TargetFramework>net6.0-windows</TargetFramework>
+		<UseWPF>true</UseWPF>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<LangVersion>latest</LangVersion>
@@ -12,13 +13,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
-	  <PackageReference Include="Nameless.Core" Version="2.1.21" />
-	  <PackageReference Include="WPF-UI" Version="3.0.4" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+		<PackageReference Include="Nameless.Core" Version="2.1.21" />
+		<PackageReference Include="WPF-UI" Version="3.0.4" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Nameless.InfoPhoenix.Core\Nameless.InfoPhoenix.Core.csproj" />
+		<ProjectReference Include="..\Nameless.InfoPhoenix.Core\Nameless.InfoPhoenix.Core.csproj" />
 	</ItemGroup>
 
 </Project>

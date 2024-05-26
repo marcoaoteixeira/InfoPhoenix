@@ -9,7 +9,6 @@
             <ResourceDictionary.MergedDictionaries>
                 <ui:ThemesDictionary Theme="Light" />
                 <ui:ControlsDictionary />
-                <ResourceDictionary Source="pack://application:,,,/Resources/OverrideResourceDictionary.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Resources/ValidationResourceDictionary.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <converters:StringToIntegerConverter x:Key="StringToIntegerConverter" />

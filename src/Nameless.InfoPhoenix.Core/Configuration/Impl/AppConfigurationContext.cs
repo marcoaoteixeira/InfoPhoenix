@@ -15,7 +15,8 @@ namespace Nameless.InfoPhoenix.Configuration.Impl {
             Theme: Root.Defaults.APPLICATION_THEME,
             SearchHistoryLimit: 10,
             SearchHistory: [],
-            ConfirmBeforeExit: false);
+            ConfirmBeforeExit: false,
+            EnableDocumentViewer: false);
 
         #endregion
 
@@ -79,7 +80,8 @@ namespace Nameless.InfoPhoenix.Configuration.Impl {
             => new(Theme,
                    SearchHistoryLimit,
                    [.. SearchHistory.Reverse().Take(10)],
-                   ConfirmBeforeExit);
+                   ConfirmBeforeExit,
+                   EnableDocumentViewer);
 
         private void StoreIntoFileSystem() {
             var file = _fileProvider.GetFileInfo(APP_CONFIGURATION_FILE_NAME);
@@ -105,7 +107,12 @@ namespace Nameless.InfoPhoenix.Configuration.Impl {
         #region Public Records
 
         // Record used to persist configurations in JSON format.
-        public sealed record AppConfiguration(string Theme, int SearchHistoryLimit, string[] SearchHistory, bool ConfirmBeforeExit);
+        public sealed record AppConfiguration(
+            string Theme,
+            int SearchHistoryLimit,
+            string[] SearchHistory,
+            bool ConfirmBeforeExit,
+            bool EnableDocumentViewer);
 
         #endregion
 
@@ -123,6 +130,8 @@ namespace Nameless.InfoPhoenix.Configuration.Impl {
         public ISet<string> SearchHistory { get; private set; } = new HashSet<string>();
 
         public bool ConfirmBeforeExit { get; set; }
+
+        public bool EnableDocumentViewer { get; set; }
 
         #endregion
 

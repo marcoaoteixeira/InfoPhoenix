@@ -7,13 +7,12 @@
       mc:Ignorable="d" 
       Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       x:Name="AppConfigurationPageRoot">
-
     <StackPanel Margin="24">
         <ui:TextBlock FontTypography="Title"
                       Margin="0 0 0 20"
                       Text="Aparência &amp; Comportamento" />
 
-        <ui:CardControl Icon="{ui:ImageIcon 'pack://application:,,,/Resources/info_phoenix_icon.png'}"
+        <ui:CardControl Icon="{ui:ImageIcon 'pack://application:,,,/Resources/branding/info_phoenix_64x64.png'}"
                         Margin="0 0 0 10">
             <ui:CardControl.Header>
                 <Grid>
@@ -173,6 +172,25 @@
                        Content="Abrir"
                        Icon="{ui:SymbolIcon Open48}"
                        Padding="30 8" />
+        </ui:CardControl>
+
+        <ui:CardControl Icon="{ui:SymbolIcon ShieldQuestion32}"
+                        Margin="0 0 0 10">
+            <ui:CardControl.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <ui:TextBlock FontTypography="BodyStrong"
+                                  Grid.Row="0"
+                                  Text="Visualizador de Documentos (Experimental)" />
+                    <ui:TextBlock Grid.Row="1"
+                                  Text="Deseja habilitar a visualização de documentos? Essa é uma função experimental que pode (ou não) melhorar como o documento é visualizado no resultado da busca." />
+                </Grid>
+            </ui:CardControl.Header>
+            <CheckBox Cursor="Hand"
+                      IsChecked="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.EnableDocumentViewer, Mode=TwoWay}" />
         </ui:CardControl>
 
     </StackPanel>

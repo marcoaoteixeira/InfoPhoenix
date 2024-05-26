@@ -74,6 +74,7 @@ namespace Nameless.InfoPhoenix.Client {
                                                   .Version ?? new Version()
                        )
                        .RegisterBootstrap(SupportAssemblies)
+                       .RegisterDocumentReaderProvider()
                        .RegisterFileProvider()
                        .RegisterLogging()
                        .RegisterLucene()
@@ -84,10 +85,16 @@ namespace Nameless.InfoPhoenix.Client {
                        .RegisterPerformanceWatcher()
                        .RegisterPubSubService()
                        .RegisterSnackbarService()
-                       .RegisterOfficeSuite()
+                       .RegisterOffice()
                        .RegisterViews()
                        .RegisterViewModels()
-                       .RegisterWindowService();
+                       .RegisterWindowFactory()
+
+                       .RegisterTextDocumentReader()
+                       .RegisterPDFDocumentReader()
+                       .RegisterWordDocumentReader()
+                       .RegisterXPSDocumentReader()
+                       .RegisterXPSDocumentConverter();
 
         #endregion
     }

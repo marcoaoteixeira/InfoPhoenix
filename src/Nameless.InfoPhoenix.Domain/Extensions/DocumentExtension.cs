@@ -25,11 +25,11 @@ namespace Nameless.InfoPhoenix.Domain {
                     .Set(nameof(SearchResultEntryDto.DocumentDirectoryLabel), documentDirectory.Label, FieldOptions.Store)
                     .Set(nameof(SearchResultEntryDto.DocumentDirectoryPath), documentDirectory.DirectoryPath, FieldOptions.Store)
                     .Set(nameof(SearchResultEntryDto.DocumentDirectoryLastIndexingTime), documentDirectory.LastIndexingTime.GetValueOrDefault().ToString("G"), FieldOptions.Store)
+
                     .Set(nameof(SearchResultEntryDto.DocumentFileName), Path.GetFileNameWithoutExtension(self.FilePath), FieldOptions.Store)
                     .Set(nameof(SearchResultEntryDto.DocumentFilePath), self.FilePath, FieldOptions.Store)
                     .Set(nameof(SearchResultEntryDto.DocumentContent), self.Content, FieldOptions.Store | FieldOptions.Analyze)
-                    .Set(nameof(SearchResultEntryDto.DocumentLastIndexingTime), self.LastIndexingTime.GetValueOrDefault().ToString("G"), FieldOptions.Store)
-                    .Set(nameof(SearchResultEntryDto.DocumentLastWriteTime), self.LastWriteTime.GetValueOrDefault().ToString("G"), FieldOptions.Store);
+                    .Set(nameof(SearchResultEntryDto.DocumentLastIndexingTime), self.LastIndexingTime.GetValueOrDefault().ToString("G"), FieldOptions.Store);
 
         #endregion
     }

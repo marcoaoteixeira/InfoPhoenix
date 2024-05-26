@@ -12,6 +12,36 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="Resources\proverbs.doc" />
+	  <None Remove="Resources\proverbs.docx" />
+	  <None Remove="Resources\proverbs.pdf" />
+	  <None Remove="Resources\proverbs.rtf" />
+	  <None Remove="Resources\proverbs.txt" />
+	  <None Remove="Resources\proverbs.xps" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="Resources\proverbs.doc">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Resources\proverbs.docx">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Resources\proverbs.pdf">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Resources\proverbs.rtf">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Resources\proverbs.txt">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Resources\proverbs.xps">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="coverlet.collector" Version="6.0.2">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

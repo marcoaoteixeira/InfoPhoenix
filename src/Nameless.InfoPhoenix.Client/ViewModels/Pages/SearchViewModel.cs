@@ -18,7 +18,7 @@ namespace Nameless.InfoPhoenix.Client.ViewModels.Pages {
 
         private readonly IAppConfigurationContext _appConfigurationContext;
         private readonly IMediator _mediator;
-        private readonly IWindowService _windowService;
+        private readonly IWindowFactory _windowFactory;
         private readonly IPerformanceReporter _performanceReporter;
 
         #endregion
@@ -29,14 +29,20 @@ namespace Nameless.InfoPhoenix.Client.ViewModels.Pages {
 
         #endregion
 
-        #region Private Fields (Observable)
+        #region Private Fields for Observables
 
         [ObservableProperty]
         private ObservableCollection<string> _searchHistory = [];
 
         [ObservableProperty]
-        private List<SearchResultEntryGroupDto> _result = [];
+        private List<SearchResultCollectionDto> _result = [];
 
+        #endregion
+
+        #region Private Properties
+
+        private string[] HighlightTerms { get; set; } = [];
+        
         #endregion
 
         #region Public Constructors
@@ -46,11 +52,11 @@ namespace Nameless.InfoPhoenix.Client.ViewModels.Pages {
             IMediator mediator,
             IPubSubService pubSubService,
             IPerformanceReporter performanceReporter,
-            IWindowService windowService) : base(pubSubService) {
+            IWindowFactory windowFactory) : base(pubSubService) {
             _appConfigurationContext = Guard.Against.Null(appConfigurationContext, nameof(appConfigurationContext));
             _mediator = Guard.Against.Null(mediator, nameof(mediator));
             _performanceReporter = Guard.Against.Null(performanceReporter, nameof(performanceReporter));
-            _windowService = Guard.Against.Null(windowService, nameof(windowService));
+            _windowFactory = Guard.Against.Null(windowFactory, nameof(windowFactory));
         }
 
         #endregion
@@ -94,13 +100,13 @@ namespace Nameless.InfoPhoenix.Client.ViewModels.Pages {
                 AssertSearchHistory(term);
             }
 
+            HighlightTerms = response.HighlightTerms;
             Result = [.. response.Value];
         }
 
         [RelayCommand]
-        private Task VisualizeSearchResultEntryAsync(SearchResultEntryGroupDto entry) {
-            _windowService
-                .DisplaySearchResultWindow(entry);
+        private Task VisualizeSearchResultEntryAsync(SearchResultCollectionDto entry) {
+            _windowFactory.DisplaySearchResultWindow(entry, HighlightTerms);
 
             return Task.CompletedTask;
         }

@@ -29,15 +29,6 @@
             public const string APPLICATION_THEME = "Light";
 
             #endregion
-
-            #region Public Static Properties
-
-            /// <summary>
-            /// Gets the valid documents extensions: .doc, .docx, .rtf
-            /// </summary>
-            public static string[] DocumentExtensions { get; } = [".doc", ".docx", ".rtf"];
-
-            #endregion
         }
 
         #endregion
