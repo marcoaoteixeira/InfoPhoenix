@@ -56,8 +56,11 @@ jobs:
         if: success()
         run: |
           dotnet publish ${{ env.PROJECT_PATH }} `
-          -p:Version=${{ env.BUILD_VERSION }} `
           -p:PublishSingleFile=True `
+          -p:AssemblyVersion=${{ env.BUILD_VERSION }} `
+          -p:FileVersion=${{ env.BUILD_VERSION }} `
+          -p:PackageVersion=${{ env.BUILD_VERSION }} `
+          -p:Version=${{ env.BUILD_VERSION }} `
           --configuration Release `
           --runtime win-x64 `
           --framework net6.0-windows `

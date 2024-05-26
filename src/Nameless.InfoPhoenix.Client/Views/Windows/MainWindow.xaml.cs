@@ -15,7 +15,6 @@ using Wpf.Ui.Controls;
 
 namespace Nameless.InfoPhoenix.Client.Views.Windows {
     public partial class MainWindow : INavigationWindow {
-
         #region Private Read-Only Fields
 
         private readonly IAppConfigurationContext _appConfigurationContext;
@@ -98,8 +97,8 @@ namespace Nameless.InfoPhoenix.Client.Views.Windows {
 
             SetPageService(_pageService);
 
-            try { Icon = new BitmapImage(new Uri("pack://application:,,,/Resources/branding/info_phoenix_64x64.png")); }
-            catch (Exception ex) { _logger.LogError(ex, ex.Message); }
+            try { Icon = new  BitmapImage(new Uri("pack://application:,,,/Resources/branding/info_phoenix_64x64.png")); }
+            catch (Exception ex) { _logger.LogError(ex, "Could not load resource info_phoenix_64x64"); }
 
             _initialized = true;
         }
