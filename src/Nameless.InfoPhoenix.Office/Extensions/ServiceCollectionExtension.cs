@@ -1,28 +1,20 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Nameless.InfoPhoenix.Office.Impl;
+using Nameless.InfoPhoenix.Office.Text;
+using Nameless.InfoPhoenix.Text;
 
 namespace Nameless.InfoPhoenix.Office {
     public static class ServiceCollectionExtension {
-        #region Private Constants
-
-        private const string WORD_APPLICATION_REG_KEY = $"{nameof(WordApplication)}::362d5577-0bd7-4cbb-a484-4b1b974862c3";
-
-        #endregion
-
         #region Public Static Methods
 
-        public static IServiceCollection RegisterOfficeSuite(this IServiceCollection self)
-            => self
-               .AddKeyedSingleton<IWordApplication, WordApplication>(WORD_APPLICATION_REG_KEY)
-               .AddSingleton<IOfficeSuite>(provider => {
-                   var wordApplication = provider.GetRequiredKeyedService<IWordApplication>(WORD_APPLICATION_REG_KEY);
-                   var logger = provider
-                       .GetRequiredService<ILoggerFactory>()
-                       .CreateLogger<OfficeSuite>();
+        public static IServiceCollection RegisterOffice(this IServiceCollection self)
+            => self.AddSingleton<IWordApplication, WordApplication>();
 
-                   return new OfficeSuite(wordApplication, logger);
-               });
+        public static IServiceCollection RegisterXPSDocumentConverter(this IServiceCollection self)
+            => self.AddSingleton<InfoPhoenix.Text.IDocumentConverter, XPSDocumentConverter>();
+
+        public static IServiceCollection RegisterWordDocumentReader(this IServiceCollection self)
+            => self.AddSingleton<IDocumentReader, WordDocumentReader>();
 
         #endregion
     }

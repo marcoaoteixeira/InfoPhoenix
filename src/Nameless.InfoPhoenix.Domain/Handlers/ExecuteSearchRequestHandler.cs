@@ -5,7 +5,6 @@ using Nameless.InfoPhoenix.Domain.Dtos;
 using Nameless.InfoPhoenix.Domain.Requests;
 using Nameless.InfoPhoenix.Domain.Responses;
 using Nameless.Lucene;
-using Index = Nameless.Lucene.Impl.Index;
 
 namespace Nameless.InfoPhoenix.Domain.Handlers {
     public sealed class ExecuteSearchRequestHandler : IRequestHandler<ExecuteSearchRequest, SearchResultEntryGroupCollectionResponse> {
@@ -59,7 +58,7 @@ namespace Nameless.InfoPhoenix.Domain.Handlers {
 
             var groups = collection
                 .GroupBy(entry => (entry.DocumentDirectoryLabel, entry.DocumentDirectoryPath, entry.DocumentDirectoryLastIndexingTime))
-                .Select(group => new SearchResultEntryGroupDto([.. group]) {
+                .Select(group => new SearchResultCollectionDto([.. group]) {
                     DocumentDirectoryLabel = group.Key.DocumentDirectoryLabel,
                     DocumentDirectoryPath = group.Key.DocumentDirectoryPath,
                     DocumentDirectoryLastIndexingTime = group.Key.DocumentDirectoryLastIndexingTime,
@@ -70,7 +69,8 @@ namespace Nameless.InfoPhoenix.Domain.Handlers {
                 Value = [.. groups],
                 Error = groups.Length == 0
                     ? $"Não há resultados para a busca. Termo utilizado: {request.Query}"
-                    : null
+                    : null,
+                HighlightTerms = [.. searchToken.Exact, .. searchToken.Include]
             };
 
             return Task.FromResult(response);
@@ -122,8 +122,9 @@ namespace Nameless.InfoPhoenix.Domain.Handlers {
             foreach (var token in tokens) {
                 builder
                     .WithField(field: nameof(SearchResultEntryDto.DocumentContent),
-                               phraseParts: [.. token.Split(Root.Defaults.Chars.WHITE_SPACE)])
-                    .Mandatory();
+                               phraseParts: token.ToLowerInvariant()
+                                                 .Split(Root.Defaults.Chars.WHITE_SPACE))
+                    .ExactMatch();
             }
         }
 
@@ -131,7 +132,7 @@ namespace Nameless.InfoPhoenix.Domain.Handlers {
             foreach (var token in tokens) {
                 builder
                     .WithField(field: nameof(SearchResultEntryDto.DocumentContent),
-                               value: token,
+                               value: token.ToLowerInvariant(),
                                useWildcard: token.Contains(Root.Defaults.Strings.ASTERISK));
             }
         }
@@ -140,7 +141,8 @@ namespace Nameless.InfoPhoenix.Domain.Handlers {
             foreach (var token in tokens) {
                 builder
                     .WithField(field: nameof(SearchResultEntryDto.DocumentContent),
-                               value: token.Replace(Root.Defaults.Strings.DASH, string.Empty),
+                               value: token.ToLowerInvariant()
+                                           .Replace(Root.Defaults.Strings.DASH, string.Empty),
                                useWildcard: false)
                     .Forbidden();
             }

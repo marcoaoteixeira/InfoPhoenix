@@ -18,7 +18,6 @@
         public string DocumentFilePath { get; set; } = string.Empty;
         public string DocumentContent { get; set; } = string.Empty;
         public DateTime DocumentLastIndexingTime { get; set; }
-        public DateTime DocumentLastWriteTime { get; set; }
 
         #endregion
     }

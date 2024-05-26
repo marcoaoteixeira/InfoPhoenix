@@ -8,6 +8,8 @@ using Nameless.InfoPhoenix.Configuration;
 using Nameless.InfoPhoenix.Configuration.Impl;
 using Nameless.InfoPhoenix.Infrastructure;
 using Nameless.InfoPhoenix.Infrastructure.Impl;
+using Nameless.InfoPhoenix.Text;
+using Nameless.InfoPhoenix.Text.Impl;
 using Nameless.Infrastructure;
 
 namespace Nameless.InfoPhoenix {
@@ -44,6 +46,15 @@ namespace Nameless.InfoPhoenix {
 
                     return new PhysicalFileProvider(root);
                 });
+
+        public static IServiceCollection RegisterDocumentReaderProvider(this IServiceCollection self)
+            => self.AddSingleton<IDocumentReaderProvider, DocumentReaderProvider>();
+
+        public static IServiceCollection RegisterTextDocumentReader(this IServiceCollection self)
+            => self.AddSingleton<IDocumentReader, TextDocumentReader>();
+
+        public static IServiceCollection RegisterPDFDocumentReader(this IServiceCollection self)
+            => self.AddSingleton<IDocumentReader, PDFDocumentReader>();
 
         public static IServiceCollection RegisterMediatR(this IServiceCollection self, Assembly[] supportAssemblies)
             => self.AddMediatR(setup => setup.RegisterServicesFromAssemblies(supportAssemblies));

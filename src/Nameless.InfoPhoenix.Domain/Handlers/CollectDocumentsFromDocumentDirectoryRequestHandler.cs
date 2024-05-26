@@ -7,27 +7,28 @@ using Nameless.InfoPhoenix.Domain.Entities;
 using Nameless.InfoPhoenix.Domain.Objects;
 using Nameless.InfoPhoenix.Domain.Requests;
 using Nameless.InfoPhoenix.Infrastructure;
-using Nameless.InfoPhoenix.Office;
 using Nameless.InfoPhoenix.Responses;
+using Nameless.InfoPhoenix.Text;
 
-namespace Nameless.InfoPhoenix.Domain.Handlers {
+namespace Nameless.InfoPhoenix.Domain.Handlers
+{
     public sealed class CollectDocumentsFromDocumentDirectoryRequestHandler : IRequestHandler<CollectDocumentsFromDocumentDirectoryRequest, EmptyResponse> {
         #region Private Read-Only Fields
 
         private readonly AppDbContext _appDbContext;
-        private readonly ILogger _logger;
-        private readonly IOfficeSuite _officeSuite;
+        private readonly IDocumentReaderProvider _documentReaderProvider;
         private readonly IPubSubService _pubSubService;
+        private readonly ILogger _logger;
 
         #endregion
 
         #region Public Constructors
 
-        public CollectDocumentsFromDocumentDirectoryRequestHandler(AppDbContext appDbContext, ILogger<CollectDocumentsFromDocumentDirectoryRequestHandler> logger, IOfficeSuite officeSuite, IPubSubService pubSubService) {
+        public CollectDocumentsFromDocumentDirectoryRequestHandler(AppDbContext appDbContext, IDocumentReaderProvider documentReaderProvider, IPubSubService pubSubService, ILogger<CollectDocumentsFromDocumentDirectoryRequestHandler> logger) {
             _appDbContext = Guard.Against.Null(appDbContext, nameof(appDbContext));
-            _logger = Guard.Against.Null(logger, nameof(logger));
-            _officeSuite = Guard.Against.Null(officeSuite, nameof(officeSuite));
+            _documentReaderProvider = Guard.Against.Null(documentReaderProvider, nameof(documentReaderProvider));
             _pubSubService = Guard.Against.Null(pubSubService, nameof(pubSubService));
+            _logger = Guard.Against.Null(logger, nameof(logger));
         }
 
         #endregion
@@ -113,8 +114,8 @@ namespace Nameless.InfoPhoenix.Domain.Handlers {
             cancellationToken.ThrowIfCancellationRequested();
 
             var documents = Root
-                                .Defaults
-                                .ValidDocumentExtensions
+                                .Files
+                                .DocumentExtensions
                                 .SelectMany(extension =>
                                                 Directory
                                                     .GetFiles(documentDirectory.DirectoryPath, $"*{extension}", SearchOption.AllDirectories)
@@ -250,14 +251,15 @@ namespace Nameless.InfoPhoenix.Domain.Handlers {
             content = null;
 
             try {
-                content = Path.GetExtension(filePath)
-                              .Equals(Root.Defaults.TXT_EXTENSION, StringComparison.InvariantCultureIgnoreCase)
-                    ? File.ReadAllText(filePath)
-                    : _officeSuite.GetWordDocumentContent(filePath, formatted: true);
+                var extension = Path.GetExtension(filePath);
+
+                content = _documentReaderProvider
+                    .GetDocumentReader(extension)
+                    .GetContent(filePath);
             }
             catch (Exception ex) {
                 _logger.LogError(exception: ex,
-                                 message: "Unable read document using Office Suite service. File: {FilePath}",
+                                 message: "Unable to read document. File: {FilePath}",
                                  args: [filePath]);
                 return false;
             }

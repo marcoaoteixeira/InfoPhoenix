@@ -10,22 +10,42 @@
     public static class Root {
         #region Public Static Classes
 
-        public static class Defaults {
-            public const string TXT_EXTENSION = ".txt";
-            public const string DOC_EXTENSION = ".doc";
-            public const string DOCX_EXTENSION = ".docx";
-            public const string RTF_EXTENSION = ".rtf";
+        public static class Files {
+            #region Public Static Read-Only Properties
 
             /// <summary>
-            /// Gets the valid documents extensions: .doc, .docx, .rtf
+            /// Gets the valid documents extensions.
             /// </summary>
-            public static string[] ValidDocumentExtensions { get; } = [
-                DOCX_EXTENSION,
-                DOC_EXTENSION,
-                RTF_EXTENSION,
-                TXT_EXTENSION
+            public static string[] DocumentExtensions { get; } = [
+                Extensions.DOC,
+                Extensions.DOCX,
+                Extensions.RTF,
+                Extensions.TXT,
+                Extensions.PDF,
+                Extensions.XPS
             ];
 
+            #endregion
+
+            #region Public Static Classes
+
+            public static class Extensions {
+                #region Public Constants
+
+                public const string TXT = ".txt";
+                public const string DOC = ".doc";
+                public const string DOCX = ".docx";
+                public const string RTF = ".rtf";
+                public const string PDF = ".pdf";
+                public const string XPS = ".xps";
+
+                #endregion
+            }
+
+            #endregion
+        }
+
+        public static class Defaults {
             #region Public Static Inner Classes
 
             public static class Chars {

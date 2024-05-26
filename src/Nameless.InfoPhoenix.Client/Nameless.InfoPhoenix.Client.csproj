@@ -3,7 +3,6 @@
 	<PropertyGroup>
 		<RootNamespace>Nameless.InfoPhoenix.Client</RootNamespace>
 		<ApplicationManifest>App.manifest</ApplicationManifest>
-		<ApplicationIcon>Resources\info_phoenix_icon.ico</ApplicationIcon>
 		<OutputType>WinExe</OutputType>
 		<UseWPF>true</UseWPF>
 		<RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
@@ -15,17 +14,20 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Remove="AppSettings.json" />
-		<None Remove="Resources\docx_file_icon.png" />
-		<None Remove="Resources\doc_file_icon.png" />
-		<None Remove="Resources\info_phoenix_icon.png" />
-		<None Remove="Resources\info_phoenix_splash_screen.png" />
-		<None Remove="Resources\rtf_file_icon.png" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Page Remove="Resources\OverrideResourceDictionary.xaml" />
-	  <Page Remove="Resources\ValidationResourceDictionary.xaml" />
+		<None Remove="info_phoenix.ico" />
+		<None Remove="Resources\branding\info_phoenix_16x16.png" />
+		<None Remove="Resources\branding\info_phoenix_24x24.png" />
+		<None Remove="Resources\branding\info_phoenix_32x32.png" />
+		<None Remove="Resources\branding\info_phoenix_64x64.png" />
+		<None Remove="Resources\branding\info_phoenix_128x128.png" />
+		<None Remove="Resources\branding\info_phoenix_256x256.png" />
+		<None Remove="Resources\branding\info_phoenix_512x512.png" />
+		<None Remove="Resources\files\docx_file.png" />
+		<None Remove="Resources\files\doc_file.png" />
+		<None Remove="Resources\files\pdf_file.png" />
+		<None Remove="Resources\files\rtf_file.png" />
+		<None Remove="Resources\files\txt_file.png" />
+		<None Remove="Resources\files\xps_file.png" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -47,41 +49,39 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Page Remove="Resources\ValidationResourceDictionary.xaml" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Resource Include="Resources\branding\info_phoenix_16x16.png" />
+		<Resource Include="Resources\branding\info_phoenix_24x24.png" />
+		<Resource Include="Resources\branding\info_phoenix_32x32.png" />
+		<Resource Include="Resources\branding\info_phoenix_64x64.png" />
+		<Resource Include="Resources\branding\info_phoenix_128x128.png" />
+		<Resource Include="Resources\branding\info_phoenix_256x256.png" />
+		<Resource Include="Resources\files\docx_file.png" />
+		<Resource Include="Resources\files\doc_file.png" />
+		<Resource Include="Resources\files\pdf_file.png" />
+		<Resource Include="Resources\files\rtf_file.png" />
+		<Resource Include="Resources\files\txt_file.png" />
+		<Resource Include="Resources\files\xps_file.png" />
+		<Resource Include="Resources\ValidationResourceDictionary.xaml">
+			<SubType>Designer</SubType>
+			<Generator>MSBuild:Compile</Generator>
+		</Resource>
+	</ItemGroup>
+
+	<ItemGroup>
 		<Content Include="AppSettings.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="info_phoenix.ico">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
-		<Resource Include="Resources\docx_file_icon.png">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Resource>
-		<Resource Include="Resources\doc_file_icon.png">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Resource>
-		<Resource Include="Resources\info_phoenix_icon.ico">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Resource>
-		<Resource Include="Resources\info_phoenix_icon.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Resource>
-		<Resource Include="Resources\rtf_file_icon.png">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Resource>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Resource Include="Resources\OverrideResourceDictionary.xaml">
-	    <SubType>Designer</SubType>
-	    <Generator>MSBuild:Compile</Generator>
-	  </Resource>
-	  <Resource Include="Resources\ValidationResourceDictionary.xaml">
-	    <SubType>Designer</SubType>
-	    <Generator>MSBuild:Compile</Generator>
-	  </Resource>
-	</ItemGroup>
-
-	<ItemGroup>
-		<SplashScreen Include="Resources\info_phoenix_splash_screen.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</SplashScreen>
+		<SplashScreen Include="Resources\branding\info_phoenix_512x512.png" />
 	</ItemGroup>
 
 </Project>

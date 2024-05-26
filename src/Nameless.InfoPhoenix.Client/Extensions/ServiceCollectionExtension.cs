@@ -20,19 +20,24 @@ namespace Nameless.InfoPhoenix.Client {
 
         public static IServiceCollection RegisterViews(this IServiceCollection self)
             => self
-                .AddSingleton<INavigationWindow, MainWindow>()
-                .AddSingleton<AppConfigurationPage>()
-                .AddTransient<DocumentDirectoryFormPage>()
-                .AddSingleton<ListDocumentDirectoryPage>()
-                .AddSingleton<SearchPage>();
+               .AddSingleton<INavigationWindow, MainWindow>()
+               .AddSingleton<AppConfigurationPage>()
+               .AddSingleton<ListDocumentDirectoryPage>()
+               .AddSingleton<SearchPage>()
+
+               .AddTransient<DocumentDirectoryFormPage>()
+               .AddTransient<ShowSearchResultWindow>()
+               .AddTransient<DocumentViewerWindow>();
 
         public static IServiceCollection RegisterViewModels(this IServiceCollection self)
             => self
                 .AddSingleton<MainWindowViewModel>()
                 .AddSingleton<AppConfigurationViewModel>()
-                .AddTransient<DocumentDirectoryFormViewModel>()
                 .AddSingleton<ListDocumentDirectoryViewModel>()
-                .AddSingleton<SearchViewModel>();
+                .AddSingleton<SearchViewModel>()
+
+                .AddTransient<DocumentDirectoryFormViewModel>()
+                .AddTransient<ShowSearchResultWindowViewModel>();
 
         #endregion
     }

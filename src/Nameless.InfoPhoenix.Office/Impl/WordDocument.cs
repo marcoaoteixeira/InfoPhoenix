@@ -76,10 +76,11 @@ namespace Nameless.InfoPhoenix.Office.Impl {
         private MSWord_Document GetDocument()
             => _document ?? throw new ArgumentNullException(nameof(_document));
 
-        private static MSWord_WdSaveFormat ParseDocumentType(DocumentType type)
+        private static MSWord_WdSaveFormat Convert(DocumentType type)
             => type switch {
                 DocumentType.RichTextFormat => MSWord_WdSaveFormat.wdFormatRTF,
                 DocumentType.Word => MSWord_WdSaveFormat.wdFormatDocument,
+                DocumentType.XPS => MSWord_WdSaveFormat.wdFormatXPS,
                 _ => throw new InvalidOperationException("Invalid document format type.")
             };
 
@@ -93,10 +94,6 @@ namespace Nameless.InfoPhoenix.Office.Impl {
             BlockAccessAfterDispose();
 
             var sb = new StringBuilder();
-
-            static string ExtractText(MSWord_Range range, bool formatted) {
-                return formatted ? range.FormattedText.Text : range.Text;
-            }
 
             // Read header
             foreach (MSWord_Section section in GetDocument().Sections) {
@@ -116,12 +113,16 @@ namespace Nameless.InfoPhoenix.Office.Impl {
             }
 
             return sb.ToString();
+
+            static string ExtractText(MSWord_Range range, bool formatted) {
+                return formatted ? range.FormattedText.Text : range.Text;
+            }
         }
 
         public void SaveAs(string filePath, DocumentType type) {
             BlockAccessAfterDispose();
 
-            var currentFormat = (object)ParseDocumentType(type);
+            var currentFormat = (object)Convert(type);
             var currentOutputFilePath = (object)filePath;
 
             GetDocument().SaveAs2(
