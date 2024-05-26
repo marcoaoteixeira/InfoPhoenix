@@ -42,7 +42,7 @@ jobs:
           dotnet build `
           --configuration Debug `
           --no-restore `
-          --verbosity normal
+          --verbosity detailed
 
       - name: Run Test Suite
         if: success()
