@@ -12,7 +12,7 @@
                       Margin="0 0 0 20"
                       Text="Aparência &amp; Comportamento" />
 
-        <ui:CardControl Icon="{ui:ImageIcon 'pack://application:,,,/Resources/branding/info_phoenix_64x64.png'}"
+        <ui:CardControl Icon="{ui:ImageIcon '/Resources/branding/info_phoenix_64x64.png'}"
                         Margin="0 0 0 10">
             <ui:CardControl.Header>
                 <Grid>

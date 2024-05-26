@@ -4,7 +4,7 @@ using Nameless.InfoPhoenix.Domain.Dtos;
 using Nameless.InfoPhoenix.UI;
 
 namespace Nameless.InfoPhoenix.Client {
-    public static class WindowServiceExtension {
+    public static class WindowFactoryExtension {
         #region Public Static Methods
 
         public static void DisplaySearchResultWindow(this IWindowFactory self, SearchResultCollectionDto searchResultCollection, string[] highlightTerms) {

@@ -15,7 +15,17 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Page Remove="Resources\ValidationResourceDictionary.xaml" />
+		<None Remove="Resources\branding\info_phoenix_128x128.png" />
+		<None Remove="Resources\branding\info_phoenix_256x256.png" />
+		<None Remove="Resources\branding\info_phoenix_512x512.png" />
+		<None Remove="Resources\branding\info_phoenix_64x64.png" />
+		<None Remove="Resources\files\docx_file.png" />
+		<None Remove="Resources\files\doc_file.png" />
+		<None Remove="Resources\files\pdf_file.png" />
+		<None Remove="Resources\files\rtf_file.png" />
+		<None Remove="Resources\files\txt_file.png" />
+		<None Remove="Resources\files\xps_file.png" />
+		<None Remove="Resources\icons\info_phoenix.ico" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -37,23 +47,20 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Include="AppSettings.json">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-		<Content Include="Resources\branding\info_phoenix_512x512.png" />
-		<Content Include="Resources\branding\info_phoenix_256x256.png" />
-		<Content Include="Resources\branding\info_phoenix_128x128.png" />
-		<Content Include="Resources\branding\info_phoenix_64x64.png" />
-		<Content Include="Resources\files\doc_file.png" />
-		<Content Include="Resources\files\docx_file.png" />
-		<Content Include="Resources\files\pdf_file.png" />
-		<Content Include="Resources\files\rtf_file.png" />
-		<Content Include="Resources\files\txt_file.png" />
-		<Content Include="Resources\files\xps_file.png" />
-		<Content Include="Resources\icons\info_phoenix.ico" />
+		<Page Remove="Resources\ValidationResourceDictionary.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<Resource Include="Resources\branding\info_phoenix_128x128.png" />
+		<Resource Include="Resources\branding\info_phoenix_256x256.png" />
+		<Resource Include="Resources\branding\info_phoenix_64x64.png" />
+		<Resource Include="Resources\files\docx_file.png" />
+		<Resource Include="Resources\files\doc_file.png" />
+		<Resource Include="Resources\files\pdf_file.png" />
+		<Resource Include="Resources\files\rtf_file.png" />
+		<Resource Include="Resources\files\txt_file.png" />
+		<Resource Include="Resources\files\xps_file.png" />
+		<Resource Include="Resources\icons\info_phoenix.ico" />
 		<Resource Include="Resources\ValidationResourceDictionary.xaml">
 			<SubType>Designer</SubType>
 			<Generator>MSBuild:Compile</Generator>
@@ -61,42 +68,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<SplashScreen Include="Resources\branding\info_phoenix_512x512.png">
+		<Content Include="AppSettings.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</SplashScreen>
+		</Content>
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Update="Resources\branding\info_phoenix_256x256.png">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-		<None Update="Resources\branding\info_phoenix_128x128.png">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-		<None Update="Resources\branding\info_phoenix_64x64.png">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-		<None Update="Resources\files\docx_file.png">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-		<None Update="Resources\files\doc_file.png">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-		<None Update="Resources\files\pdf_file.png">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-		<None Update="Resources\files\rtf_file.png">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-		<None Update="Resources\files\txt_file.png">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-		<None Update="Resources\files\xps_file.png">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-		<None Update="Resources\icons\info_phoenix.ico">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
+		<SplashScreen Include="Resources\branding\info_phoenix_512x512.png" />
 	</ItemGroup>
 
 </Project>

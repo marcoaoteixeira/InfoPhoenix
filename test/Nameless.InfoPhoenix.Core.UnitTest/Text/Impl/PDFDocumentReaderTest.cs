@@ -1,4 +1,5 @@
 namespace Nameless.InfoPhoenix.Text.Impl {
+    [Category(Constants.Categories.RUNS_ON_DEV_MACHINE)]
     public class PDFDocumentReaderTest {
         [Test]
         public void Read_Simple_Pdf_Document() {
