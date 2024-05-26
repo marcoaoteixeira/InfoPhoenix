@@ -3,7 +3,6 @@
 	<PropertyGroup>
 		<RootNamespace>Nameless.InfoPhoenix.Client</RootNamespace>
 		<ApplicationManifest>App.manifest</ApplicationManifest>
-		<ApplicationIcon>info_phoenix_64x64.ico</ApplicationIcon>
 		<OutputType>WinExe</OutputType>
 		<UseWPF>true</UseWPF>
 		<RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
