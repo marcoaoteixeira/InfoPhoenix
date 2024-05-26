@@ -42,7 +42,7 @@ jobs:
           dotnet build `
           --configuration Debug `
           --no-restore `
-          --verbosity detailed
+          --verbosity normal
 
       - name: Run Test Suite
         if: success()
@@ -55,7 +55,7 @@ jobs:
           --results-directory ./code-coverage/ `
           --filter "Category!=RunsOnDevMachine" `
           --settings .runsettings `
-          --verbosity detailed
+          --verbosity normal
 
       - name: Prepare for Coverage Report
         if: success()

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Windows.Media.Imaging;
 using Microsoft.Extensions.Logging;
 using Nameless.InfoPhoenix.Client.Objects;
 using Nameless.InfoPhoenix.Client.ViewModels.Windows;
@@ -14,14 +15,16 @@ using Wpf.Ui.Controls;
 
 namespace Nameless.InfoPhoenix.Client.Views.Windows {
     public partial class MainWindow : INavigationWindow {
+
         #region Private Read-Only Fields
 
         private readonly IAppConfigurationContext _appConfigurationContext;
         private readonly IMessageBoxService _messageBoxService;
         private readonly INavigationService _navigationService;
-        private readonly IPubSubService _pubSubService;
         private readonly IPageService _pageService;
+        private readonly IPubSubService _pubSubService;
         private readonly ISnackbarService _snackbarService;
+        private readonly ILogger<MainWindow> _logger;
 
         #endregion
 
@@ -43,8 +46,8 @@ namespace Nameless.InfoPhoenix.Client.Views.Windows {
             IAppConfigurationContext appConfigurationContext,
             IMessageBoxService messageBoxService,
             INavigationService navigationService,
-            IPubSubService pubSubService,
             IPageService pageService,
+            IPubSubService pubSubService,
             ISnackbarService snackbarService,
             ILogger<MainWindow> logger) {
             ViewModel = Guard.Against.Null(viewModel, nameof(viewModel));
@@ -52,15 +55,13 @@ namespace Nameless.InfoPhoenix.Client.Views.Windows {
             _appConfigurationContext = Guard.Against.Null(appConfigurationContext, nameof(appConfigurationContext));
             _messageBoxService = Guard.Against.Null(messageBoxService, nameof(messageBoxService));
             _navigationService = Guard.Against.Null(navigationService, nameof(navigationService));
-            _pubSubService = Guard.Against.Null(pubSubService, nameof(pubSubService));
             _pageService = Guard.Against.Null(pageService, nameof(pageService));
+            _pubSubService = Guard.Against.Null(pubSubService, nameof(pubSubService));
+            _logger = Guard.Against.Null(logger, nameof(logger));
             _snackbarService = Guard.Against.Null(snackbarService, nameof(snackbarService));
 
-            try { InitializeComponent(); }
-            catch (Exception ex) { logger.LogError(ex, ex.Message); }
-
-            try { Initialize(); }
-            catch (Exception ex) { logger.LogError(ex, ex.Message); }
+            InitializeComponent();
+            Initialize();
         }
 
         #endregion
@@ -94,8 +95,11 @@ namespace Nameless.InfoPhoenix.Client.Views.Windows {
 
             _pubSubService.Subscribe<SnackbarNotification>(this, (_, notification) => SnackbarNotificationHandler(notification));
             _pubSubService.Subscribe<CollectDocumentNotification>(this, (_, notification) => StatusTextBlockNotificationHandler(notification));
-            
+
             SetPageService(_pageService);
+
+            try { Icon = new BitmapImage(new Uri("pack://application:,,,/Resources/branding/info_phoenix_64x64.png")); }
+            catch (Exception ex) { _logger.LogError(ex, ex.Message); }
 
             _initialized = true;
         }
