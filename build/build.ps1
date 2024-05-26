@@ -146,7 +146,9 @@ Try {
 			--verbosity normal
 		
 		$ArchiveLookup = Join-Path $pwd $OutputPath
-		$ArchiveDestination = Join-Path $pwd "v$($SemVer).zip"
+		
+		New-Item -Path "artifacts" -ItemType Directory
+		$ArchiveDestination = Join-Path $pwd "artifacts\v$($SemVer).zip"
 		
 		Compress-Archive "$($ArchiveLookup)\*" -DestinationPath $ArchiveDestination -CompressionLevel Optimal
 		
@@ -180,6 +182,10 @@ Try {
 		"-reports:./code-coverage/**/coverage.cobertura.xml" `
 		"-targetdir:./code-coverage/report" `
 		-reporttypes:Html
+		
+	# Clean
+	Remove-Item -Path .\bin\ -Force -Recurse
+	Remove-Item -Path $OutputPath -Force -Recurse
 } Finally {
     Write-Verbose "[$($SCRIPT_NAME)] Performing cleanup..."
 }
