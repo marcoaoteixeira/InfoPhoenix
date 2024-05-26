@@ -11,7 +11,7 @@ env:
   RUNTIME: 'win-x64'
   TARGET_FRAMEWORK: 'net6.0-windows'
   TARGET_PLATFORM: 'x64'
-  OUTPUT_DIR: '.\release'
+  OUTPUT_PATH: '.\release'
 
 jobs:
 
@@ -67,11 +67,11 @@ jobs:
             /p:FileVersion=$env:BUILD_VERSION `
             /p:Version=$env:BUILD_VERSION `
             /p:Framework=$env:TARGET_FRAMEWORK `
-            /p:OutputDir=$env:OUTPUT_DIR
+            /p:OutputPath=..\..\$env:OUTPUT_PATH
 
       - name: Compress Files
         if: success()
-        run:  Compress-Archive $env:OUTPUT_DIR\$env:TARGET_PLATFORM\$env:CONFIGURATION\$env:TARGET_FRAMEWORK\* -DestinationPath v${{ env.BUILD_VERSION }}.zip -CompressionLevel Optimal
+        run:  Compress-Archive $env:OUTPUT_PATH\$env:TARGET_PLATFORM\$env:CONFIGURATION\$env:TARGET_FRAMEWORK\* -DestinationPath v${{ env.BUILD_VERSION }}.zip -CompressionLevel Optimal
       
       - name: Publish release
         uses: softprops/action-gh-release@v2.0.5
