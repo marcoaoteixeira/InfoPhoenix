@@ -3,7 +3,7 @@
   <PropertyGroup>
 	  <RootNamespace>Nameless.InfoPhoenix</RootNamespace>
 	  <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
-	  <TargetFramework>net6.0</TargetFramework>
+	  <TargetFramework>net6.0-windows</TargetFramework>
 	  <ImplicitUsings>enable</ImplicitUsings>
 	  <Nullable>enable</Nullable>
 	  <LangVersion>latest</LangVersion>
