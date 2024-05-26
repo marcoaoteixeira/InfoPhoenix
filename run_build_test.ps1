@@ -1,0 +1,1 @@
+.\build\build.ps1 -SolutionName .\InfoPhoenix.sln -Configuration Debug
