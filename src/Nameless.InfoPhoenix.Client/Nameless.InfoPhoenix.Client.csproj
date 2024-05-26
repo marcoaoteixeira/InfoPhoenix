@@ -3,7 +3,6 @@
 	<PropertyGroup>
 		<RootNamespace>Nameless.InfoPhoenix.Client</RootNamespace>
 		<ApplicationManifest>App.manifest</ApplicationManifest>
-		<ApplicationIcon>info_phoenix.ico</ApplicationIcon>
 		<OutputType>WinExe</OutputType>
 		<UseWPF>true</UseWPF>
 		<RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
@@ -68,9 +67,6 @@
 	<ItemGroup>
 		<Content Include="AppSettings.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-		<Content Include="info_phoenix.ico">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>
 
