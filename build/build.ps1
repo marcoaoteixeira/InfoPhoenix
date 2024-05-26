@@ -147,12 +147,18 @@ Try {
 		
 		$ArchiveLookup = Join-Path $pwd $OutputPath
 		
-		New-Item -Path "artifacts" -ItemType Directory
+		If (!(Test-Path -PathType Container "artifacts")) {
+			New-Item -Path "artifacts" -ItemType Directory | Out-Null
+		}
 		$ArchiveDestination = Join-Path $pwd "artifacts\v$($SemVer).zip"
 		
 		Compress-Archive "$($ArchiveLookup)\*" -DestinationPath $ArchiveDestination -CompressionLevel Optimal
 		
 		[Version]::Save($CurrentVersion, $VersionFilePath)
+		
+		# Clean
+		Remove-Item -Path .\bin\ -Force -Recurse | Out-Null
+		Remove-Item -Path $OutputPath -Force -Recurse | Out-Null
 		
 		exit(0)
 	}
@@ -184,8 +190,8 @@ Try {
 		-reporttypes:Html
 		
 	# Clean
-	Remove-Item -Path .\bin\ -Force -Recurse
-	Remove-Item -Path $OutputPath -Force -Recurse
+	Remove-Item -Path .\bin\ -Force -Recurse | Out-Null
+	Remove-Item -Path $OutputPath -Force -Recurse | Out-Null
 } Finally {
     Write-Verbose "[$($SCRIPT_NAME)] Performing cleanup..."
 }
