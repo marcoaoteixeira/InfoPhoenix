@@ -71,6 +71,7 @@
 		<Content Include="AppSettings.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
+		<Content Include="Resources\icons\info_phoenix.ico" />
 	</ItemGroup>
 
 	<ItemGroup>
