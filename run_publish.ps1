@@ -1,0 +1,1 @@
+.\build\build.ps1 -SolutionName .\src\Nameless.InfoPhoenix.Client\Nameless.InfoPhoenix.Client.csproj -Configuration Release -Publish
