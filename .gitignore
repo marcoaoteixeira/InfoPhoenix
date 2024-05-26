@@ -34,6 +34,8 @@ bld/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
+[Oo]utput/
+[Aa]rtifacts/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
@@ -152,6 +154,7 @@ _TeamCity*
 coverage*.json
 coverage*.xml
 coverage*.info
+code-coverage/
 
 # Visual Studio code coverage results
 *.coverage
