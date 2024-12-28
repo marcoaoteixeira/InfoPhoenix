@@ -1,0 +1,79 @@
+name: Publish InfoPhoenix
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+env:
+  SOLUTION: ".\\InfoPhoenix.sln"
+  PUBLISH_PROJECT: ".\\src\\Nameless.InfoPhoenix.Client\\Nameless.InfoPhoenix.Client.csproj"
+  PUBLISH_PATH: "..\\..\\publish\\"
+  ASSETS_PATH: ".\\publish\\"
+
+jobs:
+  publish:
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        dotnet-version: ['8.0.x']
+
+    steps:
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4.1.0
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+
+      - name: Setup MS Build
+        uses: microsoft/setup-msbuild@v2
+        with:
+          msbuild-architecture: x64
+
+      - name: Add GitHub Package Registry As NuGet Source
+        run: >
+          dotnet nuget add source
+          --username ${{ github.repository_owner }}
+          --password ${{ secrets.GITHUB_TOKEN }}
+          --store-password-in-clear-text
+          --name github ${{ vars.PACKAGE_SOURCE_URL_GITHUB }}
+
+      - name: Get Version From Revision Tag
+        shell: pwsh
+        run: |
+          $tag = "${{ github.ref_name }}"
+          if ($tag -match '^v(\d+\.\d+\.\d+)$') {
+            echo "VERSION=$($matches[1])" >> $env:GITHUB_ENV
+          } else {
+            echo "VERSION=1.0.0" >> $env:GITHUB_ENV
+          }
+          echo "Publishing version $VERSION"
+
+      - name: Checkout Source Code
+        uses: actions/checkout@v4.2.2
+
+      - name: Restore Solution
+        run: dotnet restore $env:SOLUTION --force
+
+      - name: Publish InfoPhoenix
+        run: >
+          msbuild $env:PUBLISH_PROJECT
+          /p:AssemblyVersion=$env:VERSION
+          /p:FileVersion=$env:VERSION
+          /p:Version=$env:VERSION
+          /p:Configuration=Release
+          /p:SelfContained=true
+          /target:Publish
+          /p:PublishDir=$env:PUBLISH_PATH
+          /verbosity:normal
+
+      - name: Compress Output Files
+        shell: pwsh
+        run: Compress-Archive -Path $env:ASSETS_PATH -DestinationPath "InfoPhoenix.v$($env:VERSION).zip"
+
+      - name: Upload Publish Assets
+        uses: softprops/action-gh-release@v2.2.0
+        with:
+          files: "InfoPhoenix.v${{ env.VERSION }}.zip"
+
+      

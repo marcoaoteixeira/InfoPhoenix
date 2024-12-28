@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+	</PropertyGroup>
+
+	<!-- Project References -->
+	<ItemGroup>
+		<ProjectReference Include="..\Nameless.InfoPhoenix.Core\Nameless.InfoPhoenix.Core.csproj" />
+	</ItemGroup>
+
+	<!-- Packages -->
+	<ItemGroup>
+		<PackageReference Include="Bogus" Version="35.6.1" />
+		<PackageReference Include="MediatR" Version="12.4.1" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.0" />
+		<PackageReference Include="Nameless.MediatR.Integration" Version="3.3.4" />
+		<PackageReference Include="Nameless.Search.Lucene" Version="3.3.4" />
+		<PackageReference Include="Nameless.Validation.FluentValidation" Version="3.3.4" />
+	</ItemGroup>
+</Project>

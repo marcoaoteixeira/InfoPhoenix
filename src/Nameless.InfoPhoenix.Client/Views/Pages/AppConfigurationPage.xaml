@@ -1,0 +1,195 @@
+﻿<Page x:Class="Nameless.InfoPhoenix.Client.Views.Pages.AppConfigurationPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+
+      x:Name="AppConfigurationPageRoot"
+
+      mc:Ignorable="d" 
+
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}">
+
+    <StackPanel Margin="24">
+        <ui:TextBlock FontTypography="Title"
+                      Margin="0 0 0 20"
+                      Text="Aparência &amp; Comportamento" />
+
+        <ui:CardControl Icon="{ui:ImageIcon '/Resources/branding/info_phoenix_64x64.png'}"
+                        Margin="0 0 0 10">
+            <ui:CardControl.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <ui:TextBlock FontTypography="BodyStrong"
+                                  Grid.Row="0"
+                                  Text="Versão Atual" />
+                    <ui:TextBlock Grid.Row="1"
+                                  Text="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.AppVersion, Mode=OneTime}" />
+                </Grid>
+            </ui:CardControl.Header>
+            <ui:Anchor Appearance="Primary"
+                       Content="Verificar se há atualizações"
+                       Cursor="Hand"
+                       Icon="{ui:SymbolIcon Globe32}"
+                       NavigateUri="https://github.com/marcoaoteixeira/InfoPhoenix/releases"
+                       Padding="30 8" />
+        </ui:CardControl>
+
+        <ui:CardControl Icon="{ui:SymbolIcon Database32}"
+                        Margin="0 0 0 10">
+            <ui:CardControl.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <ui:TextBlock FontTypography="BodyStrong"
+                                  Grid.Row="0"
+                                  Text="Backup da Base de Dados" />
+                    <ui:TextBlock Grid.Row="1"
+                                  Text="Crie uma cópia da Base de Dados para evitar eventual perda de dados." />
+                </Grid>
+            </ui:CardControl.Header>
+            <ui:Button Appearance="Success"
+                       Cursor="Hand"
+                       Command="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.PerformApplicationDatabaseBackupCommand, Mode=OneTime}"
+                       Content="Criar Backup"
+                       Icon="{ui:SymbolIcon DatabaseMultiple20}"
+                       Padding="30 8" />
+        </ui:CardControl>
+
+        <ui:CardControl Icon="{ui:SymbolIcon Color24}"
+                Margin="0 0 0 10">
+            <ui:CardControl.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <ui:TextBlock FontTypography="BodyStrong"
+                                  Grid.Row="0"
+                                  Text="Tema da Aplicação" />
+                    <ui:TextBlock Grid.Row="1"
+                                  Text="Selecione a aparência da aplicação" />
+                </Grid>
+            </ui:CardControl.Header>
+            <ComboBox Cursor="Hand"
+                      ItemsSource="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.AvailableThemes, Mode=OneTime}"
+                      SelectedValue="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.CurrentTheme, Mode=TwoWay}"
+                      IsSynchronizedWithCurrentItem="True"
+                      MinWidth="200" />
+        </ui:CardControl>
+
+        <ui:CardControl Icon="{ui:SymbolIcon ArrowExit20}"
+                        Margin="0 0 0 10">
+            <ui:CardControl.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <ui:TextBlock FontTypography="BodyStrong"
+                                  Grid.Row="0"
+                                  Text="Confirmação ao Sair" />
+                    <ui:TextBlock Grid.Row="1"
+                                  Text="Deseja que a aplicação sempre pergunte antes de sair?" />
+                </Grid>
+            </ui:CardControl.Header>
+            <CheckBox Cursor="Hand"
+                      IsChecked="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.CurrentConfirmBeforeExit, Mode=TwoWay}" />
+        </ui:CardControl>
+
+        <ui:CardControl Icon="{ui:SymbolIcon History48}"
+                        Margin="0 0 0 10">
+            <ui:CardControl.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <ui:TextBlock FontTypography="BodyStrong"
+                                  Grid.Row="0"
+                                  Text="Limite do Histórico de Pesquisa" />
+                    <ui:TextBlock Grid.Row="1"
+                                  Text="Defina quantas entradas deverão aparecer no histórico de pesquisa (apenas pesquisas bem sucedidas):" />
+                </Grid>
+            </ui:CardControl.Header>
+            <ComboBox Cursor="Hand"
+                      ItemsSource="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.AvailableSearchHistoryLimit, Mode=OneTime}"
+                      SelectedValue="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.CurrentSearchHistoryLimit, Mode=TwoWay}"
+                      IsSynchronizedWithCurrentItem="True"
+                      MinWidth="200" />
+        </ui:CardControl>
+
+        <ui:CardControl Icon="{ui:SymbolIcon FolderGlobe20}"
+                        Margin="0 0 0 10">
+            <ui:CardControl.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <ui:TextBlock FontTypography="BodyStrong"
+                                  Grid.Row="0"
+                                  Text="Diretório de Dados da Aplicação" />
+                    <ui:TextBlock Grid.Row="1"
+                                  Text="Este é o diretório que contêm todos os dados da aplicação, bem como arquivos de configuração, suporte e logs." />
+                </Grid>
+            </ui:CardControl.Header>
+            <ui:Button Appearance="Primary"
+                       Cursor="Hand"
+                       Command="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.OpenApplicationDataDirectoryCommand, Mode=OneTime}"
+                       Content="Abrir"
+                       Icon="{ui:SymbolIcon Open48}"
+                       Padding="30 8" />
+        </ui:CardControl>
+
+        <ui:CardControl Icon="{ui:SymbolIcon CodeTextEdit20}"
+                        Margin="0 0 0 10">
+            <ui:CardControl.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <ui:TextBlock FontTypography="BodyStrong"
+                                  Grid.Row="0"
+                                  Text="Log da Aplicação" />
+                    <ui:TextBlock Grid.Row="1"
+                                  Text="Abrir o arquivo de log no editor padrão." />
+                </Grid>
+            </ui:CardControl.Header>
+            <ui:Button Appearance="Primary"
+                       Cursor="Hand"
+                       Command="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.OpenApplicationLogFileCommand, Mode=OneTime}"
+                       Content="Abrir"
+                       Icon="{ui:SymbolIcon Open48}"
+                       Padding="30 8" />
+        </ui:CardControl>
+
+        <ui:CardControl Icon="{ui:SymbolIcon ShieldQuestion32}"
+                        Margin="0 0 0 10">
+            <ui:CardControl.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <ui:TextBlock FontTypography="BodyStrong"
+                                  Grid.Row="0"
+                                  Text="Visualizador de Documentos (Experimental)" />
+                    <ui:TextBlock Grid.Row="1"
+                                  Text="Deseja habilitar a visualização de documentos? Essa é uma função experimental que pode (ou não) melhorar como o documento é visualizado no resultado da busca." />
+                </Grid>
+            </ui:CardControl.Header>
+            <CheckBox Cursor="Hand"
+                      IsChecked="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.CurrentEnableDocumentViewer, Mode=TwoWay}" />
+        </ui:CardControl>
+
+    </StackPanel>
+</Page>
+

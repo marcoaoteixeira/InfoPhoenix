@@ -1,0 +1,80 @@
+﻿<Window x:Class="Nameless.InfoPhoenix.Client.Views.Windows.ProgressWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+
+        x:Name="ProgressWindowRoot"
+        
+        d:DesignHeight="155"
+        d:DesignWidth="600"
+
+        mc:Ignorable="d"
+
+        Height="155"
+        Width="600"
+        ResizeMode="NoResize"
+
+        Loaded="StartupHandler"
+        
+        Background="{DynamicResource ApplicationBackgroundBrush}"
+        Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+        WindowStyle="None"
+        WindowStartupLocation="CenterScreen">
+    <Grid Margin="24">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Progress -->
+        <ui:ProgressRing Foreground="CornflowerBlue"
+                         Grid.Column="0"
+                         HorizontalAlignment="Left"
+                         IsIndeterminate="True"
+                         Margin="20 0"
+                         Name="MainProgressRing" />
+
+        <StackPanel Grid.Column="1">
+            <!-- Title -->
+            <ui:TextBlock FontTypography="BodyStrong"
+                          FontSize="20"
+                          HorizontalAlignment="Left"
+                          Margin="10 10 0 0"
+                          Name="TitleTextBlock"
+                          VerticalAlignment="Center">Título</ui:TextBlock>
+
+            <!-- Progress Notification -->
+            <ui:TextBlock FontTypography="Body"
+                          HorizontalAlignment="Left"
+                          Margin="20 10 0 0"
+                          Name="ProgressNotificationTextBlock"
+                          VerticalAlignment="Center">Progresso...</ui:TextBlock>
+
+            <WrapPanel HorizontalAlignment="Right"
+                       Margin="0 10 0 0"
+                       VerticalAlignment="Bottom">
+                <!-- Cancel Button -->
+                <ui:Button Appearance="Danger"
+                           Click="CancelHandler"
+                           Content="Cancelar"
+                           Cursor="Hand"
+                           Foreground="White"
+                           Icon="{ui:SymbolIcon HandLeft24}"
+                           IsEnabled="True"
+                           Name="CancelButton" />
+
+                <!-- Close Button -->
+                <ui:Button Appearance="Success"
+                           Click="CloseHandler"
+                           Content="Fechar"
+                           Cursor="Hand"
+                           Icon="{ui:SymbolIcon ArrowExit20}"
+                           IsEnabled="True"
+                           Margin="20 0 0 0"
+                           Name="CloseButton"/>
+            </WrapPanel>
+        </StackPanel>
+    </Grid>
+</Window>

@@ -1,0 +1,10 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<RootNamespace>Nameless.InfoPhoenix</RootNamespace>
+	</PropertyGroup>
+	<!-- Packages -->
+	<ItemGroup>
+		<PackageReference Include="Nameless.Core" Version="3.3.4" />
+		<PackageReference Include="Nameless.Result" Version="3.3.4" />
+	</ItemGroup>
+</Project>

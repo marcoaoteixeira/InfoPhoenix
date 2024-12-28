@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<UseWPF>true</UseWPF>
+	</PropertyGroup>
+
+	<!-- Project References -->
+	<ItemGroup>
+		<ProjectReference Include="..\Nameless.InfoPhoenix.Core\Nameless.InfoPhoenix.Core.csproj" />
+	</ItemGroup>
+
+	<!-- Packages -->
+	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.0" />
+		<PackageReference Include="WPF-UI" Version="3.0.5" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Compile Update="Dialogs\DialogWindow.xaml.cs">
+	    <SubType>Code</SubType>
+	  </Compile>
+	</ItemGroup>
+
+</Project>

@@ -1,0 +1,100 @@
+﻿<Window x:Class="Nameless.InfoPhoenix.Application.Dialogs.DialogWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:dialogs="clr-namespace:Nameless.InfoPhoenix.Dialogs;assembly=Nameless.InfoPhoenix.Core"
+
+        x:Name="DialogWindowRoot"
+
+        mc:Ignorable="d"
+
+        
+        MaxHeight="400"
+        MaxWidth="800"
+        MinHeight="200"
+        MinWidth="400"
+        ResizeMode="NoResize"
+        SizeToContent="WidthAndHeight"
+        WindowStyle="None"
+        WindowStartupLocation="CenterScreen">
+    <Grid Margin="32" >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Icon -->
+        <ui:SymbolIcon Grid.Column="0"
+                       Grid.Row="0"
+                       Grid.RowSpan="3"
+                       FontSize="60"
+                       HorizontalAlignment="Center"
+                       Margin="0 0 32 0"
+                       Name="IconSymbolIcon"
+                       VerticalAlignment="Top" />
+
+        <!-- Title -->
+        <ui:TextBlock FontTypography="Subtitle"
+                      Grid.Column="1"
+                      Grid.Row="0"
+                      Margin="0 0 0 10"
+                      Name="TitleTextBlock" />
+
+        <!-- Message -->
+        <ui:TextBlock FontTypography="Body"
+                      Grid.Column="1"
+                      Grid.Row="1"
+                      TextWrapping="Wrap"
+                      Margin="0 0 0 32"
+                      Name="MessageTextBlock" />
+
+        <!-- Buttons -->
+        <WrapPanel Grid.Column="1"
+                   Grid.Row="2"
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Bottom">
+            <ui:Button Appearance="Primary"
+                       Click="ButtonHandler"
+                       Content="Confirmar"
+                       Cursor="Hand"
+                       Foreground="WhiteSmoke"
+                       MinWidth="120"
+                       Name="ConfirmButton"
+                       Tag="{x:Static dialogs:DialogResult.Confirm}" />
+            <ui:Button Appearance="Success"
+                       Click="ButtonHandler"
+                       Content="Sim"
+                       Cursor="Hand"
+                       Foreground="WhiteSmoke"
+                       Margin="10 0 0 0"
+                       MinWidth="120"
+                       Name="YesButton"
+                       Tag="{x:Static dialogs:DialogResult.Yes}" />
+            <ui:Button Appearance="Danger"
+                       Click="ButtonHandler"
+                       Content="Não"
+                       Cursor="Hand"
+                       Foreground="WhiteSmoke"
+                       Margin="10 0 0 0"
+                       MinWidth="120"
+                       Name="NoButton"
+                       Tag="{x:Static dialogs:DialogResult.No}" />
+            <ui:Button Appearance="Primary"
+                       Click="ButtonHandler"
+                       Content="Cancelar"
+                       Cursor="Hand"
+                       Foreground="WhiteSmoke"
+                       Margin="10 0 0 0"
+                       MinWidth="120"
+                       Name="CancelButton"
+                       Tag="{x:Static dialogs:DialogResult.Cancel}" />
+        </WrapPanel>
+    </Grid>
+</Window>

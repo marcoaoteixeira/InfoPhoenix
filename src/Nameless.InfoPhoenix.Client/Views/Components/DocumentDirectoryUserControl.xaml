@@ -1,0 +1,120 @@
+﻿<UserControl x:Class="Nameless.InfoPhoenix.Client.Views.Components.DocumentDirectoryUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+
+             x:Name="DocumentDirectoryUserControlRoot"
+
+             mc:Ignorable="d">
+    <ui:CardControl Margin="0 0 0 10"
+                    MouseDoubleClick="DoubleClickHandler">
+        <ui:CardControl.Header>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <ui:SymbolIcon Grid.Column="0"
+                               Grid.Row="0"
+                               Grid.RowSpan="5"
+                               FontSize="60"
+                               Symbol="FolderOpen24"
+                               Width="120"/>
+
+                <ui:TextBlock Grid.Column="1"
+                              Grid.Row="0"
+                              FontTypography="Subtitle"
+                              Margin="0 0 0 10"
+                              Text="{Binding ElementName=DocumentDirectoryUserControlRoot, Path=DocumentDirectory.Label}" />
+
+                <ui:TextBlock Grid.Column="1"
+                              Grid.Row="1"
+                              FontTypography="Caption"
+                              Margin="0 0 0 5">
+                    <Run FontWeight="Medium"
+                         Text="Caminho: " />
+                    <Run Text="{Binding ElementName=DocumentDirectoryUserControlRoot, Path=DocumentDirectory.DirectoryPath}" />
+                </ui:TextBlock>
+
+                <ui:TextBlock Grid.Column="1"
+                              Grid.Row="2"
+                              FontTypography="Caption"
+                              Margin="0 0 0 5">
+                    <Run FontWeight="Medium"
+                         Text="Quantidade de arquivos: " />
+                    <Run Text="{Binding ElementName=DocumentDirectoryUserControlRoot, Path=DocumentDirectory.DocumentCount}" />
+                </ui:TextBlock>
+
+                <ui:TextBlock Grid.Column="1"
+                              Grid.Row="3"
+                              FontTypography="Caption"
+                              Margin="0 0 0 5">
+                    <Run FontWeight="Medium"
+                         Text="Última indexação: "/>
+                    <Run Text="{Binding ElementName=DocumentDirectoryUserControlRoot, Path=DocumentDirectory.LastIndexingTime, Converter={StaticResource DateTimeToStringValueConverter}}" />
+                </ui:TextBlock>
+
+                <TextBlock Grid.Column="1"
+                           Grid.Row="4"
+                           Foreground="#C85961"
+                           FontSize="16"
+                           FontWeight="Medium"
+                           Margin="0 0 0 5"
+                           Text="Diretório não localizado no disco."
+                           Visibility="{Binding ElementName=DocumentDirectoryUserControlRoot, Path=IsMissingBadgeVisible}" />
+
+                <ui:DropDownButton Content="Ações"
+                                   Cursor="Hand"
+                                   Grid.Column="2"
+                                   Grid.Row="0"
+                                   Grid.RowSpan="5"
+                                   Margin="10 0"
+                                   Icon="{ui:SymbolIcon Options24}">
+                    <ui:DropDownButton.Flyout>
+                        <ContextMenu>
+                            <MenuItem Click="EditHandler"
+                                      Cursor="Hand"
+                                      Header="Editar"
+                                      Icon="{ui:SymbolIcon Edit24}"
+                                      IsEnabled="{Binding RelativeSource={x:Static RelativeSource.TemplatedParent}, Path=IsDropDownButtonEnabled}" />
+
+                            <MenuItem Click="UpdateHandler"
+                                      Cursor="Hand"
+                                      Header="Atualizar"
+                                      Icon="{ui:SymbolIcon DocumentMultipleSync20}"
+                                      IsEnabled="{Binding RelativeSource={x:Static RelativeSource.TemplatedParent}, Path=IsDropDownButtonEnabled}" />
+
+                            <MenuItem Click="IndexHandler"
+                                      Cursor="Hand"
+                                      Header="Indexar"
+                                      Icon="{ui:SymbolIcon BookSearch24}"
+                                      IsEnabled="{Binding RelativeSource={x:Static RelativeSource.TemplatedParent}, Path=IsDropDownButtonEnabled}" />
+
+                            <MenuItem Click="OpenHandler"
+                                      Cursor="Hand"
+                                      Header="Abrir pasta"
+                                      Icon="{ui:SymbolIcon FolderOpen24}"
+                                      IsEnabled="{Binding RelativeSource={x:Static RelativeSource.TemplatedParent}, Path=IsDropDownButtonEnabled}" />
+
+                            <MenuItem Click="DeleteHandler"
+                                      Cursor="Hand"
+                                      Header="Remover"
+                                      Icon="{ui:SymbolIcon Eraser24}" />
+                        </ContextMenu>
+                    </ui:DropDownButton.Flyout>
+                </ui:DropDownButton>
+            </Grid>
+        </ui:CardControl.Header>
+    </ui:CardControl>
+</UserControl>

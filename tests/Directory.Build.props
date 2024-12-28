@@ -1,0 +1,23 @@
+<Project>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<LangVersion>latest</LangVersion>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<BaseOutputPath>..\..\bin</BaseOutputPath>
+		<IsPackable>false</IsPackable>
+		<IsTestProject>true</IsTestProject>
+		
+		<!-- CODE ANALYSIS -->
+		<AnalysisLevel>latest</AnalysisLevel>
+		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+		<EnableNETAnalyzers>True</EnableNETAnalyzers>
+		<RunAnalyzersDuringLiveAnalysis>True</RunAnalyzersDuringLiveAnalysis>
+		<RunAnalyzersDuringBuild>True</RunAnalyzersDuringBuild>
+	</PropertyGroup>
+	
+	<ItemGroup>
+		<Using Include="NUnit.Framework" />
+	</ItemGroup>
+</Project>

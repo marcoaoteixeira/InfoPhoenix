@@ -1,0 +1,19 @@
+<Project>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<LangVersion>latest</LangVersion>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<AssemblyVersion>1.0.0</AssemblyVersion>
+		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+		<BaseOutputPath>..\..\bin</BaseOutputPath>
+		
+		<!-- CODE ANALYSIS -->
+		<AnalysisLevel>latest</AnalysisLevel>
+		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+		<EnableNETAnalyzers>True</EnableNETAnalyzers>
+		<RunAnalyzersDuringLiveAnalysis>True</RunAnalyzersDuringLiveAnalysis>
+		<RunAnalyzersDuringBuild>True</RunAnalyzersDuringBuild>
+	</PropertyGroup>
+</Project>

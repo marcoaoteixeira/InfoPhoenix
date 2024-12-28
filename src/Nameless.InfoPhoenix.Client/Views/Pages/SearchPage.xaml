@@ -1,0 +1,42 @@
+﻿<Page x:Class="Nameless.InfoPhoenix.Client.Views.Pages.SearchPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:components="clr-namespace:Nameless.InfoPhoenix.Client.Views.Components"
+
+      x:Name="SearchPageRoot"
+
+      mc:Ignorable="d" 
+
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}">
+
+    <StackPanel Margin="24">
+        <ui:TextBlock FontTypography="Title"
+                      Margin="0 0 0 20"
+                      Text="Pesquisar Documentos" />
+
+        <ui:AutoSuggestBox Margin="0 0 0 10"
+                           Name="SearchAutoSuggestBox"
+                           OriginalItemsSource="{Binding ElementName=SearchPageRoot, Path=ViewModel.SearchHistory, Mode=TwoWay}"
+                           PlaceholderText="Pesquisar por..."
+                           QuerySubmitted="ExecuteSearchHandler"
+                           SuggestionChosen="ExecuteSearchHandler">
+            <ui:AutoSuggestBox.Icon>
+                <ui:IconSourceElement>
+                    <ui:SymbolIconSource Symbol="Search24" />
+                </ui:IconSourceElement>
+            </ui:AutoSuggestBox.Icon>
+        </ui:AutoSuggestBox>
+
+        <ItemsControl ItemsSource="{Binding ElementName=SearchPageRoot, Path=ViewModel.DocumentDirectories, Mode=TwoWay}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <components:DocumentDirectorySearchResultUserControl DocumentDirectory="{Binding}"
+                                                                         ShowDocumentsCommand="{Binding ElementName=SearchPageRoot, Path=ViewModel.ShowDocumentsCommand}"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </StackPanel>
+</Page>

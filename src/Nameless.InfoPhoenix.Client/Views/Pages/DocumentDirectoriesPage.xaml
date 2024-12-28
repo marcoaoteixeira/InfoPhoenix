@@ -1,0 +1,51 @@
+﻿<Page x:Class="Nameless.InfoPhoenix.Client.Views.Pages.DocumentDirectoriesPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:components="clr-namespace:Nameless.InfoPhoenix.Client.Views.Components"
+
+      x:Name="DocumentDirectoriesPageRoot"
+
+      mc:Ignorable="d" 
+
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}">
+
+    <StackPanel Margin="24">
+        <Grid Margin="0 0 0 20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <ui:TextBlock FontTypography="Title"
+                          Grid.Column="0"
+                          Text="Diretórios de Documentos" />
+
+            <ui:Button Appearance="Success"
+                       Command="{Binding ElementName=DocumentDirectoriesPageRoot, Path=ViewModel.CreateNewDocumentDirectoryCommand, Mode=OneTime}"
+                       Content="Adicionar novo diretório"
+                       Cursor="Hand"
+                       Foreground="#F5F5F5"
+                       Grid.Column="1"
+                       HorizontalAlignment="Right"
+                       Icon="{ui:SymbolIcon FolderAdd24}"
+                       Padding="30 8"/>
+        </Grid>
+
+        <ItemsControl ItemsSource="{Binding ElementName=DocumentDirectoriesPageRoot, Path=ViewModel.DocumentDirectories, Mode=TwoWay}"
+                      Name="DocumentDirectoriesItemsControl">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <components:DocumentDirectoryUserControl DocumentDirectory="{Binding}"
+                                                             DeleteCommand="{Binding ElementName=DocumentDirectoriesPageRoot, Path=ViewModel.DeleteDocumentDirectoryCommand}"
+                                                             DoubleClickCommand="{Binding ElementName=DocumentDirectoriesPageRoot, Path=ViewModel.CopyDocumentDirectoryPathClipboardCommand}"
+                                                             EditCommand="{Binding ElementName=DocumentDirectoriesPageRoot, Path=ViewModel.EditDocumentDirectoryCommand}"
+                                                             IndexCommand="{Binding ElementName=DocumentDirectoriesPageRoot, Path=ViewModel.IndexDocumentDirectoryCommand}"
+                                                             OpenCommand="{Binding ElementName=DocumentDirectoriesPageRoot, Path=ViewModel.OpenDocumentDirectoryCommand}"
+                                                             UpdateCommand="{Binding ElementName=DocumentDirectoriesPageRoot, Path=ViewModel.UpdateDocumentDirectoryCommand}" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </StackPanel>
+</Page>

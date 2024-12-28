@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<!-- Project References -->
+	<ItemGroup>
+		<ProjectReference Include="..\Nameless.InfoPhoenix.Core\Nameless.InfoPhoenix.Core.csproj" />
+	</ItemGroup>
+
+	<!-- Packages -->
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
+		<PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="9.0.0" />
+		<PackageReference Include="Nameless.FileSystem" Version="3.3.4" />
+		<PackageReference Include="NLog.Extensions.Logging" Version="5.3.15" />
+	</ItemGroup>
+</Project>

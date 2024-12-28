@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<!-- Project References -->
+	<ItemGroup>
+		<ProjectReference Include="..\Nameless.InfoPhoenix.Core\Nameless.InfoPhoenix.Core.csproj" />
+	</ItemGroup>
+
+	<!-- Packages -->
+	<ItemGroup>
+		<PackageReference Include="Nameless.FileSystem.Abstractions" Version="3.3.4" />
+		<PackageReference Include="PdfPig" Version="0.1.9" />
+	</ItemGroup>
+
+	<!-- Microsof Office References -->
+	<ItemGroup>
+		<Reference Include="Interop.Microsoft.Office.Core">
+			<HintPath>..\..\resources\libs\Interop.Microsoft.Office.Core.dll</HintPath>
+		</Reference>
+		<Reference Include="Interop.Microsoft.Office.Interop.Word">
+			<HintPath>..\..\resources\libs\Interop.Microsoft.Office.Interop.Word.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+</Project>

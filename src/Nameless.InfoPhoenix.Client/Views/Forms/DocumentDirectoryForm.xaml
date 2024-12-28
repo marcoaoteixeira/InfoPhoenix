@@ -1,0 +1,113 @@
+﻿<Window x:Class="Nameless.InfoPhoenix.Client.Views.Forms.DocumentDirectoryForm"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+
+        x:Name="DocumentDirectoryFormRoot"
+
+        d:DesignHeight="430"
+        d:DesignWidth="600"
+
+        mc:Ignorable="d"
+
+        Height="430"
+        Width="600"
+        ResizeMode="NoResize"
+
+        Background="{DynamicResource ApplicationBackgroundBrush}"
+        Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+        WindowStyle="SingleBorderWindow"
+        WindowStartupLocation="CenterScreen">
+    <DockPanel Margin="16">
+        <ui:TextBlock DockPanel.Dock="Top"
+                      FontTypography="Title"
+                      Margin="0 0 0 20"
+                      Text="{Binding ElementName=DocumentDirectoryFormRoot, Path=ViewModel.Title, Mode=OneWay}" />
+
+        <StackPanel DockPanel.Dock="Top"
+                    HorizontalAlignment="Stretch"
+                    Margin="0 0 0 10">
+            <Label Content="Rótulo"
+                   Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                   Margin="0 0 0 5"
+                   Target="{Binding ElementName=LabelTextBox}"/>
+            <ui:TextBox Name="LabelTextBox"
+                        Style="{StaticResource ValidationErrorStyle}"
+                        Text="{Binding ElementName=DocumentDirectoryFormRoot, Path=ViewModel.Label, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        Validation.ErrorTemplate="{StaticResource ValidationTemplate}" />
+        </StackPanel>
+
+        <StackPanel DockPanel.Dock="Top"
+                    HorizontalAlignment="Stretch"
+                    Margin="0 0 0 10">
+            <Label Content="Caminho do Diretório"
+                   Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                   Margin="0 0 0 5"
+                   Target="{Binding ElementName=DirectoryPathTextBox}"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <ui:TextBox Grid.Column="0"
+                            HorizontalAlignment="Stretch"
+                            IsReadOnly="True"
+                            Name="DirectoryPathTextBox"
+                            Style="{StaticResource ValidationErrorStyle}"
+                            Text="{Binding ElementName=DocumentDirectoryFormRoot, Path=ViewModel.DirectoryPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                            VerticalAlignment="Top" />
+                <ui:Button Command="{Binding ElementName=DocumentDirectoryFormRoot, Path=ViewModel.PickDirectoryPathCommand, Mode=OneTime}"
+                           Cursor="Hand"
+                           Grid.Column="1"
+                           Height="36"
+                           Icon="{ui:SymbolIcon FolderOpen16}"
+                           Margin="10 0 0 0"
+                           VerticalAlignment="Top"
+                           Width="48" />
+            </Grid>
+        </StackPanel>
+
+        <StackPanel DockPanel.Dock="Top"
+                    HorizontalAlignment="Stretch"
+                    Margin="0 0 0 10">
+            <Label Content="Posição"
+                   Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                   Margin="0 0 0 5"
+                   Target="{Binding ElementName=OrderNumberBox}"/>
+            <ui:NumberBox HorizontalAlignment="Left"
+                          Icon="{ui:SymbolIcon NumberSymbolSquare24}"
+                          MaxDecimalPlaces="0"
+                          Maximum="999"
+                          Minimum="0"
+                          Name="OrderNumberBox"
+                          SmallChange="1"
+                          Value="{Binding ElementName=DocumentDirectoryFormRoot, Path=ViewModel.Order, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          Width="175" />
+        </StackPanel>
+
+        <WrapPanel DockPanel.Dock="Bottom"
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Bottom">
+            <ui:Button Appearance="Success"
+                       Command="{Binding ElementName=DocumentDirectoryFormRoot, Path=ViewModel.SaveCommand, Mode=OneTime}"
+                       CommandParameter="{Binding ElementName=DocumentDirectoryFormRoot}"
+                       Content="Salvar"
+                       Cursor="Hand"
+                       Foreground="WhiteSmoke"
+                       Icon="{ui:SymbolIcon Save20}"
+                       Padding="30 8"
+                       Margin="10 0 0 0" />
+            <ui:Button Appearance="Danger"
+                       Content="Fechar"
+                       Cursor="Hand"
+                       Click="CloseHandler"
+                       Foreground="WhiteSmoke"
+                       Icon="{ui:SymbolIcon ArrowExit20}"
+                       Padding="30 8"
+                       Margin="10 0 0 0" />
+        </WrapPanel>
+    </DockPanel>
+</Window>

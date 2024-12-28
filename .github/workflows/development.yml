@@ -1,0 +1,72 @@
+name: Development InfoPhoenix
+
+on:
+  push:
+    branches:
+      - 'feature/**'
+      - 'refactor/**'
+      - 'bugfix/**'
+      - 'proposal/**'
+
+env:
+  SOLUTION: ".\\InfoPhoenix.sln"
+  CODE_COVERAGE_FOLDER_PATH: ".\\code-coverage\\"
+  CODE_COVERAGE_COBERTURA_FILE_PATH: ".\\code-coverage\\**\\coverage.cobertura.xml"
+  CODE_COVERAGE_REPORT_FOLDER_PATH: ".\\code-coverage\\report\\"
+
+jobs:
+  publish:
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        dotnet-version: ["8.0.x"]
+
+    steps:
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4.1.0
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+
+      - name: Install Coverage Report Tool
+        run: >
+          dotnet tool install dotnet-reportgenerator-globaltool
+          --version 5.4.2
+          --global
+
+      - name: Add GitHub Package Registry As NuGet Source
+        run: >
+          dotnet nuget add source
+          --username ${{ github.repository_owner }}
+          --password ${{ secrets.GITHUB_TOKEN }}
+          --store-password-in-clear-text
+          --name github ${{ vars.PACKAGE_SOURCE_URL_GITHUB }}
+
+      - name: Checkout Source Code
+        uses: actions/checkout@v4.2.2
+
+      - name: Run Tests
+        run: >
+          dotnet test $env:SOLUTION
+          --configuration Debug
+          --collect:"XPlat Code Coverage"
+          --filter "Category!=RunsOnDevMachine"
+          --logger:"Html;LogFileName=code-coverage-log.html"
+          --nologo
+          --results-directory $env:CODE_COVERAGE_FOLDER_PATH
+          --settings .runsettings
+          --verbosity normal
+
+      - name: Generate Coverage Report
+        run: >
+          reportgenerator
+          "-reports:$env:CODE_COVERAGE_COBERTURA_FILE_PATH"
+          "-targetdir:$env:CODE_COVERAGE_REPORT_FOLDER_PATH"
+          -reporttypes:Html
+
+      - name: Upload Coverage Report to Artifacts
+        uses: actions/upload-artifact@v4.5.0
+        with:
+          name: coverage-report
+          path: ${{ env.CODE_COVERAGE_REPORT_FOLDER_PATH }}
+          retention-days: 3

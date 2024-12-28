@@ -1,0 +1,10 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<IsTestProject>false</IsTestProject>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="NUnit" />
+		<PackageReference Include="Moq" />
+		<PackageReference Include="Nameless.Core" />
+	</ItemGroup>
+</Project>

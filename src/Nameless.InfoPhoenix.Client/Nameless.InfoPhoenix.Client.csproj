@@ -1,0 +1,88 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<AssemblyName>InfoPhoenix</AssemblyName>
+		<ApplicationIcon>info_phoenix.ico</ApplicationIcon>
+		<OutputType>WinExe</OutputType>
+		<StartupObject>Nameless.InfoPhoenix.Client.App</StartupObject>
+		<ApplicationManifest>App.manifest</ApplicationManifest>
+
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<UseWPF>true</UseWPF>
+		<SelfContained>true</SelfContained>
+		<PublishSingleFile>true</PublishSingleFile>
+		<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+		<EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+	</PropertyGroup>
+
+	<!-- Resources -->
+	<ItemGroup>
+		<Resource Include="Resources\branding\info_phoenix_64x64.png" />
+		<Resource Include="Resources\files\docx_file.png" />
+		<Resource Include="Resources\files\doc_file.png" />
+		<Resource Include="Resources\files\pdf_file.png" />
+		<Resource Include="Resources\files\rtf_file.png" />
+		<Resource Include="Resources\files\txt_file.png" />
+		<Resource Include="Resources\files\xps_file.png" />
+		<Resource Include="Resources\ValidationResourceDictionary.xaml">
+			<SubType>Designer</SubType>
+			<Generator>MSBuild:Compile</Generator>
+		</Resource>
+	</ItemGroup>
+
+	<!-- Output Folder Files -->
+	<ItemGroup>
+		<Content Include="AppSettings.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="info_phoenix.ico">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<!-- Splash Screen -->
+
+	<!-- Project References -->
+	<ItemGroup>
+		<ProjectReference Include="..\Nameless.InfoPhoenix.Application\Nameless.InfoPhoenix.Application.csproj" />
+		<ProjectReference Include="..\Nameless.InfoPhoenix.Core\Nameless.InfoPhoenix.Core.csproj" />
+		<ProjectReference Include="..\Nameless.InfoPhoenix.Domains\Nameless.InfoPhoenix.Domains.csproj" />
+		<ProjectReference Include="..\Nameless.InfoPhoenix.Infrastructure\Nameless.InfoPhoenix.Infrastructure.csproj" />
+		<ProjectReference Include="..\Nameless.InfoPhoenix.Office\Nameless.InfoPhoenix.Office.csproj" />
+	</ItemGroup>
+
+	<!-- Packages -->
+	<ItemGroup>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
+		<PackageReference Include="Nameless.Collections" Version="3.3.4" />
+		<PackageReference Include="Ookii.Dialogs.Wpf" Version="5.0.1" />
+	</ItemGroup>
+	<ItemGroup>
+		<SplashScreen Include="Resources\branding\info_phoenix_512x512.png" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Update="Resources\DisplayResource.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>DisplayResource.resx</DependentUpon>
+		</Compile>
+		<Compile Update="Resources\ValidationResource.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>ValidationResource.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Update="Resources\DisplayResource.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>DisplayResource.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Resources\ValidationResource.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>ValidationResource.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
+</Project>
