@@ -47,6 +47,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "misc", "misc", "{6A2A2224-FD30-4EC0-96A4-3D19876478A4}"
 	ProjectSection(SolutionItems) = preProject
 		CHANGE_LOG.md = CHANGE_LOG.md
+		README.md = README.md
 		RELEASE.md = RELEASE.md
 	EndProjectSection
 EndProject
