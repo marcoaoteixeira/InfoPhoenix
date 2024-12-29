@@ -11,8 +11,8 @@ on:
 env:
   SOLUTION: ".\\InfoPhoenix.sln"
   PUBLISH_PROJECT: ".\\src\\Nameless.InfoPhoenix.Client\\Nameless.InfoPhoenix.Client.csproj"
-  PUBLISH_PATH: "..\\..\\publish\\"
-  ASSETS_PATH: ".\\publish\\"
+  PUBLISH_PATH: ".\\publish\\"
+  ARTIFACTS_PATH: ".\\artifacts\\"
 
 jobs:
   publishing:
@@ -27,11 +27,6 @@ jobs:
         uses: actions/setup-dotnet@v4.1.0
         with:
           dotnet-version: ${{ matrix.dotnet-version }}
-
-      - name: Setup MS Build
-        uses: microsoft/setup-msbuild@v2
-        with:
-          msbuild-architecture: x64
 
       - name: Add GitHub Package Registry As NuGet Source
         run: >
@@ -56,24 +51,27 @@ jobs:
       - name: Checkout Source Code
         uses: actions/checkout@v4.2.2
 
+<<<<<<< Updated upstream
       - name: Restore Solution
         run: dotnet restore $env:SOLUTION
 
+=======
+>>>>>>> Stashed changes
       - name: Publish InfoPhoenix
         run: >
-          msbuild $env:PUBLISH_PROJECT
-          /p:AssemblyVersion=$env:VERSION
-          /p:FileVersion=$env:VERSION
-          /p:Version=$env:VERSION
-          /p:Configuration=Release
-          /p:SelfContained=true
-          /target:Publish
-          /p:PublishDir=$env:PUBLISH_PATH
-          /verbosity:normal
+          dotnet publish $env:PUBLISH_PROJECT
+          -p:AssemblyVersion=$env:VERSION
+          -p:FileVersion=$env:VERSION
+          -p:Version=$env:VERSION
+          --configuration Release
+          --self-contained
+          --output $env:PUBLISH_PATH
+          --artifacts-path $env:ARTIFACTS_PATH
+          --verbosity normal
 
       - name: Compress Output Files
         shell: pwsh
-        run: Compress-Archive -Path $env:ASSETS_PATH -DestinationPath "InfoPhoenix.v$($env:VERSION).zip"
+        run: Compress-Archive -Path $env:PUBLISH_PATH -DestinationPath "InfoPhoenix.v$($env:VERSION).zip"
 
       - name: Upload Publish Assets
         uses: softprops/action-gh-release@v2.2.0
