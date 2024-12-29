@@ -3,10 +3,7 @@ name: Development InfoPhoenix
 on:
   push:
     branches:
-      - 'feature/**'
-      - 'refactor/**'
-      - 'bugfix/**'
-      - 'proposal/**'
+      - develop
 
 env:
   SOLUTION: ".\\InfoPhoenix.sln"
@@ -15,7 +12,7 @@ env:
   CODE_COVERAGE_REPORT_FOLDER_PATH: ".\\code-coverage\\report\\"
 
 jobs:
-  publish:
+  development:
     runs-on: windows-latest
 
     strategy:
