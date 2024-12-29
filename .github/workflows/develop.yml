@@ -3,7 +3,10 @@ name: Development InfoPhoenix
 on:
   push:
     branches:
-      - develop
+      - 'feature/**'
+      - 'refactor/**'
+      - 'bugfix/**'
+      - 'proposal/**'
 
 env:
   SOLUTION: ".\\InfoPhoenix.sln"
