@@ -44,10 +44,11 @@ jobs:
           $tag = "${{ github.ref_name }}"
           if ($tag -match '^v(\d+\.\d+\.\d+)$') {
             echo "VERSION=$($matches[1])" >> $env:GITHUB_ENV
+            echo "Publishing version: $($matches[1])"
           } else {
             echo "VERSION=1.0.0" >> $env:GITHUB_ENV
-          }
-          echo "Publishing version $VERSION"
+            echo "Publishing version: 1.0.0"
+          }          
 
       - name: Checkout Source Code
         uses: actions/checkout@v4.2.2
@@ -75,5 +76,4 @@ jobs:
         uses: softprops/action-gh-release@v2.2.0
         with:
           files: "InfoPhoenix.v${{ env.VERSION }}.zip"
-
-      
+          token: ${{ secrets.GITHUB_TOKEN }}
