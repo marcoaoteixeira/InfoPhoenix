@@ -12,8 +12,8 @@ on:
 env:
   SOLUTION: ".\\InfoPhoenix.sln"
   PUBLISH_PROJECT: ".\\src\\Nameless.InfoPhoenix.Client\\Nameless.InfoPhoenix.Client.csproj"
-  PUBLISH_PATH: ".\\publish\\"
-  ARTIFACTS_PATH: ".\\artifacts\\"
+  PUBLISH_PATH: ".\\publish"
+  ARTIFACTS_PATH: ".\\artifacts"
 
 jobs:
   publishing:
@@ -37,11 +37,10 @@ jobs:
           --store-password-in-clear-text
           --name github ${{ vars.PACKAGE_SOURCE_URL_GITHUB }}
 
-      - name: Get Version From Revision Tag
+      - name: Generate Version Info From Revision Tag
         shell: pwsh
         run: |
-          $tag = "${{ github.ref_name }}"
-          if ($tag -match '^v(\d+\.\d+\.\d+)$') {
+          if ("${{ github.ref_name }}" -match "^v(\d+\.\d+\.\d+)$") {
             echo "VERSION=$($matches[1])" >> $env:GITHUB_ENV
             echo "Publishing version: $($matches[1])"
           } else {
@@ -64,19 +63,12 @@ jobs:
           --artifacts-path $env:ARTIFACTS_PATH
           --verbosity normal
 
-      - name: Compress Output Files
+      - name: Generate InfoPhoenix Package
         shell: pwsh
-        run: Compress-Archive -Path $env:PUBLISH_PATH -DestinationPath ".\\InfoPhoenix.v$($env:VERSION).zip"
+        run: Compress-Archive -Path "$($env:PUBLISH_PATH)\\*" -DestinationPath ".\\InfoPhoenix.v$($env:VERSION).zip"
 
-      - name: Upload Publish Artifacts
-        uses: actions/upload-artifact@v4.5.0
-        with:
-          name: InfoPhoenix
-          path: ".\\InfoPhoenix.v${{ env.VERSION }}.zip"
-          retention-days: 3
-
-      - name: Upload Publish Assets
-        uses: softprops/action-gh-release@v2.2.0
+      - name: Upload InfoPhoenix Package (Release Assets)
+        uses: softprops/action-gh-release@v2.0.9
         with:
           files: "InfoPhoenix.v${{ env.VERSION }}.zip"
           token: ${{ secrets.GITHUB_TOKEN }}

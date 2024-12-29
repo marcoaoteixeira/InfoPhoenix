@@ -61,7 +61,7 @@ jobs:
           "-targetdir:$env:CODE_COVERAGE_REPORT_FOLDER_PATH"
           -reporttypes:Html
 
-      - name: Upload Coverage Report to Artifacts
+      - name: Upload Coverage Report (Artifacts)
         uses: actions/upload-artifact@v4.5.0
         with:
           name: coverage-report
