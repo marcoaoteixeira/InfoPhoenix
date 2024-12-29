@@ -15,7 +15,7 @@ env:
   ASSETS_PATH: ".\\publish\\"
 
 jobs:
-  publish:
+  publishing:
     runs-on: windows-latest
 
     strategy:
