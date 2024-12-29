@@ -18,4 +18,9 @@
 
 ## Contribuições :raising_hand:
 
-*![marcoaoteixeira](https://github.com/marcoaoteixeira)
+* @marcoaoteixeira
+  * [#PR - Descrição](https://github.com/marcoaoteixeira/InfoPhoenix/pull/1)
+
+## Log de Mudanças (Completo)
+
+* [v1.0.0](https://github.com/marcoaoteixeira/InfoPhoenix/commits/v1.0.0)
