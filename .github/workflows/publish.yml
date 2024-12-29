@@ -70,5 +70,8 @@ jobs:
       - name: Upload InfoPhoenix Package (Release Assets)
         uses: softprops/action-gh-release@v2.0.9
         with:
-          files: "InfoPhoenix.v${{ env.VERSION }}.zip"
+          files: |
+            InfoPhoenix.v${{ env.VERSION }}.zip
+            Release.md
+            LICENSE
           token: ${{ secrets.GITHUB_TOKEN }}

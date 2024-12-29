@@ -35,8 +35,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{0AF2
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{3DC0A7FC-8F89-4A73-ABF7-5F0C4403A97E}"
 	ProjectSection(SolutionItems) = preProject
-		.github\workflows\publish.yml = .github\workflows\publish.yml
 		.github\workflows\develop.yml = .github\workflows\develop.yml
+		.github\workflows\publish.yml = .github\workflows\publish.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "resources", "resources", "{75064974-2B95-4118-8FF0-FBD6A3E47DB0}"
+	ProjectSection(SolutionItems) = preProject
+		resources\RELEASE_TEMPLATE.md = resources\RELEASE_TEMPLATE.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "misc", "misc", "{6A2A2224-FD30-4EC0-96A4-3D19876478A4}"
+	ProjectSection(SolutionItems) = preProject
+		CHANGE_LOG.md = CHANGE_LOG.md
+		RELEASE.md = RELEASE.md
 	EndProjectSection
 EndProject
 Global
