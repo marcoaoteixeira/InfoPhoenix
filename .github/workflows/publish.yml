@@ -57,7 +57,7 @@ jobs:
         uses: actions/checkout@v4.2.2
 
       - name: Restore Solution
-        run: dotnet restore $env:SOLUTION --force
+        run: dotnet restore $env:SOLUTION
 
       - name: Publish InfoPhoenix
         run: >
