@@ -1,0 +1,61 @@
+﻿<UserControl x:Class="Nameless.InfoPhoenix.Client.Views.Components.SearchResultsGroupingUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:loc="clr-namespace:Nameless.InfoPhoenix.Client.Resources"
+
+             x:Name="SearchResultsGroupingUserControlRoot"
+
+             mc:Ignorable="d">
+    <ui:CardControl Margin="0 0 0 10">
+        <ui:CardControl.Header>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0"
+                            Grid.Row="0"
+                            Margin="0 0 20 0"
+                            Width="120">
+                    <ui:TextBlock FontWeight="Medium"
+                                  Margin="0 0 0 5"
+                                  Text="{x:Static loc:Strings.DocumentDirectorySearchEntryUserControl_TotalDocuments_Label}"
+                                  TextAlignment="Center"
+                                  TextWrapping="Wrap" />
+                    <ui:TextBlock FontSize="48"
+                                  FontWeight="Bold"
+                                  TextAlignment="Center"
+                                  Text="{Binding ElementName=SearchResultsGroupingUserControlRoot, Path=Entry.DocumentCount}" />
+                </StackPanel>
+
+                <StackPanel Grid.Column="1"
+                            Grid.Row="0">
+                    <ui:TextBlock FontTypography="Subtitle"
+                                  Margin="0 0 0 10"
+                                  Text="{Binding ElementName=SearchResultsGroupingUserControlRoot, Path=Entry.Label}" />
+                    <ui:TextBlock FontTypography="Caption">
+                        <Run FontWeight="Medium"
+                             Text="{x:Static loc:Strings.DocumentDirectorySearchEntryUserControl_LastIndexingTime_Label}" />
+                        <Run Text="{Binding ElementName=SearchResultsGroupingUserControlRoot, Path=Entry.LastIndexingTime, Converter={StaticResource DateToStringValueConverter}}" />
+                    </ui:TextBlock>
+                </StackPanel>
+            </Grid>
+
+        </ui:CardControl.Header>
+        <ui:CardControl.Content>
+            <ui:Button Click="ShowDocumentsHandler"
+                   Cursor="Hand"
+                   FontSize="48"
+                   Icon="{ui:SymbolIcon Eye48}"
+                   ToolTip="{x:Static loc:Strings.DocumentDirectorySearchEntryUserControl_ShowDocumentsButton_Caption}"
+                   Padding="30 8"/>
+        </ui:CardControl.Content>
+    </ui:CardControl>
+</UserControl>

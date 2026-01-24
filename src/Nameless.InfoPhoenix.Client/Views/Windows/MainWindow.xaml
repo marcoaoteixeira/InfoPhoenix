@@ -26,7 +26,7 @@
         <ui:NavigationView FooterMenuItemsSource="{Binding ElementName=MainWindowRoot, Path=ViewModel.FooterMenuItemsSource}"
                            IsPaneOpen="False"
                            Margin="5 0 0 0"
-                           MenuItemsSource="{Binding ElementName=MainWindowRoot, Path=ViewModel.MenuItemsSource}"
+                           MenuItemsSource="{Binding ElementName=MainWindowRoot, Path=ViewModel.MainMenuItemsSource}"
                            Name="NavigationViewRoot"
                            PaneDisplayMode="Left"
                            TitleBar="{Binding ElementName=TitleBarRoot, Mode=OneWay}">
@@ -40,11 +40,11 @@
                      Name="TitleBarRoot"
                      Title="{Binding ElementName=MainWindowRoot, Path=ViewModel.AppTitle}">
             <ui:TitleBar.Icon>
-                <ui:ImageIcon Source="/Resources/branding/info_phoenix_64x64.png" />
+                <ui:ImageIcon Source="/Resources/application_64x64.png" />
             </ui:TitleBar.Icon>
         </ui:TitleBar>
 
-        <ContentPresenter Grid.Row="0" x:Name="ContentDialogRoot" />
+        <ui:ContentDialogHost Grid.Row="0" x:Name="ContentDialogHostRoot" />
 
         <StatusBar Grid.Row="1" >
             <StatusBar.ItemsPanel>

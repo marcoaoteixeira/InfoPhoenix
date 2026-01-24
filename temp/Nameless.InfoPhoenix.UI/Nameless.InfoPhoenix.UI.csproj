@@ -1,0 +1,9 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<ItemGroup>
+		<PackageReference Include="WPF-UI" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Nameless.InfoPhoenix.Core\Nameless.InfoPhoenix.Core.csproj" />
+		<ProjectReference Include="..\Nameless.InfoPhoenix.Resources\Nameless.InfoPhoenix.Resources.csproj" />
+	</ItemGroup>
+</Project>

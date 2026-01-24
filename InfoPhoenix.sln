@@ -1,55 +1,51 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35506.116
+VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{AEABF713-C6B9-4A4D-9BAE-CB1FE13720D6}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{7F3E77A9-19F6-4856-9ACE-DE9160AC16D2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.InfoPhoenix.Client", "src\Nameless.InfoPhoenix.Client\Nameless.InfoPhoenix.Client.csproj", "{9DC20E5A-9991-493A-81BD-8A651A9EE049}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.InfoPhoenix.Client", "src\Nameless.InfoPhoenix.Client\Nameless.InfoPhoenix.Client.csproj", "{AD486753-BC16-49EB-B1DA-0C87F7AFD7A6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.InfoPhoenix.Core", "src\Nameless.InfoPhoenix.Core\Nameless.InfoPhoenix.Core.csproj", "{6C25F1D4-C479-43F9-98AD-C1D32FCCEA6E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.InfoPhoenix.Core", "src\Nameless.InfoPhoenix.Core\Nameless.InfoPhoenix.Core.csproj", "{726A2B6C-EFF7-4DAC-9DD7-63978DF81598}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".solution", ".solution", "{2AC9F258-E6C7-4E79-80A2-DF4DC299747C}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		.runsettings = .runsettings
+		Directory.Build.props = Directory.Build.props
+		Directory.Packages.props = Directory.Packages.props
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.InfoPhoenix.Core.UnitTests", "tests\Nameless.InfoPhoenix.Core.UnitTests\Nameless.InfoPhoenix.Core.UnitTests.csproj", "{61BD6CBD-D827-440C-982E-368F8AC29537}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{C1BA8FFB-04D8-4497-8FF4-126E24D2D1EE}"
+	ProjectSection(SolutionItems) = preProject
+		build\build.cake = build\build.cake
+		build\tools.sh = build\tools.sh
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.InfoPhoenix.Application", "src\Nameless.InfoPhoenix.Application\Nameless.InfoPhoenix.Application.csproj", "{1D650965-0893-4825-B5BC-B47879B568DD}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{F135D7D2-4577-4E3D-B2AC-9C378C251E7D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.InfoPhoenix.Infrastructure", "src\Nameless.InfoPhoenix.Infrastructure\Nameless.InfoPhoenix.Infrastructure.csproj", "{F9D1BAEB-BD75-4109-AF27-0FF0FB2EC300}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.InfoPhoenix.Domains", "src\Nameless.InfoPhoenix.Domains\Nameless.InfoPhoenix.Domains.csproj", "{B1B74C5F-DB04-4800-A532-73BA6BB9680B}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.InfoPhoenix.Office", "src\Nameless.InfoPhoenix.Office\Nameless.InfoPhoenix.Office.csproj", "{0B758F71-78DF-4B04-A19C-F65B2A931C3A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.InfoPhoenix.Domains.UnitTests", "tests\Nameless.InfoPhoenix.Domains.UnitTests\Nameless.InfoPhoenix.Domains.UnitTests.csproj", "{C8D06082-C7CF-430E-9262-E5CB0D9BDF33}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Test.Utils", "tests\Nameless.Test.Utils\Nameless.Test.Utils.csproj", "{9A891A0A-450B-4D9E-AED0-98FDC8186DA2}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.InfoPhoenix.Application.UnitTests", "tests\Nameless.InfoPhoenix.Application.UnitTests\Nameless.InfoPhoenix.Application.UnitTests.csproj", "{15C6A6FE-7E77-466E-B33C-65F0B09F320D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.InfoPhoenix.Infrastructure.UnitTests", "tests\Nameless.InfoPhoenix.Infrastructure.UnitTests\Nameless.InfoPhoenix.Infrastructure.UnitTests.csproj", "{182D28E5-0251-4608-A0DC-D06EE6B6F2A8}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.InfoPhoenix.Office.UnitTests", "tests\Nameless.InfoPhoenix.Office.UnitTests\Nameless.InfoPhoenix.Office.UnitTests.csproj", "{05444B0E-4710-4541-8974-51BB12FDA6D4}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{0AF296B8-3332-482C-A7B2-9CD8DE9CD6A8}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{3DC0A7FC-8F89-4A73-ABF7-5F0C4403A97E}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{DD6639FE-DE7E-4C58-B865-3F3E91072602}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\develop.yml = .github\workflows\develop.yml
-		.github\workflows\publish.yml = .github\workflows\publish.yml
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "resources", "resources", "{75064974-2B95-4118-8FF0-FBD6A3E47DB0}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{92D94781-4395-4BFB-B25F-353BACE1487D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.InfoPhoenix.Core.Tests", "tests\Nameless.InfoPhoenix.Core.Tests\Nameless.InfoPhoenix.Core.Tests.csproj", "{A176ABD6-801D-4793-8F91-7AEC3A87C58C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{6EBCEEA0-55AD-4F0D-B190-5327FB6949B9}"
 	ProjectSection(SolutionItems) = preProject
-		resources\RELEASE_TEMPLATE.md = resources\RELEASE_TEMPLATE.md
+		scripts\efcore.ps1 = scripts\efcore.ps1
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "misc", "misc", "{6A2A2224-FD30-4EC0-96A4-3D19876478A4}"
-	ProjectSection(SolutionItems) = preProject
-		CHANGE_LOG.md = CHANGE_LOG.md
-		README.md = README.md
-		RELEASE.md = RELEASE.md
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.InfoPhoenix.Testing.Tools", "src\Nameless.InfoPhoenix.Testing.Tools\Nameless.InfoPhoenix.Testing.Tools.csproj", "{D9264AA5-F4A9-E7D1-3256-1BB88D4AAE80}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.InfoPhoenix.Resources", "src\Nameless.InfoPhoenix.Resources\Nameless.InfoPhoenix.Resources.csproj", "{7283184E-3C74-436E-B63D-956E65E987DE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,71 +53,42 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{AD486753-BC16-49EB-B1DA-0C87F7AFD7A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AD486753-BC16-49EB-B1DA-0C87F7AFD7A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AD486753-BC16-49EB-B1DA-0C87F7AFD7A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AD486753-BC16-49EB-B1DA-0C87F7AFD7A6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{726A2B6C-EFF7-4DAC-9DD7-63978DF81598}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{726A2B6C-EFF7-4DAC-9DD7-63978DF81598}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{726A2B6C-EFF7-4DAC-9DD7-63978DF81598}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{726A2B6C-EFF7-4DAC-9DD7-63978DF81598}.Release|Any CPU.Build.0 = Release|Any CPU
-		{61BD6CBD-D827-440C-982E-368F8AC29537}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{61BD6CBD-D827-440C-982E-368F8AC29537}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{61BD6CBD-D827-440C-982E-368F8AC29537}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{61BD6CBD-D827-440C-982E-368F8AC29537}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1D650965-0893-4825-B5BC-B47879B568DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1D650965-0893-4825-B5BC-B47879B568DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1D650965-0893-4825-B5BC-B47879B568DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1D650965-0893-4825-B5BC-B47879B568DD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F9D1BAEB-BD75-4109-AF27-0FF0FB2EC300}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F9D1BAEB-BD75-4109-AF27-0FF0FB2EC300}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F9D1BAEB-BD75-4109-AF27-0FF0FB2EC300}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F9D1BAEB-BD75-4109-AF27-0FF0FB2EC300}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B1B74C5F-DB04-4800-A532-73BA6BB9680B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B1B74C5F-DB04-4800-A532-73BA6BB9680B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B1B74C5F-DB04-4800-A532-73BA6BB9680B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B1B74C5F-DB04-4800-A532-73BA6BB9680B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0B758F71-78DF-4B04-A19C-F65B2A931C3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0B758F71-78DF-4B04-A19C-F65B2A931C3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0B758F71-78DF-4B04-A19C-F65B2A931C3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0B758F71-78DF-4B04-A19C-F65B2A931C3A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C8D06082-C7CF-430E-9262-E5CB0D9BDF33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C8D06082-C7CF-430E-9262-E5CB0D9BDF33}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C8D06082-C7CF-430E-9262-E5CB0D9BDF33}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C8D06082-C7CF-430E-9262-E5CB0D9BDF33}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9A891A0A-450B-4D9E-AED0-98FDC8186DA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9A891A0A-450B-4D9E-AED0-98FDC8186DA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9A891A0A-450B-4D9E-AED0-98FDC8186DA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9A891A0A-450B-4D9E-AED0-98FDC8186DA2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{15C6A6FE-7E77-466E-B33C-65F0B09F320D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{15C6A6FE-7E77-466E-B33C-65F0B09F320D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{15C6A6FE-7E77-466E-B33C-65F0B09F320D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{15C6A6FE-7E77-466E-B33C-65F0B09F320D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{182D28E5-0251-4608-A0DC-D06EE6B6F2A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{182D28E5-0251-4608-A0DC-D06EE6B6F2A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{182D28E5-0251-4608-A0DC-D06EE6B6F2A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{182D28E5-0251-4608-A0DC-D06EE6B6F2A8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{05444B0E-4710-4541-8974-51BB12FDA6D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{05444B0E-4710-4541-8974-51BB12FDA6D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{05444B0E-4710-4541-8974-51BB12FDA6D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{05444B0E-4710-4541-8974-51BB12FDA6D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DC20E5A-9991-493A-81BD-8A651A9EE049}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DC20E5A-9991-493A-81BD-8A651A9EE049}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DC20E5A-9991-493A-81BD-8A651A9EE049}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DC20E5A-9991-493A-81BD-8A651A9EE049}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C25F1D4-C479-43F9-98AD-C1D32FCCEA6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C25F1D4-C479-43F9-98AD-C1D32FCCEA6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C25F1D4-C479-43F9-98AD-C1D32FCCEA6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C25F1D4-C479-43F9-98AD-C1D32FCCEA6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A176ABD6-801D-4793-8F91-7AEC3A87C58C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A176ABD6-801D-4793-8F91-7AEC3A87C58C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A176ABD6-801D-4793-8F91-7AEC3A87C58C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A176ABD6-801D-4793-8F91-7AEC3A87C58C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9264AA5-F4A9-E7D1-3256-1BB88D4AAE80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9264AA5-F4A9-E7D1-3256-1BB88D4AAE80}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9264AA5-F4A9-E7D1-3256-1BB88D4AAE80}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9264AA5-F4A9-E7D1-3256-1BB88D4AAE80}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7283184E-3C74-436E-B63D-956E65E987DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7283184E-3C74-436E-B63D-956E65E987DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7283184E-3C74-436E-B63D-956E65E987DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7283184E-3C74-436E-B63D-956E65E987DE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{AD486753-BC16-49EB-B1DA-0C87F7AFD7A6} = {AEABF713-C6B9-4A4D-9BAE-CB1FE13720D6}
-		{726A2B6C-EFF7-4DAC-9DD7-63978DF81598} = {AEABF713-C6B9-4A4D-9BAE-CB1FE13720D6}
-		{61BD6CBD-D827-440C-982E-368F8AC29537} = {7F3E77A9-19F6-4856-9ACE-DE9160AC16D2}
-		{1D650965-0893-4825-B5BC-B47879B568DD} = {AEABF713-C6B9-4A4D-9BAE-CB1FE13720D6}
-		{F9D1BAEB-BD75-4109-AF27-0FF0FB2EC300} = {AEABF713-C6B9-4A4D-9BAE-CB1FE13720D6}
-		{B1B74C5F-DB04-4800-A532-73BA6BB9680B} = {AEABF713-C6B9-4A4D-9BAE-CB1FE13720D6}
-		{0B758F71-78DF-4B04-A19C-F65B2A931C3A} = {AEABF713-C6B9-4A4D-9BAE-CB1FE13720D6}
-		{C8D06082-C7CF-430E-9262-E5CB0D9BDF33} = {7F3E77A9-19F6-4856-9ACE-DE9160AC16D2}
-		{9A891A0A-450B-4D9E-AED0-98FDC8186DA2} = {7F3E77A9-19F6-4856-9ACE-DE9160AC16D2}
-		{15C6A6FE-7E77-466E-B33C-65F0B09F320D} = {7F3E77A9-19F6-4856-9ACE-DE9160AC16D2}
-		{182D28E5-0251-4608-A0DC-D06EE6B6F2A8} = {7F3E77A9-19F6-4856-9ACE-DE9160AC16D2}
-		{05444B0E-4710-4541-8974-51BB12FDA6D4} = {7F3E77A9-19F6-4856-9ACE-DE9160AC16D2}
-		{3DC0A7FC-8F89-4A73-ABF7-5F0C4403A97E} = {0AF296B8-3332-482C-A7B2-9CD8DE9CD6A8}
+		{9DC20E5A-9991-493A-81BD-8A651A9EE049} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{6C25F1D4-C479-43F9-98AD-C1D32FCCEA6E} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{C1BA8FFB-04D8-4497-8FF4-126E24D2D1EE} = {2AC9F258-E6C7-4E79-80A2-DF4DC299747C}
+		{F135D7D2-4577-4E3D-B2AC-9C378C251E7D} = {2AC9F258-E6C7-4E79-80A2-DF4DC299747C}
+		{DD6639FE-DE7E-4C58-B865-3F3E91072602} = {F135D7D2-4577-4E3D-B2AC-9C378C251E7D}
+		{A176ABD6-801D-4793-8F91-7AEC3A87C58C} = {92D94781-4395-4BFB-B25F-353BACE1487D}
+		{6EBCEEA0-55AD-4F0D-B190-5327FB6949B9} = {2AC9F258-E6C7-4E79-80A2-DF4DC299747C}
+		{D9264AA5-F4A9-E7D1-3256-1BB88D4AAE80} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{7283184E-3C74-436E-B63D-956E65E987DE} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {433D110F-07A8-4681-9532-DEDCCA4D35FE}
 	EndGlobalSection
 EndGlobal

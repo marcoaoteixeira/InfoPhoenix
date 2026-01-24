@@ -4,13 +4,17 @@ using System.Windows.Documents;
 using System.Windows.Xps.Packaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MediatR;
-using Nameless.InfoPhoenix.Domains.UseCases.Documents.Convert;
+using Microsoft.Extensions.Logging;
+using Nameless.InfoPhoenix.DTOs;
+using Nameless.InfoPhoenix.UseCases.Documents.ConvertXps;
+using Nameless.Mediator;
+using Nameless.WPF.Mvvm;
 
 namespace Nameless.InfoPhoenix.Client.ViewModels.Windows;
 
-public partial class DocumentViewerWindowViewModel : ViewModelBase {
+public partial class DocumentViewerWindowViewModel : ViewModel {
     private readonly IMediator _mediator;
+    private readonly ILogger<DocumentViewerWindowViewModel> _logger;
 
     [ObservableProperty]
     private string _title = string.Empty;
@@ -18,22 +22,25 @@ public partial class DocumentViewerWindowViewModel : ViewModelBase {
     [ObservableProperty]
     private FixedDocumentSequence? _document;
 
-    public DocumentViewerWindowViewModel(IMediator mediator) {
-        _mediator = Prevent.Argument.Null(mediator);
+    public DocumentViewerWindowViewModel(IMediator mediator, ILogger<DocumentViewerWindowViewModel> logger) {
+        _mediator = mediator;
+        _logger = logger;
     }
 
     [RelayCommand]
-    private async Task InitializeAsync(string filePath, CancellationToken cancellationToken) {
-        var result = await _mediator.Send(new ConvertDocumentToXpsFileRequest {
-            FilePath = filePath,
-        }, cancellationToken);
+    private async Task InitializeAsync(DocumentDto document, CancellationToken cancellationToken) {
+        var request = new ConvertIntoXpsFormatRequest { FilePath = document.FilePath };
+        var response = await _mediator.ExecuteAsync(request, cancellationToken);
 
-        if (result is { HasErrors: false, Value.Length: > 0 }) {
-            var doc = new XpsDocument(result.Value,
-                                      FileAccess.Read,
-                                      CompressionOption.NotCompressed);
+        response.Match(
+            onSuccess: value => {
+                var doc = new XpsDocument(value.FilePath, FileAccess.Read, CompressionOption.NotCompressed);
 
-            Document = doc.GetFixedDocumentSequence();
-        }
+                Document = doc.GetFixedDocumentSequence();
+            },
+            onFailure: errors => {
+
+            }
+        );
     }
 }

@@ -5,6 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:components="clr-namespace:Nameless.InfoPhoenix.Client.Views.Components"
+      xmlns:loc="clr-namespace:Nameless.InfoPhoenix.Client.Resources"
 
       x:Name="SearchPageRoot"
 
@@ -15,12 +16,12 @@
     <StackPanel Margin="24">
         <ui:TextBlock FontTypography="Title"
                       Margin="0 0 0 20"
-                      Text="Pesquisar Documentos" />
+                      Text="{x:Static loc:Strings.DocumentSearchPage_Title}" />
 
         <ui:AutoSuggestBox Margin="0 0 0 10"
                            Name="SearchAutoSuggestBox"
                            OriginalItemsSource="{Binding ElementName=SearchPageRoot, Path=ViewModel.SearchHistory, Mode=TwoWay}"
-                           PlaceholderText="Pesquisar por..."
+                           PlaceholderText="{x:Static loc:Strings.DocumentSearchPage_AutoSuggestBox_Placeholder}"
                            QuerySubmitted="ExecuteSearchHandler"
                            SuggestionChosen="ExecuteSearchHandler">
             <ui:AutoSuggestBox.Icon>
@@ -30,11 +31,11 @@
             </ui:AutoSuggestBox.Icon>
         </ui:AutoSuggestBox>
 
-        <ItemsControl ItemsSource="{Binding ElementName=SearchPageRoot, Path=ViewModel.DocumentDirectories, Mode=TwoWay}">
+        <ItemsControl ItemsSource="{Binding ElementName=SearchPageRoot, Path=ViewModel.Entries, Mode=TwoWay}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <components:DocumentDirectorySearchResultUserControl DocumentDirectory="{Binding}"
-                                                                         ShowDocumentsCommand="{Binding ElementName=SearchPageRoot, Path=ViewModel.ShowDocumentsCommand}"/>
+                    <components:SearchResultsGroupingUserControl Entry="{Binding}"
+                                                                        ShowDocumentsCommand="{Binding ElementName=SearchPageRoot, Path=ViewModel.ShowDocumentsCommand}"/>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>

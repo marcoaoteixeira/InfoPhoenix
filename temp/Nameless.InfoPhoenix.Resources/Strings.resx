@@ -1,0 +1,388 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ComboBoxItem_Default_Select" xml:space="preserve">
+    <value>Select</value>
+  </data>
+  <data name="ControlAppearance_Caution" xml:space="preserve">
+    <value>Attention</value>
+  </data>
+  <data name="ControlAppearance_Danger" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="ControlAppearance_Info" xml:space="preserve">
+    <value>Information</value>
+  </data>
+  <data name="ControlAppearance_Success" xml:space="preserve">
+    <value>Success</value>
+  </data>
+  <data name="DirectorySelectionBoxImpl_FallbackTitle" xml:space="preserve">
+    <value>Select a directory...</value>
+  </data>
+  <data name="DirectorySelectionBoxImpl_FallbackTitle_Plural" xml:space="preserve">
+    <value>Select directories...</value>
+  </data>
+  <data name="AppDbContextInitializationBootstrapStep_Name" xml:space="preserve">
+    <value>Database Context Initialization Step</value>
+  </data>
+  <data name="MessageBoxIcon_Attention" xml:space="preserve">
+    <value>Attention</value>
+  </data>
+  <data name="MessageBoxIcon_Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="MessageBoxIcon_Information" xml:space="preserve">
+    <value>Information</value>
+  </data>
+  <data name="MessageBoxIcon_Question" xml:space="preserve">
+    <value>Question</value>
+  </data>
+  <data name="MessageBoxIcon_Warning" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="TaskRunnerWindow_Cancel_Button" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="TaskRunnerWindow_Close_Button" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="TaskRunnerWindow_Default_Title" xml:space="preserve">
+    <value>Task runner...</value>
+  </data>
+  <data name="Theme_Light" xml:space="preserve">
+    <value>Light</value>
+  </data>
+  <data name="Theme_Dark" xml:space="preserve">
+    <value>Dark</value>
+  </data>
+  <data name="Theme_HighContrast" xml:space="preserve">
+    <value>High Contrast</value>
+  </data>
+  <data name="CheckSystemUpdateNotification_Title" xml:space="preserve">
+    <value>Check System Update</value>
+  </data>
+  <data name="CheckSystemUpdateNotification_Success_NewVersionAvailable" xml:space="preserve">
+    <value>A new version is available. Download the new version {0} at: {1}</value>
+  </data>
+  <data name="CheckSystemUpdateNotification_Success_CurrentVersionUpToDate" xml:space="preserve">
+    <value>Current version is the latest.</value>
+  </data>
+  <data name="CheckSystemUpdateRequestHandler_NotificationCheckingNewVersion" xml:space="preserve">
+    <value>Please wait as we check for a new version...</value>
+  </data>
+  <data name="DownloadSystemUpdateNotification_Title" xml:space="preserve">
+    <value>Download System Update</value>
+  </data>
+  <data name="DownloadSystemUpdateNotification_Success" xml:space="preserve">
+    <value>System update download complete. The new file package can be found at: {0}</value>
+  </data>
+  <data name="DownloadSystemUpdateNotification_Starting" xml:space="preserve">
+    <value>Initializing system update download...</value>
+  </data>
+  <data name="DownloadSystemUpdateNotification_WritingFile" xml:space="preserve">
+    <value>Writing system update file to the disk...</value>
+  </data>
+  <data name="GetLastestReleaseResponse_Failure_ReleaseSerialization" xml:space="preserve">
+    <value>Couldn't retrieve latest release information.</value>
+  </data>
+  <data name="GetLastestReleaseResponse_Failure_Exception" xml:space="preserve">
+    <value>An error occurred while trying to retrieve latest release information: {0}</value>
+  </data>
+  <data name="PerformDatabaseBackupNotification_Title" xml:space="preserve">
+    <value>Database Backup</value>
+  </data>
+  <data name="PerformDatabaseBackupNotification_Success" xml:space="preserve">
+    <value>Database backup successfully. The file can be found at: {0}</value>
+  </data>
+  <data name="PerformDatabaseBackupNotification_ExecuteBackup_Starting" xml:space="preserve">
+    <value>Starting database backup execution...</value>
+  </data>
+  <data name="PerformDatabaseBackupNotification_ExecuteBackup_Failure" xml:space="preserve">
+    <value>An error occurred while executing database backup: {0}</value>
+  </data>
+  <data name="PerformDatabaseBackupNotification_ExecuteBackup_Finish" xml:space="preserve">
+    <value>Database backup execution finished.</value>
+  </data>
+  <data name="PerformDatabaseBackupNotification_PrepareBackupFile_Starting" xml:space="preserve">
+    <value>Starting backup file preparation...</value>
+  </data>
+  <data name="PerformDatabaseBackupNotification_PrepareBackupFile_Failure" xml:space="preserve">
+    <value>An error occurred while preparing the backup file: {0}</value>
+  </data>
+  <data name="PerformDatabaseBackupNotification_PrepareBackupFile_Finish" xml:space="preserve">
+    <value>Backup file preparation execution finished successfully.</value>
+  </data>
+  <data name="PerformSystemUpdate_TaskRunnerWindow_Title" xml:space="preserve">
+    <value>System Update</value>
+  </data>
+  <data name="PerformDatabaseBackup_TaskRunnerWindow_Title" xml:space="preserve">
+    <value>Database Backup</value>
+  </data>
+  <data name="AppConfigurationPageViewModel_ExecuteSystemUpdateAsync_MessageBox_Message" xml:space="preserve">
+    <value>A new version is available for download. Do you want to download it to the application data directory?</value>
+  </data>
+  <data name="AppConfigurationPageViewModel_ExecuteSystemUpdateAsync_MessageBox_Title" xml:space="preserve">
+    <value>New Version Available</value>
+  </data>
+  <data name="AppConfigurationPage_Title" xml:space="preserve">
+    <value>Appearance &amp; Behavior</value>
+  </data>
+  <data name="AppConfigurationPage_VersionCard_Title" xml:space="preserve">
+    <value>Current Version</value>
+  </data>
+  <data name="AppConfigurationPage_VersionCard_PerformSystemUpdate_Button" xml:space="preserve">
+    <value>Check System Update</value>
+  </data>
+  <data name="AppConfigurationPage_DatabaseBackupCard_Title" xml:space="preserve">
+    <value>Database Backup</value>
+  </data>
+  <data name="AppConfigurationPage_DatabaseBackupCard_Message" xml:space="preserve">
+    <value>Create a copy of the Database to avoid possible data loss.</value>
+  </data>
+  <data name="AppConfigurationPage_DatabaseBackupCard_PerformDatabaseBackup_Button" xml:space="preserve">
+    <value>Create Database Backup</value>
+  </data>
+  <data name="AppConfigurationPage_ThemeCard_Title" xml:space="preserve">
+    <value>Application Theme</value>
+  </data>
+  <data name="AppConfigurationPage_ThemeCard_Message" xml:space="preserve">
+    <value>Choose the application appearance</value>
+  </data>
+  <data name="AppConfigurationPage_ExitBehaviorCard_Title" xml:space="preserve">
+    <value>Confirm Before Exit</value>
+  </data>
+  <data name="AppConfigurationPage_ExitBehaviorCard_Message" xml:space="preserve">
+    <value>Would you like the application ask you before leave?</value>
+  </data>
+  <data name="AppConfigurationPage_AppDirectoryPathCard_Title" xml:space="preserve">
+    <value>Application Data Directory</value>
+  </data>
+  <data name="AppConfigurationPage_AppDirectoryPathCard_Message" xml:space="preserve">
+    <value>The directory that contains all application data, including configuration files, support files, and logs.</value>
+  </data>
+  <data name="AppConfigurationPage_AppDirectoryPathCard_Button" xml:space="preserve">
+    <value>Open Application Data Directory</value>
+  </data>
+  <data name="AppConfigurationPage_ApplicationLogCard_Title" xml:space="preserve">
+    <value>Application Log</value>
+  </data>
+  <data name="AppConfigurationPage_ApplicationLogCard_Message" xml:space="preserve">
+    <value>Open the log file in the standard editor.</value>
+  </data>
+  <data name="AppConfigurationPage_ApplicationLogCard_Button" xml:space="preserve">
+    <value>Open Application Log File</value>
+  </data>
+  <data name="MainWindow_CloseHandler_MessageBox_Title" xml:space="preserve">
+    <value>Exit</value>
+  </data>
+  <data name="MainWindow_CloseHandler_MessageBox_Message" xml:space="preserve">
+    <value>Always ask before exit?</value>
+  </data>
+  <data name="SearchHistoryLimit_None" xml:space="preserve">
+    <value>Do not use search history</value>
+  </data>
+  <data name="SearchHistoryLimit_Small" xml:space="preserve">
+    <value>Small (25 entries)</value>
+  </data>
+  <data name="SearchHistoryLimit_Medium" xml:space="preserve">
+    <value>Medium (50 entries)</value>
+  </data>
+  <data name="SearchHistoryLimit_Large" xml:space="preserve">
+    <value>Large (100 entries)</value>
+  </data>
+  <data name="DocumentDirectoryWindow_DocumentDirectory_Label" xml:space="preserve">
+    <value>Label</value>
+  </data>
+  <data name="DocumentDirectoryWindow_DocumentDirectory_DirectoryPath" xml:space="preserve">
+    <value>Directory path</value>
+  </data>
+  <data name="DocumentDirectoryWindow_DocumentDirectory_DisplayPosition" xml:space="preserve">
+    <value>Display position</value>
+  </data>
+  <data name="DocumentDirectoryWindow_SaveButton" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="DocumentDirectoryWindow_CloseButton" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="SearchPage_Title" xml:space="preserve">
+    <value>Search Documents</value>
+  </data>
+  <data name="SearchPage_AutoComplete_Placeholder" xml:space="preserve">
+    <value>Search for...</value>
+  </data>
+  <data name="DocumentDirectorySearchEntryUserControl_Label_TotalDocumentsFound" xml:space="preserve">
+    <value>Total Documents Found</value>
+  </data>
+  <data name="DocumentDirectorySearchEntryUserControl_Label_LastIndexingTime" xml:space="preserve">
+    <value>Last indexing: </value>
+  </data>
+  <data name="DocumentDirectorySearchEntryUserControl_Button_ShowDocuments" xml:space="preserve">
+    <value>Show Documents</value>
+  </data>
+  <data name="DisplayDocumentDirectoryUserControl_Label_DirectoryPath" xml:space="preserve">
+    <value>Directory path: </value>
+  </data>
+  <data name="DisplayDocumentDirectoryUserControl_Label_TotalDocuments" xml:space="preserve">
+    <value>Total documents: </value>
+  </data>
+  <data name="DisplayDocumentDirectoryUserControl_Label_LastIndexingTime" xml:space="preserve">
+    <value>Last indexing time: </value>
+  </data>
+  <data name="DisplayDocumentDirectoryUserControl_Label_MissingDirectory" xml:space="preserve">
+    <value>Directory not found.</value>
+  </data>
+  <data name="DisplayDocumentDirectoryUserControl_Button_Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="DisplayDocumentDirectoryUserControl_Button_Update" xml:space="preserve">
+    <value>Update content</value>
+  </data>
+  <data name="DisplayDocumentDirectoryUserControl_Button_Index" xml:space="preserve">
+    <value>Indexing</value>
+  </data>
+  <data name="DisplayDocumentDirectoryUserControl_Button_Open" xml:space="preserve">
+    <value>Open in Explorer</value>
+  </data>
+  <data name="DisplayDocumentDirectoryUserControl_Button_Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="DocumentDirectoryManagementPage_Title" xml:space="preserve">
+    <value>Document Directories</value>
+  </data>
+  <data name="DocumentDirectoryManagementPage_Button_CreateNewDocumentDirectory" xml:space="preserve">
+    <value>Create new document directory</value>
+  </data>
+  <data name="DocumentDirectoryManagementPageViewModel_DeleteDocumentDirectoryWarning" xml:space="preserve">
+    <value>Do you really want to remove the documents directory '{0}'?
+This will cause all documents associated with this directory to be removed as well.</value>
+  </data>
+  <data name="DocumentDirectoryManagementPageViewModel_DeleteDocumentDirectoryTitle" xml:space="preserve">
+    <value>Delete Document Directory</value>
+  </data>
+  <data name="DocumentDirectoryWindowViewModel_Title_CreateNewDocumentDirectory" xml:space="preserve">
+    <value>Create New Document Directory</value>
+  </data>
+  <data name="DocumentDirectoryWindowViewModel_Title_EditDocumentDirectory" xml:space="preserve">
+    <value>Edit Document Directory</value>
+  </data>
+  <data name="DocumentDirectoryWindowViewModel_PickDirectoryDialog_Title" xml:space="preserve">
+    <value>Select the document directory...</value>
+  </data>
+</root>

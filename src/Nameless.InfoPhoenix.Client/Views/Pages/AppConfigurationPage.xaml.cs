@@ -1,16 +1,19 @@
-﻿using Nameless.InfoPhoenix.Client.ViewModels.Pages;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Nameless.InfoPhoenix.Client.ViewModels.Pages;
+using Nameless.WPF.DependencyInjection;
+using Nameless.WPF.Navigation;
+using Wpf.Ui.Abstractions.Controls;
 using Wpf.Ui.Controls;
 
 namespace Nameless.InfoPhoenix.Client.Views.Pages;
 
+[ServiceLifetime(Lifetime = ServiceLifetime.Singleton)]
+[NavigationViewItem(Title = "Configurações", Icon = SymbolRegular.Settings48, Footer = true)]
 public partial class AppConfigurationPage : INavigableView<AppConfigurationPageViewModel> {
-    public static readonly string PageName = "Configurações";
-    public static readonly string PageToolTip = "Configurações";
-
     public AppConfigurationPageViewModel ViewModel { get; }
 
     public AppConfigurationPage(AppConfigurationPageViewModel viewModel) {
-        ViewModel = Prevent.Argument.Null(viewModel);
+        ViewModel = viewModel;
 
         DataContext = ViewModel;
 

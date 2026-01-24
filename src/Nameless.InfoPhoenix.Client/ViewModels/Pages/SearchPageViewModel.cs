@@ -1,100 +1,137 @@
 ﻿using System.Collections.ObjectModel;
+using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MediatR;
 using Nameless.Collections.Generic;
-using Nameless.InfoPhoenix.Application.Windows;
-using Nameless.InfoPhoenix.Client.Contracts.Views.Windows;
+using Nameless.InfoPhoenix.Client.Views.Windows;
 using Nameless.InfoPhoenix.Configuration;
-using Nameless.InfoPhoenix.Domains.Dtos;
-using Nameless.InfoPhoenix.Domains.UseCases.Search;
+using Nameless.InfoPhoenix.DTOs;
+using Nameless.InfoPhoenix.UseCases.Search;
+using Nameless.Mediator;
+using Nameless.WPF.Configuration;
+using Nameless.WPF.Mvvm;
+using Nameless.WPF.Windows;
+using Wpf.Ui.Abstractions.Controls;
 
 namespace Nameless.InfoPhoenix.Client.ViewModels.Pages;
 
-public partial class SearchPageViewModel : ViewModelBase {
+public partial class SearchPageViewModel : ViewModel, INavigationAware {
     private readonly IAppConfigurationManager _appConfigurationManager;
     private readonly IMediator _mediator;
     private readonly IWindowFactory _windowFactory;
 
-    private CircularBuffer<string>? _searchHistoryBuffer;
-    
-    [ObservableProperty]
-    private string[] _searchHistory = [];
+    private SearchHistoryLimit _currentSearchHistoryLimit;
+    private string _previousSearchTerm = string.Empty;
+    private CircularBuffer<string> _searchHistoryBuffer = new((int)SearchHistoryLimit.Small);
 
     [ObservableProperty]
-    private ObservableCollection<DocumentDirectoryDto> _documentDirectories = [];
+    private ObservableCollection<string> _searchHistory = [];
 
-    private SearchResultCollection SearchResults { get; set; } = [];
+    [ObservableProperty]
+    private ObservableCollection<DocumentDirectoryDto> _entries = [];
+
+    [ObservableProperty]
+    private ObservableCollection<object> _multiSelectSelectedItems = [];
+
     private string[] HighlightTerms { get; set; } = [];
 
-    public SearchPageViewModel(IAppConfigurationManager appConfigurationManager,
-                               IMediator mediator,
-                               IWindowFactory windowFactory) {
+    public SearchPageViewModel(
+        IAppConfigurationManager appConfigurationManager,
+        IMediator mediator,
+        IWindowFactory windowFactory) {
         _appConfigurationManager = appConfigurationManager;
         _mediator = mediator;
         _windowFactory = windowFactory;
     }
 
-    [RelayCommand]
-    private Task UpdateAsync() {
-        UpdateSearchHistoryBuffer();
+    public Task OnNavigatedToAsync() {
+        RefreshSearchHistory();
 
         return Task.CompletedTask;
     }
 
-    [RelayCommand]
-    private async Task ExecuteSearchAsync(SearchTerm term) {
-        var result = await _mediator.Send(new SearchDocumentsRequest {
-            QueryTerm = term.Value
-        });
-
-        SearchResults = result.Value;
-        HighlightTerms = result.HighlightTerms;
-
-        DocumentDirectories = [.. result.Value.GetDocumentDirectories()];
-
-        if (SearchResults.Count > 0) {
-            UpdateSearchHistory(term);
-        }
+    public Task OnNavigatedFromAsync() {
+        return Task.CompletedTask;
     }
 
     [RelayCommand]
-    private Task ShowDocumentsAsync(DocumentDirectoryDto documentDirectory) {
-        var documents = SearchResults.GetDocuments(documentDirectory.ID)
-                                     .ToArray();
+    private async Task ExecuteSearchAsync(string searchTerm, CancellationToken cancellationToken) {
+        if (_previousSearchTerm.Equals(searchTerm, StringComparison.OrdinalIgnoreCase)) { return; }
 
-        if (_windowFactory.TryCreate<IDisplayDocumentSearchResultWindow>(owner: null, out var window)) {
-            window.SetTitle($"Resultados da Pesquisa para: {documentDirectory.Label}");
-            window.Initialize(documents, HighlightTerms);
-            window.Show(StartupLocation.CenterScreen);
+        _previousSearchTerm = searchTerm;
+
+        var response = await _mediator.ExecuteAsync(
+            new SearchDocumentsRequest { Term = searchTerm },
+            cancellationToken
+        );
+
+        response.Match(
+            onSuccess: value => {
+                Entries = [.. value.DocumentDirectories];
+                HighlightTerms = value.HighlightTerms;
+
+                UpdateSearchHistory(value.SearchTerm);
+            },
+            onFailure: _ => { }
+        );
+    }
+
+    [RelayCommand]
+    private Task ShowDocumentsAsync(DocumentDirectoryDto entry) {
+        if (_windowFactory.TryCreate<SearchResultsSliderWindow>(out var output)) {
+            output.SetTitle(entry.Label);
+            output.Initialize(entry, HighlightTerms);
+            output.Show(WindowStartupLocation.CenterScreen);
         }
 
         return Task.CompletedTask;
     }
 
-    private void UpdateSearchHistory(SearchTerm term) {
-        if (_searchHistoryBuffer is null || _searchHistoryBuffer.Contains(term.Value)) {
+    private void RefreshSearchHistory() {
+        var searchHistoryLimit = _appConfigurationManager.GetSearchHistoryLimit();
+
+        // If the limit hasn't changed, no need to refresh
+        if (searchHistoryLimit == _currentSearchHistoryLimit) { return;}
+
+        // If the limit changed to None, clear the history
+        if (searchHistoryLimit == SearchHistoryLimit.None) {
+            _searchHistoryBuffer.Clear();
+            _appConfigurationManager.SetSearchHistory([]);
+            _currentSearchHistoryLimit = SearchHistoryLimit.None;
+
+            SearchHistory.Clear();
+
             return;
         }
 
-        _searchHistoryBuffer.Add(term.Value);
+        // Update the buffer with the new limit
+        _currentSearchHistoryLimit = searchHistoryLimit;
 
-        SearchHistory = [.. _searchHistoryBuffer];
+        var searchHistory = _appConfigurationManager.GetSearchHistory();
 
-        _appConfigurationManager.SetSearchHistory(SearchHistory);
+        _searchHistoryBuffer = new CircularBuffer<string>(
+            capacity: (int)_currentSearchHistoryLimit,
+            items: searchHistory
+        );
+
+        SearchHistory = [.. searchHistory];
     }
 
-    private void UpdateSearchHistoryBuffer() {
-        var capacity = (int)_appConfigurationManager.GetSearchHistoryLimit();
-        var searchHistory = _searchHistoryBuffer?.ToArray() ??
-                            _appConfigurationManager.GetSearchHistory();
+    private void UpdateSearchHistory(string searchTerm) {
+        // If search history is disabled, do nothing
+        if (_currentSearchHistoryLimit == SearchHistoryLimit.None) { return; }
 
-        if (_searchHistoryBuffer is null || _searchHistoryBuffer.Capacity != capacity) {
-            searchHistory = searchHistory.Take(capacity).ToArray();
-            _searchHistoryBuffer = new CircularBuffer<string>(capacity, searchHistory);
-            _appConfigurationManager.SetSearchHistory(searchHistory);
-        }
+        // If the term already exists, do nothing
+        if (_searchHistoryBuffer.Contains(searchTerm, StringComparer.OrdinalIgnoreCase)) { return; }
 
-        SearchHistory = searchHistory;
+        // Add the new term to the buffer
+        _searchHistoryBuffer.Add(searchTerm);
+
+        // Update the observable collection and persist the changes
+        string[] newSearchHistory = [.. _searchHistoryBuffer];
+
+        SearchHistory = [.. newSearchHistory];
+
+        _appConfigurationManager.SetSearchHistory(newSearchHistory);
     }
 }
