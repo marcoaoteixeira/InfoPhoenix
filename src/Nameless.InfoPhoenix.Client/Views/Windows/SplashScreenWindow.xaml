@@ -1,0 +1,110 @@
+﻿<Window x:Class="Nameless.InfoPhoenix.Client.Views.Windows.SplashScreenWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+
+        x:Name="SplashScreenWindowRoot"
+
+        mc:Ignorable="d"
+
+        Background="WhiteSmoke"
+
+        ContentRendered="SplashScreenReady"
+
+        Height="256"
+        Width="640"
+        ResizeMode="NoResize"
+        WindowStyle="None"
+        WindowState="Normal"
+        WindowStartupLocation="CenterScreen">
+    <Window.Clip>
+        <RectangleGeometry Rect="0,0,640,256" RadiusX="5" RadiusY="5" />
+    </Window.Clip>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="256" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Column="0"
+              Grid.Row="0"
+              Height="64"
+              Margin="32 0 16 8"
+              VerticalAlignment="Bottom">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="64" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Image Grid.Column="0"
+                   Source="pack://application:,,,/Resources/loading_64x64.png"
+                   VerticalAlignment="Center" />
+
+            <TextBlock Grid.Column="1"
+                       Name="ApplicationNameTextBlock"
+                       FontFamily="pack://application:,,,/Resources/#Alte Haas Grotesk Bold"
+                       FontSize="24"
+                       FontWeight="Bold"
+                       Margin="16 0 16 0"
+                       VerticalAlignment="Center"
+                       Text="Application Name" />
+        </Grid>
+
+        <Grid Grid.Column="0"
+              Grid.Row="1"
+              Margin="32 0 16 0"
+              VerticalAlignment="Top">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="24" />
+                <RowDefinition Height="48" />
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Column="0"
+                       Grid.Row="0"
+                       Name="StepNameTextBlock"
+                       FontSize="14"
+                       FontWeight="DemiBold"
+                       Margin="0 0 0 4"
+                       VerticalAlignment="Top"
+                       Text="Step" />
+
+            <TextBlock Grid.Column="0"
+                       Grid.Row="1"
+                       Name="StepMessageTextBlock"
+                       FontSize="10"
+                       FontWeight="DemiBold"
+                       Margin="0 0 0 4"
+                       VerticalAlignment="Bottom"
+                       Text="Step progress..." />
+
+            <ProgressBar Grid.Column="0"
+                         Grid.Row="2"
+                         Height="16"
+                         Margin="0"
+                         IsIndeterminate="True"
+                         Foreground="ForestGreen"
+                         VerticalAlignment="Top" />
+
+            <TextBlock Grid.Column="0"
+                       Grid.Row="3"
+                       Name="ApplicationVersionTextBlock"
+                       FontSize="12"
+                       FontWeight="DemiBold"
+                       VerticalAlignment="Bottom"
+                       HorizontalAlignment="Right"
+                       Text="v1.0.0" />
+        </Grid>
+
+        <Image Grid.Column="1"
+               Grid.Row="0"
+               Grid.RowSpan="2"
+               Source="pack://application:,,,/Resources/splash_screen_256x256.png"
+               VerticalAlignment="Center"
+               HorizontalAlignment="Center" />
+    </Grid>
+</Window>

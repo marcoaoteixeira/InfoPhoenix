@@ -1,9 +1,7 @@
-﻿using Nameless.Result;
-
-namespace Nameless.InfoPhoenix.Documents;
+﻿namespace Nameless.InfoPhoenix.Documents;
 
 public interface IDocumentReader {
-    bool CanRead(string extension);
+    bool CanRead(string filePath);
 
-    Result<string> GetContent(string filePath);
+    Task<string> GetContentAsync(string filePath, CancellationToken cancellationToken);
 }

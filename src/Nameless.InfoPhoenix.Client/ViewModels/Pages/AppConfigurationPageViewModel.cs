@@ -1,20 +1,33 @@
 ﻿using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MediatR;
-using Nameless.Application;
-using Nameless.InfoPhoenix.Application;
+using Nameless.InfoPhoenix.Client.Resources;
 using Nameless.InfoPhoenix.Configuration;
-using Nameless.InfoPhoenix.Domains.UseCases.Database.PerformBackup;
+using Nameless.InfoPhoenix.UseCases.Application.Backup;
+using Nameless.InfoPhoenix.UseCases.Database.Backup;
+using Nameless.InfoPhoenix.UseCases.Index.Backup;
+using Nameless.Infrastructure;
+using Nameless.Mediator;
+using Nameless.WPF;
+using Nameless.WPF.Configuration;
+using Nameless.WPF.Dialogs.Message;
+using Nameless.WPF.Helpers;
+using Nameless.WPF.Mvvm;
+using Nameless.WPF.TaskRunner;
+using Nameless.WPF.UseCases.SystemUpdate.Check;
+using Nameless.WPF.UseCases.SystemUpdate.Download;
+using Nameless.WPF.UseCases.SystemUpdate.Fetch;
+using Wpf.Ui.Abstractions.Controls;
 using Wpf.Ui.Appearance;
-using Wpf.Ui.Controls;
 
 namespace Nameless.InfoPhoenix.Client.ViewModels.Pages;
 
-public partial class AppConfigurationPageViewModel : ViewModelBase, INavigationAware {
-    private readonly IAppConfigurationManager _appConfigurationContext;
+public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware {
+    private readonly IAppConfigurationManager _appConfigurationManager;
     private readonly IApplicationContext _applicationContext;
     private readonly IMediator _mediator;
+    private readonly IMessageDialog _messageDialog;
+    private readonly ITaskRunner _taskRunner;
 
     private bool _initialized;
 
@@ -22,10 +35,10 @@ public partial class AppConfigurationPageViewModel : ViewModelBase, INavigationA
     private ComboBoxItem _currentTheme = ComboBoxItemHelper.EmptyComboBoxItem;
 
     [ObservableProperty]
-    private ComboBoxItem _currentSearchHistoryLimit = ComboBoxItemHelper.EmptyComboBoxItem;
+    private bool _currentConfirmBeforeExit;
 
     [ObservableProperty]
-    private bool _currentConfirmBeforeExit;
+    private ComboBoxItem _currentSearchHistoryLimit = ComboBoxItemHelper.EmptyComboBoxItem;
 
     [ObservableProperty]
     private bool _currentEnableDocumentViewer;
@@ -39,59 +52,86 @@ public partial class AppConfigurationPageViewModel : ViewModelBase, INavigationA
     ];
 
     public ComboBoxItem[] AvailableSearchHistoryLimit { get; } = [
+        SearchHistoryLimit.None.ToComboBoxItem(),
         SearchHistoryLimit.Small.ToComboBoxItem(),
         SearchHistoryLimit.Medium.ToComboBoxItem(),
         SearchHistoryLimit.Large.ToComboBoxItem(),
     ];
 
-    public AppConfigurationPageViewModel(IAppConfigurationManager appConfigurationContext,
-                                         IApplicationContext applicationContext,
-                                         IMediator mediator) {
-        _appConfigurationContext = Prevent.Argument.Null(appConfigurationContext);
-        _applicationContext = Prevent.Argument.Null(applicationContext);
-        _mediator = Prevent.Argument.Null(mediator);
+    public AppConfigurationPageViewModel(
+        IAppConfigurationManager appConfigurationManager,
+        IApplicationContext applicationContext,
+        IMediator mediator,
+        IMessageDialog messageDialog,
+        ITaskRunner taskRunner) {
+        _appConfigurationManager = appConfigurationManager;
+        _applicationContext = applicationContext;
+        _mediator = mediator;
+        _messageDialog = messageDialog;
+        _taskRunner = taskRunner;
+
+        Initialize();
     }
 
-    public void OnNavigatedTo()
-        => Initialize();
+    public Task OnNavigatedToAsync() {
+        return Task.CompletedTask;
+    }
 
-    public void OnNavigatedFrom()
-        => _appConfigurationContext.CommitChanges();
+    public Task OnNavigatedFromAsync() {
+        return Task.CompletedTask;
+    }
 
     private void Initialize() {
         if (_initialized) { return; }
 
         AppVersion = _applicationContext.Version;
 
-        _appConfigurationContext.Initialize();
+        var theme = _appConfigurationManager.GetTheme();
 
-        var theme = _appConfigurationContext.GetTheme();
-        var searchHistoryLimit = _appConfigurationContext.GetSearchHistoryLimit();
+        CurrentTheme = theme.GetComboBoxItem(AvailableThemes);
+        CurrentConfirmBeforeExit = _appConfigurationManager.GetConfirmBeforeExit();
 
-        CurrentTheme = theme.GetComboBoxItemFromAvailable(AvailableThemes);
-        CurrentSearchHistoryLimit = searchHistoryLimit.GetComboBoxItemFromAvailable(AvailableSearchHistoryLimit);
-        CurrentConfirmBeforeExit = _appConfigurationContext.GetConfirmBeforeExit();
-        CurrentEnableDocumentViewer = _appConfigurationContext.GetEnableDocumentViewer();
+        var searchHistoryLimit = _appConfigurationManager.GetSearchHistoryLimit();
+        CurrentSearchHistoryLimit = searchHistoryLimit.GetComboBoxItem(AvailableSearchHistoryLimit);
+        CurrentEnableDocumentViewer = _appConfigurationManager.GetEnableDocumentViewer();
 
         _initialized = true;
     }
 
     [RelayCommand]
-    private async Task PerformApplicationDatabaseBackupAsync()
-        => await _mediator.Send(new PerformDatabaseBackupRequest());
+    private Task PerformSystemUpdateAsync() {
+        return _taskRunner.CreateBuilder()
+                          .SetName(Strings.AppConfigurationPageViewModel_PerformSystemUpdate_TaskRunnerWindow_Title)
+                          .SubscribeFor<CheckForUpdateNotification>()
+                          .SubscribeFor<FetchNewVersionInformationNotification>()
+                          .SubscribeFor<DownloadUpdateNotification>()
+                          .SetDelegate(ExecuteSystemUpdateAsync)
+                          .RunAsync();
+    }
 
     [RelayCommand]
     private Task OpenApplicationDataDirectoryAsync() {
-        ProcessHelper.OpenDirectory(_applicationContext.AppDataFolderPath);
+        ProcessHelper.OpenDirectory(_applicationContext.DataDirectoryPath);
 
         return Task.CompletedTask;
     }
 
     [RelayCommand]
     private Task OpenApplicationLogFileAsync() {
-        ProcessHelper.OpenTextFile(Constants.Files.LogFileName);
+        ProcessHelper.OpenTextFile(Constants.Application.LogFileName);
 
         return Task.CompletedTask;
+    }
+
+    [RelayCommand]
+    private Task PerformApplicationBackupAsync() {
+        return _taskRunner.CreateBuilder()
+                          .SetName(Strings.AppConfigurationPageViewModel_PerformApplicationBackup_TaskRunnerWindow_Title)
+                          .SubscribeFor<PerformApplicationBackupNotification>()
+                          .SubscribeFor<PerformDatabaseBackupNotification>()
+                          .SubscribeFor<PerformDocumentIndexBackupNotification>()
+                          .SetDelegate(InnerPerformApplicationBackupAsync)
+                          .RunAsync();
     }
 
     partial void OnCurrentThemeChanged(ComboBoxItem? oldValue, ComboBoxItem newValue) {
@@ -101,7 +141,13 @@ public partial class AppConfigurationPageViewModel : ViewModelBase, INavigationA
 
         ApplicationThemeManager.Apply(theme.ToApplicationTheme());
 
-        _appConfigurationContext.SetTheme(theme);
+        _appConfigurationManager.SetTheme(theme);
+    }
+
+    partial void OnCurrentConfirmBeforeExitChanged(bool oldValue, bool newValue) {
+        if (!_initialized || oldValue == newValue) { return; }
+
+        _appConfigurationManager.SetConfirmBeforeExit(newValue);
     }
 
     partial void OnCurrentSearchHistoryLimitChanged(ComboBoxItem? oldValue, ComboBoxItem newValue) {
@@ -109,18 +155,77 @@ public partial class AppConfigurationPageViewModel : ViewModelBase, INavigationA
 
         var searchHistoryLimit = (SearchHistoryLimit)newValue.Tag;
 
-        _appConfigurationContext.SetSearchHistoryLimit(searchHistoryLimit);
-    }
-
-    partial void OnCurrentConfirmBeforeExitChanged(bool oldValue, bool newValue) {
-        if (!_initialized || oldValue == newValue) { return; }
-
-        _appConfigurationContext.SetConfirmBeforeExit(newValue);
+        _appConfigurationManager.SetSearchHistoryLimit(searchHistoryLimit);
     }
 
     partial void OnCurrentEnableDocumentViewerChanged(bool oldValue, bool newValue) {
         if (!_initialized || oldValue == newValue) { return; }
 
-        _appConfigurationContext.SetEnableDocumentViewer(newValue);
+        _appConfigurationManager.SetEnableDocumentViewer(newValue);
+    }
+
+    private async Task InnerPerformApplicationBackupAsync(CancellationToken cancellationToken) {
+        _ = await _mediator.ExecuteAsync(new PerformApplicationBackupRequest(), cancellationToken)
+                           .SkipContextSync();
+    }
+
+    private async Task ExecuteSystemUpdateAsync(CancellationToken cancellationToken) {
+        var checkForUpdateResponse = await ExecuteCheckForUpdateAsync(cancellationToken).SkipContextSync();
+
+        if (!checkForUpdateResponse.Success) { return; }
+
+        if (!checkForUpdateResponse.Value.IsNewVersionAvailable) {
+            _messageDialog.ShowInformation(
+                title: Strings.AppConfigurationPageViewModel_ExecuteSystemUpdateAsync_UpdateUnavailable_MessageBox_Title,
+                message: Strings.AppConfigurationPageViewModel_ExecuteSystemUpdateAsync_UpdateUnavailable_MessageBox_Message
+            );
+
+            return;
+        }
+
+        var result = _messageDialog.ShowQuestion(
+            title: Strings.AppConfigurationPageViewModel_ExecuteSystemUpdateAsync_ConfirmDownload_MessageBox_Title,
+            message: Strings.AppConfigurationPageViewModel_ExecuteSystemUpdateAsync_ConfirmDownload_MessageBox_Message
+        );
+
+        if (result == MessageDialogResult.No) { return; }
+
+        var fetchNewVersionInformationResponse = await ExecuteFetchNewVersionInformationAsync(
+            checkForUpdateResponse.Value.ReleaseID,
+            checkForUpdateResponse.Value.ApplicationName,
+            checkForUpdateResponse.Value.Version,
+            cancellationToken
+        ).SkipContextSync();
+
+        if (!fetchNewVersionInformationResponse.Success) { return; }
+
+        if (!fetchNewVersionInformationResponse.Value.IsNewVersionAvailable) {
+            _messageDialog.ShowAttention(
+                title: Strings.AppConfigurationPageViewModel_ExecuteSystemUpdateAsync_AssetNotFound_MessageBox_Title,
+                message: Strings.AppConfigurationPageViewModel_ExecuteSystemUpdateAsync_AssetNotFound_MessageBox_Message
+            );
+
+            return;
+        }
+
+        await ExecuteDownloadUpdateAsync(
+            version: checkForUpdateResponse.Value.Version,
+            url: fetchNewVersionInformationResponse.Value.Url,
+            cancellationToken: cancellationToken
+        ).SkipContextSync();
+    }
+
+    private Task<CheckForUpdateResponse> ExecuteCheckForUpdateAsync(CancellationToken cancellationToken) {
+        return _mediator.ExecuteAsync(new CheckForUpdateRequest(), cancellationToken);
+    }
+
+    private Task<FetchNewVersionInformationResponse> ExecuteFetchNewVersionInformationAsync(int releaseID, string applicationName, string version, CancellationToken cancellationToken) {
+        var request = new FetchNewVersionInformationRequest(releaseID, applicationName, version);
+
+        return _mediator.ExecuteAsync(request, cancellationToken);
+    }
+
+    private Task<DownloadUpdateResponse> ExecuteDownloadUpdateAsync(string version, string url, CancellationToken cancellationToken) {
+        return _mediator.ExecuteAsync(new DownloadUpdateRequest(version, url), cancellationToken);
     }
 }

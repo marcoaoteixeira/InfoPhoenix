@@ -1,32 +1,30 @@
-﻿using System.Windows;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Nameless.InfoPhoenix.Client.ViewModels.Pages;
-using Nameless.InfoPhoenix.Domains.UseCases.Search;
+using Nameless.WPF.DependencyInjection;
+using Nameless.WPF.Navigation;
+using Wpf.Ui.Abstractions.Controls;
 using Wpf.Ui.Controls;
 
 namespace Nameless.InfoPhoenix.Client.Views.Pages;
 
-public partial class SearchPage : INavigableView<SearchPageViewModel>, INavigationAware {
-    public static readonly string PageName = "Pesquisar";
-    public static readonly string PageToolTip = "Pesquisar";
-
+[ServiceLifetime(Lifetime = ServiceLifetime.Singleton)]
+[NavigationViewItem(Title = "Pesquisar", Icon = SymbolRegular.DocumentSearch24)]
+public partial class SearchPage : INavigableView<SearchPageViewModel> {
     public SearchPageViewModel ViewModel { get; }
 
-    public SearchPage(SearchPageViewModel pageViewModel) {
-        ViewModel = Prevent.Argument.Null(pageViewModel);
+    public SearchPage(SearchPageViewModel viewModel) {
+        ViewModel = viewModel;
 
         DataContext = ViewModel;
 
         InitializeComponent();
     }
 
-    public void OnNavigatedTo()
-        => ViewModel.UpdateCommand.Execute(parameter: null);
+    private void ExecuteSearchHandler(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args) {
+        Dispatcher.InvokeAsync(() => ViewModel.ExecuteSearchCommand.ExecuteAsync(args.QueryText));
+    }
 
-    public void OnNavigatedFrom() { }
-
-    private void ExecuteSearchHandler(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
-        => Dispatcher.InvokeAsync(() => ViewModel.ExecuteSearchCommand.ExecuteAsync(new SearchTerm(args.QueryText, suggested: false)));
-
-    private void ExecuteSearchHandler(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
-        => Dispatcher.InvokeAsync(() => ViewModel.ExecuteSearchCommand.ExecuteAsync(new SearchTerm((string)args.SelectedItem, suggested: true)));
+    private void ExecuteSearchHandler(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args) {
+        Dispatcher.InvokeAsync(() => ViewModel.ExecuteSearchCommand.ExecuteAsync((string)args.SelectedItem));
+    }
 }

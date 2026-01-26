@@ -4,19 +4,18 @@
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:localization="clr-namespace:Nameless.InfoPhoenix.Client.Resources"
 
       x:Name="AppConfigurationPageRoot"
 
       mc:Ignorable="d" 
 
       Foreground="{DynamicResource TextFillColorPrimaryBrush}">
-
     <StackPanel Margin="24">
         <ui:TextBlock FontTypography="Title"
                       Margin="0 0 0 20"
-                      Text="Aparência &amp; Comportamento" />
-
-        <ui:CardControl Icon="{ui:ImageIcon '/Resources/branding/info_phoenix_64x64.png'}"
+                      Text="{x:Static localization:Strings.AppConfigurationPage_Title}" />
+        <ui:CardControl Icon="{ui:ImageIcon '/Resources/application_64x64.png'}"
                         Margin="0 0 0 10">
             <ui:CardControl.Header>
                 <Grid>
@@ -26,16 +25,16 @@
                     </Grid.RowDefinitions>
                     <ui:TextBlock FontTypography="BodyStrong"
                                   Grid.Row="0"
-                                  Text="Versão Atual" />
+                                  Text="{x:Static localization:Strings.AppConfigurationPage_VersionCard_Title}" />
                     <ui:TextBlock Grid.Row="1"
                                   Text="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.AppVersion, Mode=OneTime}" />
                 </Grid>
             </ui:CardControl.Header>
-            <ui:Anchor Appearance="Primary"
-                       Content="Verificar se há atualizações"
+            <ui:Button Appearance="Primary"
+                       Command="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.PerformSystemUpdateCommand, Mode=OneTime}"
+                       Content="{x:Static localization:Strings.AppConfigurationPage_VersionCard_Button_Caption}"
                        Cursor="Hand"
                        Icon="{ui:SymbolIcon Globe32}"
-                       NavigateUri="https://github.com/marcoaoteixeira/InfoPhoenix/releases"
                        Padding="30 8" />
         </ui:CardControl>
 
@@ -49,21 +48,20 @@
                     </Grid.RowDefinitions>
                     <ui:TextBlock FontTypography="BodyStrong"
                                   Grid.Row="0"
-                                  Text="Backup da Base de Dados" />
-                    <ui:TextBlock Grid.Row="1"
-                                  Text="Crie uma cópia da Base de Dados para evitar eventual perda de dados." />
+                                  Text="{x:Static localization:Strings.AppConfigurationPage_ApplicationBackupCard_Title}" />
+                    <ui:TextBlock Grid.Row="1" Text="{x:Static localization:Strings.AppConfigurationPage_ApplicationBackupCard_Message}" />
                 </Grid>
             </ui:CardControl.Header>
             <ui:Button Appearance="Success"
                        Cursor="Hand"
-                       Command="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.PerformApplicationDatabaseBackupCommand, Mode=OneTime}"
-                       Content="Criar Backup"
+                       Command="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.PerformApplicationBackupCommand, Mode=OneTime}"
+                       Content="{x:Static localization:Strings.AppConfigurationPage_ApplicationBackupCard_Button_Caption}"
                        Icon="{ui:SymbolIcon DatabaseMultiple20}"
                        Padding="30 8" />
         </ui:CardControl>
 
         <ui:CardControl Icon="{ui:SymbolIcon Color24}"
-                Margin="0 0 0 10">
+                        Margin="0 0 0 10">
             <ui:CardControl.Header>
                 <Grid>
                     <Grid.RowDefinitions>
@@ -72,9 +70,9 @@
                     </Grid.RowDefinitions>
                     <ui:TextBlock FontTypography="BodyStrong"
                                   Grid.Row="0"
-                                  Text="Tema da Aplicação" />
+                                  Text="{x:Static localization:Strings.AppConfigurationPage_ThemeCard_Title}" />
                     <ui:TextBlock Grid.Row="1"
-                                  Text="Selecione a aparência da aplicação" />
+                                  Text="{x:Static localization:Strings.AppConfigurationPage_ThemeCard_Message}" />
                 </Grid>
             </ui:CardControl.Header>
             <ComboBox Cursor="Hand"
@@ -94,13 +92,59 @@
                     </Grid.RowDefinitions>
                     <ui:TextBlock FontTypography="BodyStrong"
                                   Grid.Row="0"
-                                  Text="Confirmação ao Sair" />
+                                  Text="{x:Static localization:Strings.AppConfigurationPage_ExitBehaviorCard_Title}" />
                     <ui:TextBlock Grid.Row="1"
-                                  Text="Deseja que a aplicação sempre pergunte antes de sair?" />
+                                  Text="{x:Static localization:Strings.AppConfigurationPage_ExitBehaviorCard_Message}" />
                 </Grid>
             </ui:CardControl.Header>
             <CheckBox Cursor="Hand"
                       IsChecked="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.CurrentConfirmBeforeExit, Mode=TwoWay}" />
+        </ui:CardControl>
+
+        <ui:CardControl Icon="{ui:SymbolIcon FolderGlobe20}"
+                        Margin="0 0 0 10">
+            <ui:CardControl.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <ui:TextBlock FontTypography="BodyStrong"
+                                  Grid.Row="0"
+                                  Text="{x:Static localization:Strings.AppConfigurationPage_AppDirectoryPathCard_Title}" />
+                    <ui:TextBlock Grid.Row="1"
+                                  Text="{x:Static localization:Strings.AppConfigurationPage_AppDirectoryPathCard_Message}" />
+                </Grid>
+            </ui:CardControl.Header>
+            <ui:Button Appearance="Primary"
+                       Cursor="Hand"
+                       Command="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.OpenApplicationDataDirectoryCommand, Mode=OneTime}"
+                       Content="{x:Static localization:Strings.AppConfigurationPage_AppDirectoryPathCard_Button_Caption}"
+                       Icon="{ui:SymbolIcon Open48}"
+                       Padding="30 8" />
+        </ui:CardControl>
+
+        <ui:CardControl Icon="{ui:SymbolIcon CodeTextEdit20}"
+                        Margin="0 0 0 10">
+            <ui:CardControl.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <ui:TextBlock FontTypography="BodyStrong"
+                                  Grid.Row="0"
+                                  Text="{x:Static localization:Strings.AppConfigurationPage_ApplicationLogCard_Title}" />
+                    <ui:TextBlock Grid.Row="1"
+                                  Text="{x:Static localization:Strings.AppConfigurationPage_ApplicationLogCard_Message}" />
+                </Grid>
+            </ui:CardControl.Header>
+            <ui:Button Appearance="Primary"
+                       Cursor="Hand"
+                       Command="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.OpenApplicationLogFileCommand, Mode=OneTime}"
+                       Content="{x:Static localization:Strings.AppConfigurationPage_ApplicationLogCard_Button_Caption}"
+                       Icon="{ui:SymbolIcon Open48}"
+                       Padding="30 8" />
         </ui:CardControl>
 
         <ui:CardControl Icon="{ui:SymbolIcon History48}"
@@ -125,52 +169,6 @@
                       MinWidth="200" />
         </ui:CardControl>
 
-        <ui:CardControl Icon="{ui:SymbolIcon FolderGlobe20}"
-                        Margin="0 0 0 10">
-            <ui:CardControl.Header>
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <ui:TextBlock FontTypography="BodyStrong"
-                                  Grid.Row="0"
-                                  Text="Diretório de Dados da Aplicação" />
-                    <ui:TextBlock Grid.Row="1"
-                                  Text="Este é o diretório que contêm todos os dados da aplicação, bem como arquivos de configuração, suporte e logs." />
-                </Grid>
-            </ui:CardControl.Header>
-            <ui:Button Appearance="Primary"
-                       Cursor="Hand"
-                       Command="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.OpenApplicationDataDirectoryCommand, Mode=OneTime}"
-                       Content="Abrir"
-                       Icon="{ui:SymbolIcon Open48}"
-                       Padding="30 8" />
-        </ui:CardControl>
-
-        <ui:CardControl Icon="{ui:SymbolIcon CodeTextEdit20}"
-                        Margin="0 0 0 10">
-            <ui:CardControl.Header>
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <ui:TextBlock FontTypography="BodyStrong"
-                                  Grid.Row="0"
-                                  Text="Log da Aplicação" />
-                    <ui:TextBlock Grid.Row="1"
-                                  Text="Abrir o arquivo de log no editor padrão." />
-                </Grid>
-            </ui:CardControl.Header>
-            <ui:Button Appearance="Primary"
-                       Cursor="Hand"
-                       Command="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.OpenApplicationLogFileCommand, Mode=OneTime}"
-                       Content="Abrir"
-                       Icon="{ui:SymbolIcon Open48}"
-                       Padding="30 8" />
-        </ui:CardControl>
-
         <ui:CardControl Icon="{ui:SymbolIcon ShieldQuestion32}"
                         Margin="0 0 0 10">
             <ui:CardControl.Header>
@@ -192,4 +190,3 @@
 
     </StackPanel>
 </Page>
-

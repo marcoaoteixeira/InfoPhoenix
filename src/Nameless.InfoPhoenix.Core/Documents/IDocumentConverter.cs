@@ -1,7 +1,11 @@
-﻿using Nameless.Result;
+﻿using Nameless.InfoPhoenix.Office;
 
 namespace Nameless.InfoPhoenix.Documents;
 
 public interface IDocumentConverter {
-    Result<byte[]> Convert(string filePath);
+    DocumentType OutputType { get; }
+
+    bool CanConvert(DocumentType type);
+
+    Task<string> ConvertAsync(string filePath, CancellationToken cancellationToken);
 }

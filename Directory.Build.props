@@ -1,0 +1,54 @@
+<!--
+	We use this file to define properties and settings that are common across all
+	projects in the solution. Other properties or actions can be defined in this
+	file too, if they are common across all projects.
+	
+	You can learn more about here: https://learn.microsoft.com/en-us/visualstudio/msbuild/customize-by-directory?view=vs-2022
+-->
+
+<Project>
+	<!-- Boolean variables -->
+	<PropertyGroup>
+		<IsSrcProject>$([System.Text.RegularExpressions.Regex]::IsMatch($(MSBuildProjectFullPath), `[\\|\/]src[\\|\/]`))</IsSrcProject>
+		<IsTestsProject>$([System.Text.RegularExpressions.Regex]::IsMatch($(MSBuildProjectFullPath), `[\\|\/]tests[\\|\/]`))</IsTestsProject>
+
+		<EnableCodeAnalysis>False</EnableCodeAnalysis>
+		<EnableCodeAnalysis Condition="$(IsSrcProject) == 'True'">True</EnableCodeAnalysis>
+	</PropertyGroup>
+
+	<!-- All projects must include these properties. -->
+	<PropertyGroup>
+		<TargetFramework>net10.0-windows</TargetFramework>
+		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+		<LangVersion>latest</LangVersion>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<AssemblyVersion>1.0.0</AssemblyVersion>
+		<Version>1.0.0</Version>
+		<FileVersion>1.0.0</FileVersion>
+		<IsPackable>False</IsPackable>
+	</PropertyGroup>
+
+	<!-- All projects, except tests, must include these properties -->
+	<PropertyGroup Condition="$(IsTestsProject) == 'False'">
+		<UseWPF>true</UseWPF>
+		<AnalysisLevel>latest</AnalysisLevel>
+		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+		<EnableNETAnalyzers>True</EnableNETAnalyzers>
+		<RunAnalyzersDuringLiveAnalysis>True</RunAnalyzersDuringLiveAnalysis>
+		<RunAnalyzersDuringBuild>True</RunAnalyzersDuringBuild>
+	</PropertyGroup>
+
+	<!-- For test projects, use these properties -->
+	<PropertyGroup Condition="$(IsTestsProject)">
+		<Nullable>disable</Nullable>
+		<IsPackable>False</IsPackable>
+		<OutputType>Exe</OutputType>
+	</PropertyGroup>
+
+	<!-- Test projects must include these properties -->
+	<ItemGroup Condition="$(IsTestsProject)">
+		<Using Include="Xunit" />
+	</ItemGroup>
+</Project>

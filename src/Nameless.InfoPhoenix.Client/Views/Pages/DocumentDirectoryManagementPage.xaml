@@ -1,0 +1,51 @@
+﻿<Page x:Class="Nameless.InfoPhoenix.Client.Views.Pages.DocumentDirectoryManagementPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:loc="clr-namespace:Nameless.InfoPhoenix.Client.Resources"
+      xmlns:components="clr-namespace:Nameless.InfoPhoenix.Client.Views.Components"
+
+      x:Name="DocumentDirectoryManagementPageRoot"
+
+      mc:Ignorable="d" 
+
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}">
+    <StackPanel Margin="24">
+        <Grid Margin="0 0 0 20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <ui:TextBlock FontTypography="Title"
+                          Grid.Column="0"
+                          Text="{x:Static loc:Strings.DocumentDirectoryManagementPage_Title}" />
+
+            <ui:Button Appearance="Success"
+                       Command="{Binding ElementName=DocumentDirectoryManagementPageRoot, Path=ViewModel.CreateNewDocumentDirectoryCommand, Mode=OneTime}"
+                       Content="{x:Static loc:Strings.DocumentDirectoryManagementPage_CreateNewDocumentDirectoryButton_Caption}"
+                       Cursor="Hand"
+                       Foreground="#F5F5F5"
+                       Grid.Column="1"
+                       HorizontalAlignment="Right"
+                       Icon="{ui:SymbolIcon FolderAdd24}"
+                       Padding="30 8"/>
+        </Grid>
+
+        <ItemsControl ItemsSource="{Binding ElementName=DocumentDirectoryManagementPageRoot, Path=ViewModel.Entries, Mode=TwoWay}"
+                      Name="DocumentDirectoriesItemsControl">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <components:DisplayDocumentDirectoryUserControl DocumentDirectory="{Binding}"
+                                                                    DoubleClickCommand="{Binding ElementName=DocumentDirectoryManagementPageRoot, Path=ViewModel.DoubleClickDocumentDirectoryCommand}"
+                                                                    EditCommand="{Binding ElementName=DocumentDirectoryManagementPageRoot, Path=ViewModel.EditDocumentDirectoryCommand}"
+                                                                    FetchDocumentsCommand="{Binding ElementName=DocumentDirectoryManagementPageRoot, Path=ViewModel.FetchDocumentsForDocumentDirectoryCommand}"
+                                                                    IndexDocumentsCommand="{Binding ElementName=DocumentDirectoryManagementPageRoot, Path=ViewModel.IndexDocumentsInDocumentDirectoryCommand}"
+                                                                    OpenInExplorerCommand="{Binding ElementName=DocumentDirectoryManagementPageRoot, Path=ViewModel.OpenDocumentDirectoryInExplorerCommand}"
+                                                                    DeleteCommand="{Binding ElementName=DocumentDirectoryManagementPageRoot, Path=ViewModel.DeleteDocumentDirectoryCommand}" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </StackPanel>
+</Page>

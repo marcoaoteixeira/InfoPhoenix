@@ -1,4 +1,4 @@
-name: Development InfoPhoenix
+name: Development WPF Template
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
       - 'proposal/**'
 
 env:
-  SOLUTION: ".\\InfoPhoenix.sln"
+  SOLUTION: ".\\WPF.sln"
   CODE_COVERAGE_FOLDER_PATH: ".\\code-coverage\\"
   CODE_COVERAGE_COBERTURA_FILE_PATH: ".\\code-coverage\\**\\coverage.cobertura.xml"
   CODE_COVERAGE_REPORT_FOLDER_PATH: ".\\code-coverage\\report\\"
@@ -20,18 +20,18 @@ jobs:
 
     strategy:
       matrix:
-        dotnet-version: ["8.0.x"]
+        dotnet-version: ["9.0.x"]
 
     steps:
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4.1.0
+        uses: actions/setup-dotnet@v4.3.1
         with:
           dotnet-version: ${{ matrix.dotnet-version }}
 
       - name: Install Coverage Report Tool
         run: >
           dotnet tool install dotnet-reportgenerator-globaltool
-          --version 5.4.2
+          --version 5.4.12
           --global
 
       - name: Add GitHub Package Registry As NuGet Source
@@ -43,7 +43,7 @@ jobs:
           --name github ${{ vars.PACKAGE_SOURCE_URL_GITHUB }}
 
       - name: Checkout Source Code
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v5.0.0
 
       - name: Run Tests
         run: >
@@ -65,7 +65,7 @@ jobs:
           -reporttypes:Html
 
       - name: Upload Coverage Report (Artifacts)
-        uses: actions/upload-artifact@v4.5.0
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: coverage-report
           path: ${{ env.CODE_COVERAGE_REPORT_FOLDER_PATH }}

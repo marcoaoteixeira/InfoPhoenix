@@ -1,60 +1,47 @@
-﻿using System.Windows;
-using Nameless.Application;
-using Nameless.InfoPhoenix.Client.Views.Pages;
+﻿using Nameless.Infrastructure;
+using Nameless.WPF.Mvvm;
+using Nameless.WPF.Navigation;
 using Wpf.Ui.Controls;
 
 namespace Nameless.InfoPhoenix.Client.ViewModels.Windows;
 
-public sealed class MainWindowViewModel {
+public class MainWindowViewModel : ViewModel {
     private readonly IApplicationContext _applicationContext;
+    private readonly INavigationViewItemProvider _navigationViewItemProvider;
 
-    private bool _initialized;
+    private readonly Lazy<string> _appTitle;
+    private readonly Lazy<string> _appVersion;
+    private readonly Lazy<NavigationViewItem[]> _mainMenuItemsSource;
+    private readonly Lazy<NavigationViewItem[]> _footerMenuItemsSource;
 
-    public string AppTitle { get; private set; } = string.Empty;
-    public string AppVersion { get; private set; } = string.Empty;
-    public NavigationViewItem[] MenuItemsSource { get; private set; } = [];
-    public NavigationViewItem[] FooterMenuItemsSource { get; private set; } = [];
+    public string AppTitle => _appTitle.Value;
+    public string AppVersion => _appVersion.Value;
+    public NavigationViewItem[] MainMenuItemsSource => _mainMenuItemsSource.Value;
+    public NavigationViewItem[] FooterMenuItemsSource => _footerMenuItemsSource.Value;
 
-    public MainWindowViewModel(IApplicationContext applicationContext) {
-        _applicationContext = Prevent.Argument.Null(applicationContext);
+    public MainWindowViewModel(IApplicationContext applicationContext, INavigationViewItemProvider navigationViewItemProvider) {
+        _applicationContext = applicationContext;
+        _navigationViewItemProvider = navigationViewItemProvider;
 
-        Initialize();
+        _appTitle = new Lazy<string>(GetAppTitle);
+        _appVersion = new Lazy<string>(GetAppVersion);
+        _mainMenuItemsSource = new Lazy<NavigationViewItem[]>(GetMainMenuItemsSource);
+        _footerMenuItemsSource = new Lazy<NavigationViewItem[]>(GetFooterMenuItemsSource);
     }
 
-    private void Initialize() {
-        if (_initialized) { return; }
+    private NavigationViewItem[] GetMainMenuItemsSource() {
+        return _navigationViewItemProvider.GetMainItems().ToArray();
+    }
 
-        AppTitle = _applicationContext.AppName;
-        AppVersion = _applicationContext.Version;
+    private NavigationViewItem[] GetFooterMenuItemsSource() {
+        return _navigationViewItemProvider.GetFooterItems().ToArray();
+    }
 
-        MenuItemsSource = [
-            new NavigationViewItem {
-                Content = SearchPage.PageName,
-                Icon = new SymbolIcon { Symbol = SymbolRegular.DocumentSearch24 },
-                TargetPageType = typeof(SearchPage),
-                Margin = new Thickness(0, 0, 0, 10),
-                ToolTip = SearchPage.PageToolTip,
-                FontSize = 20
-            },
-            new NavigationViewItem {
-                Content = DocumentDirectoriesPage.PageName,
-                Icon = new SymbolIcon { Symbol = SymbolRegular.Folder48 },
-                TargetPageType = typeof(DocumentDirectoriesPage),
-                Margin = new Thickness(0, 0, 0, 10),
-                ToolTip = DocumentDirectoriesPage.PageToolTip,
-                FontSize = 20
-            }
-        ];
+    private string GetAppTitle() {
+        return _applicationContext.ApplicationName;
+    }
 
-        FooterMenuItemsSource = [
-            new NavigationViewItem {
-                Content = AppConfigurationPage.PageName,
-                Icon = new SymbolIcon { Symbol = SymbolRegular.Settings48 },
-                TargetPageType = typeof(AppConfigurationPage),
-                ToolTip = AppConfigurationPage.PageToolTip
-            }
-        ];
-
-        _initialized = true;
+    private string GetAppVersion() {
+        return _applicationContext.Version;
     }
 }

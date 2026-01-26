@@ -1,10 +1,53 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
 	<PropertyGroup>
 		<RootNamespace>Nameless.InfoPhoenix</RootNamespace>
 	</PropertyGroup>
-	<!-- Packages -->
+
 	<ItemGroup>
-		<PackageReference Include="Nameless.Core" Version="3.3.4" />
-		<PackageReference Include="Nameless.Result" Version="3.3.4" />
+		<PackageReference Include="FluentValidation" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+		<PackageReference Include="Nameless.Lucene" />
+		<PackageReference Include="Nameless.WPF" />
+		<PackageReference Include="PdfPig" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Reference Include="Interop.Microsoft.Office.Core">
+	    <HintPath>..\..\resources\libs\Interop.Microsoft.Office.Core.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Interop.Microsoft.Office.Interop.Word">
+	    <HintPath>..\..\resources\libs\Interop.Microsoft.Office.Interop.Word.dll</HintPath>
+	  </Reference>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Resources\Exceptions.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Exceptions.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Resources\Strings.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Strings.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Update="Resources\Exceptions.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>Exceptions.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Resources\Strings.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	</ItemGroup>
+
 </Project>

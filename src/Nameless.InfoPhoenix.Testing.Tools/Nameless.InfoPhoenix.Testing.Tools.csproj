@@ -1,0 +1,92 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<ItemGroup>
+		<None Remove="Resources\sample_docs\lorem_ipsum\Lorem_Ipsum.docx" />
+		<None Remove="Resources\sample_docs\poems\Invictus_Parapraph_01.docx" />
+		<None Remove="Resources\sample_docs\poems\Invictus_Parapraph_02.docx" />
+		<None Remove="Resources\sample_docs\poems\Invictus_Parapraph_03.docx" />
+		<None Remove="Resources\sample_docs\poems\Invictus_Parapraph_04.docx" />
+		<None Remove="Resources\sample_docs\proverbs\proverbs.doc" />
+		<None Remove="Resources\sample_docs\proverbs\proverbs.docx" />
+		<None Remove="Resources\sample_docs\proverbs\proverbs.pdf" />
+		<None Remove="Resources\sample_docs\proverbs\proverbs.rtf" />
+		<None Remove="Resources\sample_docs\proverbs\proverbs.txt" />
+		<None Remove="Resources\sample_docs\proverbs\proverbs.xps" />
+		<None Remove="Resources\sample_docs\stories\Horror.rtf" />
+		<None Remove="Resources\sample_docs\texts\Text_001\text_001.txt" />
+		<None Remove="Resources\sample_docs\texts\Text_002\text_002.txt" />
+		<None Remove="Resources\sample_docs\texts\Text_003\text_003.txt" />
+		<None Remove="Resources\sample_docs\texts\Text_004\text_004.txt" />
+		<None Remove="Resources\sample_docs\texts\Text_005\text_005.txt" />
+		<None Remove="Resources\sample_docs\texts\Text_006\text_006.txt" />
+		<None Remove="Resources\sample_docs\texts\Text_007\text_007.txt" />
+	</ItemGroup>
+	<ItemGroup>
+		<Content Include="Resources\sample_docs\lorem_ipsum\Lorem_Ipsum.docx">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Resources\sample_docs\poems\Invictus_Parapraph_01.docx">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Resources\sample_docs\poems\Invictus_Parapraph_02.docx">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Resources\sample_docs\poems\Invictus_Parapraph_03.docx">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Resources\sample_docs\poems\Invictus_Parapraph_04.docx">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Resources\sample_docs\proverbs\proverbs.doc">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Resources\sample_docs\proverbs\proverbs.docx">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Resources\sample_docs\proverbs\proverbs.pdf">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Resources\sample_docs\proverbs\proverbs.rtf">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Resources\sample_docs\proverbs\proverbs.txt">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Resources\sample_docs\proverbs\proverbs.xps">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Resources\sample_docs\stories\Horror.rtf">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Resources\sample_docs\texts\Text_001\text_001.txt">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Resources\sample_docs\texts\Text_002\text_002.txt">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Resources\sample_docs\texts\Text_003\text_003.txt">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Resources\sample_docs\texts\Text_004\text_004.txt">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Resources\sample_docs\texts\Text_005\text_005.txt">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Resources\sample_docs\texts\Text_006\text_006.txt">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Resources\sample_docs\texts\Text_007\text_007.txt">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+		<PackageReference Include="Nameless.Testing.Tools" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\Nameless.InfoPhoenix.Core\Nameless.InfoPhoenix.Core.csproj" />
+	</ItemGroup>
+</Project>

@@ -1,124 +1,120 @@
 ﻿using System.ComponentModel;
 using System.Windows.Media.Imaging;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Nameless.InfoPhoenix.Application;
-using Nameless.InfoPhoenix.Application.ErrorHandling;
-using Nameless.InfoPhoenix.Application.Notification;
 using Nameless.InfoPhoenix.Client.Notifications;
+using Nameless.InfoPhoenix.Client.Resources;
 using Nameless.InfoPhoenix.Client.ViewModels.Windows;
-using Nameless.InfoPhoenix.Client.Views.Pages;
-using Nameless.InfoPhoenix.Configuration;
-using Nameless.InfoPhoenix.Dialogs;
-using Nameless.InfoPhoenix.Domains.UseCases.Database.PerformBackup;
-using Nameless.InfoPhoenix.Domains.UseCases.DocumentDirectories.Indexing;
-using Nameless.InfoPhoenix.Domains.UseCases.DocumentDirectories.Save;
-using Nameless.InfoPhoenix.Domains.UseCases.DocumentDirectories.UpdateContent;
-using Nameless.InfoPhoenix.Domains.UseCases.Search;
-using Nameless.InfoPhoenix.Notification;
+using Nameless.InfoPhoenix.UseCases.DocumentDirectories.Create;
+using Nameless.InfoPhoenix.UseCases.DocumentDirectories.Update;
+using Nameless.WPF;
+using Nameless.WPF.Configuration;
+using Nameless.WPF.DependencyInjection;
+using Nameless.WPF.Dialogs.Message;
+using Nameless.WPF.Mvvm;
+using Nameless.WPF.Notifications;
+using Nameless.WPF.Snackbar;
+using Nameless.WPF.UseCases.SystemUpdate.Check;
 using Wpf.Ui;
+using Wpf.Ui.Abstractions;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
 
 namespace Nameless.InfoPhoenix.Client.Views.Windows;
 
-public partial class MainWindow : INavigationWindow, INotificationAware {
-    private readonly IAppConfigurationManager _appConfigurationContext;
+[ServiceLifetime(Lifetime = ServiceLifetime.Singleton)]
+public partial class MainWindow : INavigationWindow, IHasViewModel<MainWindowViewModel> {
+    private readonly IAppConfigurationManager _appConfigurationManager;
     private readonly IContentDialogService _contentDialogService;
-    private readonly IDialogService _dialogService;
+    private readonly IMessageDialog _messageDialog;
     private readonly INavigationService _navigationService;
+    private readonly INavigationViewPageProvider _navigationViewPageProvider;
     private readonly INotificationService _notificationService;
-    private readonly IPageService _pageService;
-    private readonly ISnackbarService _snackbarService;
+    private readonly ISnackbarService _snackBarService;
     private readonly ILogger<MainWindow> _logger;
 
     private bool _initialized;
 
     public MainWindowViewModel ViewModel { get; }
 
-    public MainWindow(MainWindowViewModel viewModel,
-                      IAppConfigurationManager appConfigurationContext,
-                      IContentDialogService contentDialogService,
-                      IDialogService dialogService,
-                      INavigationService navigationService,
-                      INotificationService notificationService,
-                      IPageService pageService,
-                      ISnackbarService snackbarService,
-                      ILogger<MainWindow> logger) {
-        ViewModel = Prevent.Argument.Null(viewModel);
+    public MainWindow(
+        MainWindowViewModel viewModel,
+        IAppConfigurationManager appConfigurationManager,
+        IContentDialogService contentDialogService,
+        IMessageDialog messageDialog,
+        INavigationService navigationService,
+        INavigationViewPageProvider navigationViewPageProvider,
+        INotificationService notificationService,
+        ISnackbarService snackBarService,
+        ILogger<MainWindow> logger) {
+
+        ViewModel = viewModel;
 
         DataContext = ViewModel;
 
-        _appConfigurationContext = Prevent.Argument.Null(appConfigurationContext);
-        _contentDialogService = Prevent.Argument.Null(contentDialogService);
-        _dialogService = Prevent.Argument.Null(dialogService);
-        _navigationService = Prevent.Argument.Null(navigationService);
-        _notificationService = Prevent.Argument.Null(notificationService);
-        _pageService = Prevent.Argument.Null(pageService);
-        _snackbarService = Prevent.Argument.Null(snackbarService);
-        _logger = Prevent.Argument.Null(logger);
+        _appConfigurationManager = appConfigurationManager;
+        _contentDialogService = contentDialogService;
+        _messageDialog = messageDialog;
+        _navigationService = navigationService;
+        _navigationViewPageProvider = navigationViewPageProvider;
+        _notificationService = notificationService;
+        _snackBarService = snackBarService;
+        _logger = logger;
 
         InitializeComponent();
-        Initialize();
+        InitializeWindow();
     }
 
-    public INavigationView GetNavigation()
-        => NavigationViewRoot;
-
-    public bool Navigate(Type pageType)
-        => GetNavigation().Navigate(pageType);
-
-    public void SetServiceProvider(IServiceProvider serviceProvider) { }
-
-    public void SetPageService(IPageService pageService)
-        => GetNavigation().SetPageService(pageService);
-
-    public void ShowWindow()
-        => Show();
-
-    public void CloseWindow()
-        => Close();
-
-    public void SubscribeForNotifications() {
-        _notificationService.Subscribe<ExceptionWardenNotification>(this, (_, notification) => SnackbarNotificationHandler(notification));
-
-        _notificationService.Subscribe<DocumentDirectorySavedNotification>(this, (_, notification) => SnackbarNotificationHandler(notification));
-        _notificationService.Subscribe<DatabaseBackupPerformedNotification>(this, (_, notification) => SnackbarNotificationHandler(notification));
-        _notificationService.Subscribe<DocumentDirectoryPathCopiedToClipboardNotification>(this, (_, notification) => SnackbarNotificationHandler(notification));
-        _notificationService.Subscribe<DocumentDirectoryMissingNotification>(this, (_, notification) => SnackbarNotificationHandler(notification));
-        _notificationService.Subscribe<DocumentDirectoryIndexedNotification>(this, (_, notification) => SnackbarNotificationHandler(notification));
-        _notificationService.Subscribe<UpdateDocumentDirectoryContentCompletedNotification>(this, (_, notification) => SnackbarNotificationHandler(notification));
-
-        _notificationService.Subscribe<SearchDocumentErrorNotification>(this, (_, notification) => SnackbarNotificationHandler(notification));
+    public INavigationView GetNavigation() {
+        return NavigationViewRoot;
     }
 
-    public void UnsubscribeFromNotifications() {
-        _notificationService.Unsubscribe<ExceptionWardenNotification>(this);
-
-        _notificationService.Unsubscribe<DocumentDirectorySavedNotification>(this);
-        _notificationService.Unsubscribe<DatabaseBackupPerformedNotification>(this);
-        _notificationService.Unsubscribe<DocumentDirectoryPathCopiedToClipboardNotification>(this);
-        _notificationService.Unsubscribe<DocumentDirectoryMissingNotification>(this);
-        _notificationService.Unsubscribe<DocumentDirectoryIndexedNotification>(this);
-        _notificationService.Unsubscribe<UpdateDocumentDirectoryContentCompletedNotification>(this);
-
-        _notificationService.Unsubscribe<SearchDocumentErrorNotification>(this);
+    public bool Navigate(Type pageType) {
+        return GetNavigation().Navigate(pageType);
     }
 
-    protected override void OnContentRendered(EventArgs args) {
-        base.OnContentRendered(args);
-
-        Navigate(typeof(SearchPage));
+    public void SetServiceProvider(IServiceProvider serviceProvider) {
+        throw new NotImplementedException();
     }
 
-    private void Initialize() {
+    public void SetPageService(INavigationViewPageProvider navigationViewPageProvider) {
+        GetNavigation().SetPageProviderService(navigationViewPageProvider);
+    }
+
+    public void ShowWindow() {
+        Show();
+    }
+
+    public void CloseWindow() {
+        Close();
+    }
+
+    private void ClosingHandler(object? _, CancelEventArgs args) {
+        if (!_appConfigurationManager.GetConfirmBeforeExit()) {
+            return;
+        }
+
+        var result = _messageDialog.ShowQuestion(
+            title: Strings.MainWindow_ConfirmApplicationExit_MessageBox_Title,
+            message: Strings.MainWindow_ConfirmApplicationExit_MessageBox_Message,
+            buttons: MessageDialogButtons.YesNoCancel);
+
+        if (result == MessageDialogResult.No) {
+            _appConfigurationManager.SetConfirmBeforeExit(false);
+        }
+
+        args.Cancel = result == MessageDialogResult.Cancel;
+    }
+
+    private void InitializeWindow() {
         if (_initialized) { return; }
-        
+
         SetApplicationTheme();
-        SetContentDialogPresenter();
-        SetMainWindowIcon();
-        SetNavigationPresenter();
-        SetPageService(_pageService);
-        SetSnackbarPresenter();
+        SetContentDialogHostRoot();
+        SetNavigationView();
+        SetPageService(_navigationViewPageProvider);
+        SetSnackBarPresenter();
+        SetWindowIcon();
         SubscribeForNotifications();
 
         _initialized = true;
@@ -126,40 +122,39 @@ public partial class MainWindow : INavigationWindow, INotificationAware {
 
     private void SetApplicationTheme() {
         SystemThemeWatcher.Watch(this);
-        var currentTheme = _appConfigurationContext.GetTheme();
-        ApplicationThemeManager.Apply(currentTheme.ToApplicationTheme());
+
+        var currentTheme = _appConfigurationManager.GetTheme()
+                                                   .ToApplicationTheme();
+
+        ApplicationThemeManager.Apply(currentTheme);
     }
 
-    private void SetContentDialogPresenter()
-        => _contentDialogService.SetDialogHost(ContentDialogRoot);
-
-    private void SetMainWindowIcon() {
-        try { Icon = new BitmapImage(new Uri("pack://application:,,,/Resources/branding/info_phoenix_64x64.png")); }
-        catch (Exception ex) { _logger.LogError(ex, "Could not load resource info_phoenix_64x64"); }
+    private void SetContentDialogHostRoot() {
+        _contentDialogService.SetDialogHost(ContentDialogHostRoot);
     }
 
-    private void SetNavigationPresenter()
-        => _navigationService.SetNavigationControl(NavigationViewRoot);
+    private void SetNavigationView() {
+        _navigationService.SetNavigationControl(NavigationViewRoot);
+    }
 
-    private void SetSnackbarPresenter()
-        => _snackbarService.SetSnackbarPresenter(SnackbarPresenterRoot);
-    
-    private void SnackbarNotificationHandler(NotificationBase notification)
-        => Dispatcher.InvokeAsync(() => _snackbarService.Show(notification.ToSnackbarParameters()));
+    private void SetSnackBarPresenter() {
+        _snackBarService.SetSnackbarPresenter(SnackbarPresenterRoot);
+    }
 
-    private void ClosingHandler(object? _, CancelEventArgs args) {
-        if (!_appConfigurationContext.GetConfirmBeforeExit()) {
-            return;
-        }
+    private void SetWindowIcon() {
+        try { Icon = new BitmapImage(new Uri("pack://application:,,,/Resources/application_64x64.png")); }
+        catch (Exception ex) { _logger.SetWindowIconFailure(ex); }
+    }
 
-        var result = _dialogService.ShowQuestion(title: "Sair",
-                                                 message: "Sempre perguntar ao sair do aplicativo?",
-                                                 buttons: DialogButtons.YesNoCancel);
+    private void SubscribeForNotifications() {
+        _notificationService.Subscribe<CheckForUpdateNotification>(this, ShowSnackBarNotification);
+        _notificationService.Subscribe<CreateNewDocumentDirectoryNotification>(this, ShowSnackBarNotification);
+        _notificationService.Subscribe<UpdateDocumentDirectoryNotification>(this, ShowSnackBarNotification);
+        _notificationService.Subscribe<DocumentDirectoryManagementNotification>(this, ShowSnackBarNotification);
 
-        if (result == Dialogs.DialogResult.No) {
-            _appConfigurationContext.SetConfirmBeforeExit(false);
-        }
+    }
 
-        args.Cancel = result == Dialogs.DialogResult.Cancel;
+    private void ShowSnackBarNotification(object sender, INotification notification) {
+        Dispatcher.Invoke(() => _snackBarService.Show(notification.ToSnackbarParameters()));
     }
 }
