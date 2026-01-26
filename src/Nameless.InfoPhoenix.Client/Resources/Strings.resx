@@ -123,8 +123,8 @@
   <data name="AppConfigurationPageViewModel_ExecuteSystemUpdateAsync_ConfirmDownload_MessageBox_Title" xml:space="preserve">
     <value>Nova Versão Disponível</value>
   </data>
-  <data name="AppConfigurationPageViewModel_PerformDatabaseBackup_TaskRunnerWindow_Title" xml:space="preserve">
-    <value>Executar Backup da Base de Dados</value>
+  <data name="AppConfigurationPageViewModel_PerformApplicationBackup_TaskRunnerWindow_Title" xml:space="preserve">
+    <value>Executar Backup dos Dados da Aplicação</value>
   </data>
   <data name="AppConfigurationPageViewModel_PerformSystemUpdate_TaskRunnerWindow_Title" xml:space="preserve">
     <value>Executar Atualização do Sistema</value>
@@ -147,14 +147,14 @@
   <data name="AppConfigurationPage_ApplicationLogCard_Title" xml:space="preserve">
     <value>Log da Aplicação</value>
   </data>
-  <data name="AppConfigurationPage_DatabaseBackupCard_Message" xml:space="preserve">
-    <value>Crie uma cópia da Base de Dados para evitar eventual perda de dados.</value>
+  <data name="AppConfigurationPage_ApplicationBackupCard_Message" xml:space="preserve">
+    <value>Crie uma cópia dos Dados da Aplicação para eventual arquivamento ou recuperação em caso de corrompimento de dados.</value>
   </data>
-  <data name="AppConfigurationPage_DatabaseBackupCard_Button_Caption" xml:space="preserve">
-    <value>Criar Backup da Base de Dados</value>
+  <data name="AppConfigurationPage_ApplicationBackupCard_Button_Caption" xml:space="preserve">
+    <value>Criar Backup dos Dados da Aplicação</value>
   </data>
-  <data name="AppConfigurationPage_DatabaseBackupCard_Title" xml:space="preserve">
-    <value>Backup da Base de Dados</value>
+  <data name="AppConfigurationPage_ApplicationBackupCard_Title" xml:space="preserve">
+    <value>Backup dos Dados da Aplicação</value>
   </data>
   <data name="AppConfigurationPage_ExitBehaviorCard_Message" xml:space="preserve">
     <value>Deseja que a aplicação sempre pergunte antes de sair?</value>

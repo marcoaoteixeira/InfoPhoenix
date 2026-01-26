@@ -9,6 +9,7 @@ using Nameless.InfoPhoenix.Testing.Tools.Mockers.Notifications;
 using Nameless.IO.FileSystem;
 using Nameless.Testing.Tools;
 using Nameless.Testing.Tools.Attributes;
+using Nameless.Testing.Tools.Helpers;
 using Nameless.Validation;
 using Nameless.WPF.Notifications;
 
@@ -30,7 +31,7 @@ public class FetchDocumentsForDocumentDirectoryRequestHandlerTests {
             opts.AllowOperationOutsideRoot = true;
             opts.Root = StaticData.ResourcesDirectoryPath;
         }));
-        validationService ??= new ValidationServiceMocker().WithValidateAsync(ValidationResult.Success())
+        validationService ??= new ValidationServiceMocker().WithValidateAsync(ValidationResult.Create())
                                                            .Build();
         logger ??= NullLogger<FetchDocumentsForDocumentDirectoryRequestHandler>.Instance;
 

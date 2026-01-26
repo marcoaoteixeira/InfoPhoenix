@@ -23,7 +23,7 @@ public class ListDocumentDirectoriesRequestHandler(
     public override async Task<ListDocumentDirectoriesResponse> HandleAsync(ListDocumentDirectoriesRequest request, CancellationToken cancellationToken) {
         var validationResult = await ValidationService.ValidateAsync(request, cancellationToken);
 
-        if (!validationResult.Succeeded) {
+        if (!validationResult.Success) {
             return validationResult.AsErrors();
         }
 

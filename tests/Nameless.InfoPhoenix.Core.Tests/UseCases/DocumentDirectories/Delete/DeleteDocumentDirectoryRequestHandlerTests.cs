@@ -23,7 +23,7 @@ public class DeleteDocumentDirectoryRequestHandlerTests {
 
         notificationService ??= new NotificationServiceMocker().Build();
         logger ??= NullLogger<DeleteDocumentDirectoryRequestHandler>.Instance;
-        validationService ??= new ValidationServiceMocker().WithValidateAsync(ValidationResult.Success())
+        validationService ??= new ValidationServiceMocker().WithValidateAsync(ValidationResult.Create())
                                                            .Build();
 
         return new DeleteDocumentDirectoryRequestHandler(

@@ -1,5 +1,8 @@
-﻿namespace Nameless.InfoPhoenix.UseCases.Index.Backup;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Nameless.InfoPhoenix.UseCases.Index.Backup;
 
 public readonly record struct PerformDocumentIndexBackupMetadata(string BackupFilePath) {
-    public bool IsBackupAvailable => !string.IsNullOrWhiteSpace(BackupFilePath);
+    [MemberNotNullWhen(returnValue: true, nameof(BackupFilePath))]
+    public bool IsBackupFileAvailable => !string.IsNullOrWhiteSpace(BackupFilePath);
 }

@@ -22,7 +22,7 @@ public class GetDocumentDirectoryRequestHandlerTests {
         ILogger<GetDocumentDirectoryRequestHandler> logger = null) {
 
         notificationService ??= new NotificationServiceMocker().Build();
-        validationService ??= new ValidationServiceMocker().WithValidateAsync(ValidationResult.Success())
+        validationService ??= new ValidationServiceMocker().WithValidateAsync(ValidationResult.Create())
                                                            .Build();
         logger ??= NullLogger<GetDocumentDirectoryRequestHandler>.Instance;
 

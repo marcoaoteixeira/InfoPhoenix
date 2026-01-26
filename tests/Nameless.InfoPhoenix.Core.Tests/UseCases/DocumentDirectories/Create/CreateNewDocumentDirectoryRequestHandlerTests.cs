@@ -20,7 +20,7 @@ public class CreateNewDocumentDirectoryRequestHandlerTests {
 
         notificationService ??= new NotificationServiceMocker().Build();
         logger ??= NullLogger<CreateNewDocumentDirectoryRequestHandler>.Instance;
-        validationService ??=  new ValidationServiceMocker().WithValidateAsync(ValidationResult.Success())
+        validationService ??=  new ValidationServiceMocker().WithValidateAsync(ValidationResult.Create())
                                                             .Build();
 
         return new CreateNewDocumentDirectoryRequestHandler(

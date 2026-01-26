@@ -5,12 +5,14 @@ using System.Windows;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Nameless.Bootstrap;
+using Nameless.Compression;
+using Nameless.Diagnostics;
 using Nameless.InfoPhoenix.Bootstrap.Steps;
 using Nameless.InfoPhoenix.Client.Views.Windows;
 using Nameless.InfoPhoenix.Data;
 using Nameless.InfoPhoenix.Documents;
 using Nameless.InfoPhoenix.Office;
-using Nameless.InfoPhoenix.Services;
 using Nameless.Infrastructure;
 using Nameless.IO.FileSystem;
 using Nameless.Lucene;
@@ -18,7 +20,6 @@ using Nameless.Mediator;
 using Nameless.Validation.FluentValidation;
 using Nameless.WPF;
 using Nameless.WPF.Behaviors;
-using Nameless.WPF.Bootstrap;
 using Nameless.WPF.Configuration;
 using Nameless.WPF.Dialogs.FileSystem;
 using Nameless.WPF.Dialogs.Message;
@@ -72,6 +73,7 @@ public partial class App {
     }
 
     private static void ConfigureServices(IServiceCollection services, IConfiguration configuration) {
+        // .NET 10 Framework
         services.AddOptions();
         services.ConfigureHttpClientDefaults(builder => {
             builder.ConfigureHttpClient((provider, client) => {
@@ -82,56 +84,67 @@ public partial class App {
                 client.DefaultRequestHeaders.UserAgent.Add(userAgent);
             });
         });
-        services.RegisterAppConfigurationManager();
-        services.RegisterAppDbContext(opts => {
-            opts.RegisterInterceptor<AuditableEntitySaveChangesInterceptor>();
-        });
+
+        // Nameless Libraries Services
         services.RegisterApplicationContext(opts => {
             opts.ApplicationName = Constants.Application.Name;
             opts.Version = typeof(App).Assembly.GetName().Version ?? new Version(1, 0, 0);
         });
-        services.RegisterBootstrapper(opts => {
-            opts.RegisterStep<InitializeDbContextStep>();
-            opts.RegisterStep<SeedDatabaseStep>();
-        });
-        services.RegisterContentDialogService();
-        services.RegisterFileSystemDialog();
-        services.RegisterMessageDialog();
-        services.RegisterDocumentServices(opts => {
-            opts.Assemblies = SupportAssemblies;
-        });
-        services.RegisterFileSystem(opts => opts.AllowOperationOutsideRoot = true);
-        services.RegisterGitHubHttpClient(configuration);
-        services.RegisterLogging();
+        services.RegisterBootstrap(opts
+            => opts.RegisterStep<InitializeDbContextStep>()
+                   .RegisterStep<SeedDatabaseStep>()
+                   .RegisterStep<MeaninglessStep>()
+        );
+        services.RegisterFileSystem(opts
+            => opts.AllowOperationOutsideRoot = true
+        );
         services.RegisterMediator(opts => {
             opts.Assemblies = SupportAssemblies;
             opts.RegisterRequestPipelineBehavior(typeof(ValidateRequestPipelineBehavior<,>))
                 .RegisterRequestPipelineBehavior(typeof(PerformanceRequestPipelineBehavior<,>));
         });
-        services.RegisterNavigation(opts => {
-            opts.Assemblies = SupportAssemblies;
-        });
+        services.RegisterValidation(opts
+            => opts.Assemblies = SupportAssemblies
+        );
+        services.RegisterLucene(opts
+            => opts.SetDirectoryName(
+                Path.Combine(Constants.Index.DirectoryName, Constants.Index.Name)
+            )
+        );
+        services.RegisterActivitySourceProvider();
+        services.RegisterZipArchiveService();
+
+        // Nameless WPF Library Services
+        services.RegisterAppConfigurationManager();
+        services.RegisterContentDialogService();
+        services.RegisterFileSystemDialog();
+        services.RegisterMessageDialog();
+        services.RegisterGitHubHttpClient(configuration);
         services.RegisterNotificationService();
-        services.RegisterOffice();
+        services.RegisterNavigation(opts
+            => opts.Assemblies = SupportAssemblies
+        );
         services.RegisterSnackbarService();
         services.RegisterTaskRunner();
+
+        // Nameless InfoPhoenix App Services
+        services.RegisterAppDbContext(opts => {
+            opts.RegisterInterceptor<AuditableEntitySaveChangesInterceptor>();
+        });
+        services.RegisterDocumentServices(opts => {
+            opts.Assemblies = SupportAssemblies;
+        });
+        services.RegisterLogging();
+        services.RegisterOffice();
         services.RegisterTimeProvider();
-        services.RegisterValidation(opts => {
-            opts.Assemblies = SupportAssemblies;
-        });
-        services.RegisterViewModels(opts => {
-            opts.Assemblies = SupportAssemblies;
-        });
-        services.RegisterWindowFactory(opts => {
-            opts.Assemblies = SupportAssemblies;
-        });
-        services.RegisterLucene(opts => opts.SetDirectoryName(
-            Path.Combine(Constants.Index.DirectoryName, Constants.Index.Name)
-        ));
-        services.RegisterZipService();
+        services.RegisterViewModels(opts
+            => opts.Assemblies = SupportAssemblies
+        );
+        services.RegisterWindowFactory(opts
+            => opts.Assemblies = SupportAssemblies
+        );
     }
 
-    // ReSharper disable once AsyncVoidMethod
     private static void OnHostStartup(IServiceProvider provider) {
         var main = provider.GetRequiredService<INavigationWindow>();
         var splashScreen = provider.GetRequiredService<ISplashScreenWindow>();

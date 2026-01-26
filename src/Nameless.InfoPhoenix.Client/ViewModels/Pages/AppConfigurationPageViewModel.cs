@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Nameless.InfoPhoenix.Client.Resources;
 using Nameless.InfoPhoenix.Configuration;
+using Nameless.InfoPhoenix.UseCases.Application.Backup;
 using Nameless.InfoPhoenix.UseCases.Database.Backup;
 using Nameless.InfoPhoenix.UseCases.Index.Backup;
 using Nameless.Infrastructure;
@@ -123,20 +124,13 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
     }
 
     [RelayCommand]
-    private Task PerformApplicationDatabaseBackupAsync() {
+    private Task PerformApplicationBackupAsync() {
         return _taskRunner.CreateBuilder()
-                          .SetName(Strings.AppConfigurationPageViewModel_PerformDatabaseBackup_TaskRunnerWindow_Title)
+                          .SetName(Strings.AppConfigurationPageViewModel_PerformApplicationBackup_TaskRunnerWindow_Title)
+                          .SubscribeFor<PerformApplicationBackupNotification>()
                           .SubscribeFor<PerformDatabaseBackupNotification>()
-                          .SetDelegate(PerformDatabaseBackupAsync)
-                          .RunAsync();
-    }
-
-    [RelayCommand]
-    private Task PerformApplicationDocumentIndexBackupAsync() {
-        return _taskRunner.CreateBuilder()
-                          .SetName("Backup do Indíce de Documentos")
-                          //.SubscribeFor<PerformDatabaseBackupNotification>()
-                          .SetDelegate(PerformDocumentIndexBackupAsync)
+                          .SubscribeFor<PerformDocumentIndexBackupNotification>()
+                          .SetDelegate(InnerPerformApplicationBackupAsync)
                           .RunAsync();
     }
 
@@ -170,13 +164,8 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
         _appConfigurationManager.SetEnableDocumentViewer(newValue);
     }
 
-    private async Task PerformDatabaseBackupAsync(CancellationToken cancellationToken) {
-        _ = await _mediator.ExecuteAsync(new PerformDatabaseBackupRequest(), cancellationToken)
-                           .SkipContextSync();
-    }
-
-    private async Task PerformDocumentIndexBackupAsync(CancellationToken cancellationToken) {
-        _ = await _mediator.ExecuteAsync(new PerformDocumentIndexBackupRequest(), cancellationToken)
+    private async Task InnerPerformApplicationBackupAsync(CancellationToken cancellationToken) {
+        _ = await _mediator.ExecuteAsync(new PerformApplicationBackupRequest(), cancellationToken)
                            .SkipContextSync();
     }
 

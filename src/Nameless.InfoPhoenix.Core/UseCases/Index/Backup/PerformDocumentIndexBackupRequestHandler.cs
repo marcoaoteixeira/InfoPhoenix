@@ -1,10 +1,10 @@
 ﻿using System.IO;
-using Microsoft.Extensions.Logging;
-using Nameless.InfoPhoenix.Services;
+using System.IO.Compression;
+using Nameless.Compression;
+using Nameless.Compression.Requests;
 using Nameless.IO.FileSystem;
 using Nameless.Lucene;
 using Nameless.Mediator.Requests;
-using Nameless.ObjectModel;
 using Nameless.WPF.Notifications;
 
 namespace Nameless.InfoPhoenix.UseCases.Index.Backup;
@@ -13,30 +13,21 @@ public class PerformDocumentIndexBackupRequestHandler : IRequestHandler<PerformD
     private readonly IFileSystem _fileSystem;
     private readonly IIndexProvider _indexProvider;
     private readonly INotificationService _notificationService;
-    private readonly TimeProvider _timeProvider;
     private readonly IZipArchiveService _zipArchiveService;
-    private readonly ILogger<PerformDocumentIndexBackupRequestHandler> _logger;
 
     public PerformDocumentIndexBackupRequestHandler(
         IFileSystem fileSystem,
         IIndexProvider indexProvider,
         INotificationService notificationService,
-        TimeProvider timeProvider,
-        IZipArchiveService zipArchiveService,
-        ILogger<PerformDocumentIndexBackupRequestHandler> logger) {
+        IZipArchiveService zipArchiveService) {
         _fileSystem = fileSystem;
         _indexProvider = indexProvider;
         _notificationService = notificationService;
-        _timeProvider = timeProvider;
         _zipArchiveService = zipArchiveService;
-        _logger = logger;
     }
 
     public async Task<PerformDocumentIndexBackupResponse> HandleAsync(PerformDocumentIndexBackupRequest request, CancellationToken cancellationToken) {
         await _notificationService.NotifyStartingAsync()
-                                  .SkipContextSync();
-
-        await _notificationService.NotifyClosingDocumentIndexFinishAsync()
                                   .SkipContextSync();
 
         // First, dispose the current index to ensure all data is flushed to disk.
@@ -45,32 +36,47 @@ public class PerformDocumentIndexBackupRequestHandler : IRequestHandler<PerformD
         _indexProvider.Get(Constants.Index.Name).Dispose();
 
         // Next, perform the backup operation.
-        var indexDirectory = _fileSystem.GetDirectory(Constants.Index.DirectoryName);
-        var backupDirectory = _fileSystem.GetDirectory(Constants.Application.Backup.DirectoryName);
-        var backupFileName = string.Format(Constants.Index.Backup.FileNamePattern, _timeProvider.GetUtcNow().UtcDateTime);
-        var backupFilePath = Path.Combine(backupDirectory.Path, backupFileName);
+        var sourceDirectoryPath = GetSourceDirectory();
+        var backupFilePath = GetBackupFilePath(request.BackupDate);
 
-        await _notificationService.NotifyCreatingBackupFileAsync()
-                                  .SkipContextSync();
-        try {
-            await _zipArchiveService.CompressDirectoryAsync(
-                indexDirectory.Path,
-                backupFilePath,
-                cancellationToken
-            ).SkipContextSync();
-        }
-        catch (Exception ex) {
-            await _notificationService.NotifyFailureAsync(ex.Message)
+        var compressArchiveRequest = new CompressArchiveRequest {
+            DestinationFilePath = $"{backupFilePath}{Constants.Application.Backup.FileExtension}",
+            CompressionLevel = CompressionLevel.Optimal
+        }.IncludeDirectory(sourceDirectoryPath);
+
+        var compressArchiveResponse = await _zipArchiveService.CompressAsync(compressArchiveRequest, cancellationToken)
+                                                              .SkipContextSync();
+
+        if (!compressArchiveResponse.Success) {
+            await _notificationService.NotifyFailureAsync(compressArchiveResponse.Errors[0].Message)
                                       .SkipContextSync();
 
-            _logger.ExecuteDocumentIndexBackupFailure(ex);
-
-            return Error.Failure(ex.Message);
+            return compressArchiveResponse.Errors[0];
         }
 
-        await _notificationService.NotifySuccessAsync(backupFilePath)
+        await _notificationService.NotifySuccessAsync(compressArchiveResponse.Value.FilePath)
                                   .SkipContextSync();
 
-        return new PerformDocumentIndexBackupMetadata(backupFilePath);
+        return new PerformDocumentIndexBackupMetadata(compressArchiveResponse.Value.FilePath);
+
+        string GetSourceDirectory() {
+            return _fileSystem.GetFullPath(
+                Path.Combine(Constants.Index.DirectoryName, Constants.Index.Name)
+            );
+        }
+
+        string GetBackupFilePath(DateTimeOffset backupDate) {
+            var backupFileName = string.Format(
+                Constants.Index.Backup.FileNamePattern,
+                backupDate
+            );
+
+            return _fileSystem.GetFullPath(
+                Path.Combine(
+                    Constants.Index.DirectoryName,
+                    backupFileName
+                )
+            );
+        }
     }
 }

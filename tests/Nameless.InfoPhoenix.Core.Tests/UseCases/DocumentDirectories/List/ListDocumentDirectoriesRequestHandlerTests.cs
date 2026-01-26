@@ -19,7 +19,7 @@ public class ListDocumentDirectoriesRequestHandlerTests {
         IValidationService validationService = null,
         ILogger<ListDocumentDirectoriesRequestHandler> logger = null) {
         notificationService ??= new NotificationServiceMocker().Build();
-        validationService ??= new ValidationServiceMocker().WithValidateAsync(ValidationResult.Success())
+        validationService ??= new ValidationServiceMocker().WithValidateAsync(ValidationResult.Create())
                                                            .Build();
         logger ??= NullLogger<ListDocumentDirectoriesRequestHandler>.Instance;
 

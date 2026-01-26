@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Logging;
 using Nameless.InfoPhoenix.Data;
 using Nameless.InfoPhoenix.DTOs;
-using Nameless.InfoPhoenix.Extensions;
 using Nameless.Lucene;
 using Nameless.ObjectModel;
 using Nameless.Validation;
@@ -28,7 +27,7 @@ public class SearchDocumentsRequestHandler : RequestHandlerBase<SearchDocumentsR
 
     public override async Task<SearchDocumentsResponse> HandleAsync(SearchDocumentsRequest request, CancellationToken cancellationToken) {
         var validationResult = await ValidationService.ValidateAsync(request, cancellationToken);
-        if (!validationResult.Succeeded) {
+        if (!validationResult.Success) {
             return validationResult.AsErrors();
         }
 
@@ -51,7 +50,7 @@ public class SearchDocumentsRequestHandler : RequestHandlerBase<SearchDocumentsR
                 limit: queryDefinition.Limit
             );
 
-            var response = await index.SearchDocumentsAsync(
+            var response = await index.SearchAsync(
                 searchDocumentsRequest,
                 cancellationToken
             ).SkipContextSync();
@@ -98,7 +97,7 @@ public class SearchDocumentsRequestHandler : RequestHandlerBase<SearchDocumentsR
             ) ?? throw new InvalidOperationException();
 
             var documentDirectoryDto = new DocumentDirectoryDto(documentDirectory) {
-                Documents = group.Select(item => item.ToDocumentDto()).ToArray(),
+                Documents = [.. group.Select(item => item.ToDocumentDto())],
                 DocumentCount = group.Count()
             };
 

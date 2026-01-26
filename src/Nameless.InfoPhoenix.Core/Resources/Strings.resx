@@ -123,47 +123,32 @@
   <data name="InitializeDbContextBootstrapStep_Name" xml:space="preserve">
     <value>Inicializar Contexto da Base de Dados</value>
   </data>
-  <data name="PerformDatabaseBackupNotification_BackupDatabase_Failure" xml:space="preserve">
-    <value>Ocorreu um erro ao executar o backup dos dados da base de dados. Erro: {0}</value>
+  <data name="PerformApplicationBackupNotification_Success" xml:space="preserve">
+    <value>Backup dos Dados da Aplicação foi concluído com sucesso. Localização do arquivo: {0}</value>
   </data>
-  <data name="PerformDatabaseBackupNotification_BackupDatabase_Finish" xml:space="preserve">
-    <value>Backup dos dados da base de dados concluído.</value>
+  <data name="PerformApplicationBackupNotification_Title" xml:space="preserve">
+    <value>Backup dos Dados da Aplicação</value>
   </data>
-  <data name="PerformDatabaseBackupNotification_BackupDatabase_Starting" xml:space="preserve">
-    <value>Iniciando o backup dos dados da base de dados...</value>
-  </data>
-  <data name="PerformDatabaseBackupNotification_PrepareBackupFile_Failure" xml:space="preserve">
-    <value>Ocorreu um erro durante a preparação do arquivo de backup da base de dados. Erro: {0}</value>
-  </data>
-  <data name="PerformDatabaseBackupNotification_PrepareBackupFile_Finish" xml:space="preserve">
-    <value>Preparação do arquivo de backup da base de dados concluído.</value>
-  </data>
-  <data name="PerformDatabaseBackupNotification_PrepareBackupFile_Starting" xml:space="preserve">
-    <value>Iniciando a preparação do arquivo de backup da base de dados...</value>
+  <data name="PerformDatabaseBackupNotification_Failure" xml:space="preserve">
+    <value>Ocorreu um erro ao executar o backup da Base de Dados. Erro: {0}</value>
   </data>
   <data name="PerformDatabaseBackupNotification_Success" xml:space="preserve">
-    <value>Backup da base de dados concluído com sucesso. O arquivo pode ser encontrado em: {0}</value>
+    <value>Backup da Base de Dados foi concluído com sucesso.</value>
   </data>
   <data name="PerformDatabaseBackupNotification_Title" xml:space="preserve">
-    <value>Realizando Backup da Base de Dados</value>
-  </data>
-  <data name="PerformDocumentIndexBackupNotification_ClosingDocumentIndex" xml:space="preserve">
-    <value>Fechando o Indíce de Documentos...</value>
-  </data>
-  <data name="PerformDocumentIndexBackupNotification_CreatingBackupFile" xml:space="preserve">
-    <value>Criando arquivo de backup...</value>
+    <value>Backup da Base de Dados</value>
   </data>
   <data name="PerformDocumentIndexBackupNotification_Failure" xml:space="preserve">
-    <value>Execução do backup do Indíce de Documentos finalizou com erro. Erro: {0}</value>
+    <value>Ocorreu um erro ao executar o backup do Indíce de Documentos. Erro: {0}</value>
   </data>
   <data name="PerformDocumentIndexBackupNotification_Starting" xml:space="preserve">
     <value>Iniciando backup do Indíce de Documentos...</value>
   </data>
   <data name="PerformDocumentIndexBackupNotification_Success" xml:space="preserve">
-    <value>Execução do backup do Indíce de Documentos finalizou com sucesso. Arquivo pode ser encontrado em {0}</value>
+    <value>Backup do Indíce de Documentos foi concluído com sucesso.</value>
   </data>
   <data name="PerformDocumentIndexBackupNotification_Title" xml:space="preserve">
-    <value>Realizando Backup do Indíce de Documentos</value>
+    <value>Backup do Indíce de Documentos</value>
   </data>
   <data name="SearchHistoryLimit_Large" xml:space="preserve">
     <value>Grande (100 entradas)</value>
@@ -176,5 +161,17 @@
   </data>
   <data name="SearchHistoryLimit_Small" xml:space="preserve">
     <value>Pequeno (25 entradas)</value>
+  </data>
+  <data name="PerformDatabaseBackupNotification_Starting" xml:space="preserve">
+    <value>Iniciando backup da Base de Dados...</value>
+  </data>
+  <data name="PerformApplicationBackupNotification_Failure" xml:space="preserve">
+    <value>Ocorreram erros durante a execução do backup dos dados da aplicação. Para mais informações consulte o log da aplicação.</value>
+  </data>
+  <data name="PerformApplicationBackupNotification_Starting" xml:space="preserve">
+    <value>Iniciando backup dos Dados da Aplicação...</value>
+  </data>
+  <data name="PerformApplicationBackupNotification_CleanUp" xml:space="preserve">
+    <value>Realizando limpeza de arquivos temporários...</value>
   </data>
 </root>

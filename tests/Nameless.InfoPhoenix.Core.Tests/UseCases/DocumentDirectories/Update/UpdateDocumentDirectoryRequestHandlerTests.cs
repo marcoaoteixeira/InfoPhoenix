@@ -23,7 +23,7 @@ public class UpdateDocumentDirectoryRequestHandlerTests {
         ILogger<UpdateDocumentDirectoryRequestHandler> logger = null) {
 
         notificationService ??= new NotificationServiceMocker().Build();
-        validationService ??= new ValidationServiceMocker().WithValidateAsync(ValidationResult.Success())
+        validationService ??= new ValidationServiceMocker().WithValidateAsync(ValidationResult.Create())
                                                            .Build();
         logger ??= NullLogger<UpdateDocumentDirectoryRequestHandler>.Instance;
 

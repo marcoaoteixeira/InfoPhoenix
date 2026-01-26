@@ -98,8 +98,4 @@
 		</EmbeddedResource>
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Internals\" />
-	</ItemGroup>
-
 </Project>

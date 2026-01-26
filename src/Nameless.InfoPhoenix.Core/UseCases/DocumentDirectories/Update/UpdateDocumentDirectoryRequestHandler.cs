@@ -22,7 +22,7 @@ public class UpdateDocumentDirectoryRequestHandler(
     public override async Task<UpdateDocumentDirectoryResponse> HandleAsync(UpdateDocumentDirectoryRequest request, CancellationToken cancellationToken) {
         var validationResult = await ValidationService.ValidateAsync(request, cancellationToken);
 
-        if (!validationResult.Succeeded) {
+        if (!validationResult.Success) {
             return validationResult.AsErrors();
         }
 

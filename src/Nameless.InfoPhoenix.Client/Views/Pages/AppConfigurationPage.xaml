@@ -48,37 +48,15 @@
                     </Grid.RowDefinitions>
                     <ui:TextBlock FontTypography="BodyStrong"
                                   Grid.Row="0"
-                                  Text="{x:Static localization:Strings.AppConfigurationPage_DatabaseBackupCard_Title}" />
-                    <ui:TextBlock Grid.Row="1" Text="{x:Static localization:Strings.AppConfigurationPage_DatabaseBackupCard_Message}" />
+                                  Text="{x:Static localization:Strings.AppConfigurationPage_ApplicationBackupCard_Title}" />
+                    <ui:TextBlock Grid.Row="1" Text="{x:Static localization:Strings.AppConfigurationPage_ApplicationBackupCard_Message}" />
                 </Grid>
             </ui:CardControl.Header>
             <ui:Button Appearance="Success"
                        Cursor="Hand"
-                       Command="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.PerformApplicationDatabaseBackupCommand, Mode=OneTime}"
-                       Content="{x:Static localization:Strings.AppConfigurationPage_DatabaseBackupCard_Button_Caption}"
+                       Command="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.PerformApplicationBackupCommand, Mode=OneTime}"
+                       Content="{x:Static localization:Strings.AppConfigurationPage_ApplicationBackupCard_Button_Caption}"
                        Icon="{ui:SymbolIcon DatabaseMultiple20}"
-                       Padding="30 8" />
-        </ui:CardControl>
-
-        <ui:CardControl Icon="{ui:SymbolIcon DatabaseSearch24}"
-                        Margin="0 0 0 10">
-            <ui:CardControl.Header>
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <ui:TextBlock FontTypography="BodyStrong"
-                                  Grid.Row="0"
-                                  Text="Backup do Indíce" />
-                    <ui:TextBlock Grid.Row="1" Text="Executar o backup do indíce de documentos." />
-                </Grid>
-            </ui:CardControl.Header>
-            <ui:Button Appearance="Success"
-                       Cursor="Hand"
-                       Command="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.PerformApplicationDocumentIndexBackupCommand, Mode=OneTime}"
-                       Content="Criar backup do indíce de documentos"
-                       Icon="{ui:SymbolIcon FolderZip24}"
                        Padding="30 8" />
         </ui:CardControl>
 

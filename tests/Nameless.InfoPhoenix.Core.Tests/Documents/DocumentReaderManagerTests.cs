@@ -12,7 +12,7 @@ public class DocumentReaderManagerTests {
         var documentReader = new DocumentReaderMocker().WithCanRead(true)
                                                        .WithGetContentAsync(Content)
                                                        .Build();
-        var sut = new DocumentService([documentReader]);
+        var sut = new DocumentService([documentReader], []);
 
         // act
         var actual = await sut.GetContentAsync("test.txt", CancellationToken.None);
@@ -24,7 +24,7 @@ public class DocumentReaderManagerTests {
     [Fact]
     public async Task WhenGettingContentAsync_WhenThereIsNoAReaderAvailable_ThenReturnsStringEmpty() {
         // arrange
-        var sut = new DocumentService([]);
+        var sut = new DocumentService([], []);
 
         // act
         var actual = await sut.GetContentAsync("test.txt", CancellationToken.None);
@@ -38,7 +38,7 @@ public class DocumentReaderManagerTests {
         // arrange
         var documentReader = new DocumentReaderMocker().WithCanRead(false)
                                                        .Build();
-        var sut = new DocumentService([documentReader]);
+        var sut = new DocumentService([documentReader], []);
 
         // act
         var actual = await sut.GetContentAsync("test.txt", CancellationToken.None);

@@ -15,74 +15,70 @@ namespace Nameless.InfoPhoenix.UseCases.Database.Backup;
 public class PerformDatabaseBackupRequestHandler : IRequestHandler<PerformDatabaseBackupRequest, PerformDatabaseBackupResponse> {
     private readonly IFileSystem _fileSystem;
     private readonly INotificationService _notificationService;
-    private readonly TimeProvider _timeProvider;
     private readonly IZipArchiveService _zipArchiveService;
     private readonly ILogger<PerformDatabaseBackupRequestHandler> _logger;
 
     public PerformDatabaseBackupRequestHandler(
         IFileSystem fileSystem,
         INotificationService notificationService,
-        TimeProvider timeProvider,
         IZipArchiveService zipArchiveService,
         ILogger<PerformDatabaseBackupRequestHandler> logger) {
         _fileSystem = fileSystem;
         _notificationService = notificationService;
-        _timeProvider = timeProvider;
         _zipArchiveService = zipArchiveService;
         _logger = logger;
     }
 
     public async Task<PerformDatabaseBackupResponse> HandleAsync(PerformDatabaseBackupRequest request, CancellationToken cancellationToken) {
-        EnsureApplicationBackupDirectory();
+        await _notificationService.NotifyStartingAsync()
+                                  .SkipContextSync();
 
-        var databaseDataBackupResult = await ExecuteDatabaseBackupAsync(cancellationToken);
+        var databaseDataBackupResult = await ExecuteDatabaseBackupAsync(
+            request.BackupDate,
+            cancellationToken
+        ).SkipContextSync();
 
         if (!databaseDataBackupResult.Success) {
             return databaseDataBackupResult.Errors[0];
         }
 
-        var backupFilePath = databaseDataBackupResult.Value;
         var prepareBackupFileResult = await PrepareBackupFileAsync(
-            backupFilePath,
+            databaseDataBackupResult.Value,
             cancellationToken
         ).SkipContextSync();
 
-        return await prepareBackupFileResult.Match(
-            onSuccess: OnSuccess,
-            onFailure: errors => OnFailure(errors[0])
+        if (!prepareBackupFileResult.Success) {
+            return prepareBackupFileResult.Errors[0];
+        }
+
+        await _notificationService.NotifySuccessAsync(
+            prepareBackupFileResult.Value
+        ).SkipContextSync();
+
+        return new PerformDatabaseBackupMetadata(
+            BackupFilePath: prepareBackupFileResult.Value
         );
     }
 
-    private void EnsureApplicationBackupDirectory() {
-        _fileSystem.GetDirectory(Constants.Application.Backup.DirectoryName).Create();
-    }
-
-    private async Task<Result<string>> ExecuteDatabaseBackupAsync(CancellationToken cancellationToken) {
+    private async Task<Result<string>> ExecuteDatabaseBackupAsync(DateTimeOffset backupDate, CancellationToken cancellationToken) {
         SqliteConnection? backupDbConnection = null;
         SqliteConnection? sourceDbConnection = null;
 
         try {
-            await _notificationService.NotifyDatabaseBackupStartingAsync()
-                                      .SkipContextSync();
-
             var sourceFilePath = GetSourceFilePath();
             sourceDbConnection = await CreateSqliteConnectionAsync(sourceFilePath, cancellationToken).SkipContextSync();
 
             var backupFilePath = GetBackupFilePath();
             backupDbConnection = await CreateSqliteConnectionAsync(backupFilePath, cancellationToken).SkipContextSync();
 
-            // Executes the backup
             sourceDbConnection.BackupDatabase(backupDbConnection);
-
-            await _notificationService.NotifyDatabaseBackupFinishAsync()
-                                      .SkipContextSync();
 
             return backupFilePath;
         }
         catch (Exception ex) {
             _logger.ExecuteDatabaseBackupFailure(ex);
 
-            await _notificationService.NotifyDatabaseBackupFailureAsync(ex.Message)
+            await _notificationService.NotifyFailureAsync(ex.Message)
                                       .SkipContextSync();
 
             return Error.Failure(ex.Message);
@@ -98,84 +94,63 @@ public class PerformDatabaseBackupRequestHandler : IRequestHandler<PerformDataba
                 await sourceDbConnection.DisposeAsync();
             }
         }
-    }
 
-    private string GetSourceFilePath() {
-        return _fileSystem.GetFullPath(
-            Path.Combine(
-                Constants.Database.DirectoryName,
-                Constants.Database.Name
-            )
-        );
-    }
+        string GetSourceFilePath() {
+            return _fileSystem.GetFullPath(
+                Path.Combine(
+                    Constants.Database.DirectoryName,
+                    Constants.Database.Name
+                )
+            );
+        }
 
-    private static async Task<SqliteConnection> CreateSqliteConnectionAsync(string filePath, CancellationToken cancellationToken) {
-        var connStr = string.Format(Constants.Database.ConnStrPattern, filePath);
-        var dbConnection = new SqliteConnection(connStr);
+        static async Task<SqliteConnection> CreateSqliteConnectionAsync(string filePath, CancellationToken cancellationToken) {
+            var connStr = string.Format(Constants.Database.ConnStrPattern, filePath);
+            var dbConnection = new SqliteConnection(connStr);
 
-        await dbConnection.OpenAsync(cancellationToken)
-                          .SkipContextSync();
+            await dbConnection.OpenAsync(cancellationToken)
+                              .SkipContextSync();
 
-        return dbConnection;
-    }
+            return dbConnection;
+        }
 
-    private string GetBackupFilePath() {
-        var now = _timeProvider.GetUtcNow();
-        var backupFileName = string.Format(
-            Constants.Database.Backup.FileNamePattern,
-            now
-        );
+        string GetBackupFilePath() {
+            var backupFileName = string.Format(
+                Constants.Database.Backup.FileNamePattern,
+                backupDate
+            );
 
-        return _fileSystem.GetFullPath(
-            Path.Combine(
-                Constants.Application.Backup.DirectoryName,
-                backupFileName
-            )
-        );
+            return _fileSystem.GetFullPath(
+                Path.Combine(
+                    Constants.Database.DirectoryName,
+                    backupFileName
+                )
+            );
+        }
     }
 
     private async Task<Result<string>> PrepareBackupFileAsync(string backupFilePath, CancellationToken cancellationToken) {
-        try {
-            await _notificationService.NotifyPrepareBackupFileStartingAsync()
-                                      .SkipContextSync();
+        var compressArchiveRequest = new CompressArchiveRequest {
+            DestinationFilePath = $"{backupFilePath}{Constants.Application.Backup.FileExtension}",
+            CompressionLevel = CompressionLevel.Optimal
+        }.IncludeFile(backupFilePath);
 
-            var compressArchiveRequest = new CompressArchiveRequest {
-                DestinationFilePath = $"{backupFilePath}{Constants.Application.Backup.FileExtension}",
-                CompressionLevel = CompressionLevel.Optimal
-            }.IncludeFile(backupFilePath);
+        var compressArchiveResponse = await _zipArchiveService.CompressAsync(
+            compressArchiveRequest,
+            cancellationToken
+        ).SkipContextSync();
 
-            var compressArchiveResponse = await _zipArchiveService.CompressAsync(compressArchiveRequest, cancellationToken)
-                                                                  .SkipContextSync();
+        if (!compressArchiveResponse.Success) {
+            await _notificationService.NotifyFailureAsync(
+                compressArchiveResponse.Errors[0].Message
+            ).SkipContextSync();
 
-            _fileSystem.GetFile(backupFilePath)
-                       .Delete();
-
-            await _notificationService.NotifyPrepareBackupFileFinishAsync()
-                                      .SkipContextSync();
-
-            return compressArchiveResponse.Match<Result<string>>(
-                onSuccess: value => value.FilePath,
-                onFailure: errors => errors
-            );
+            return compressArchiveResponse.Errors[0];
         }
-        catch (Exception ex) {
-            _logger.PrepareBackupFileFailure(ex);
 
-            await _notificationService.NotifyPrepareBackupFileFailureAsync(ex.Message)
-                                      .SkipContextSync();
+        _fileSystem.GetFile(backupFilePath)
+                   .Delete();
 
-            return Error.Failure(ex.Message);
-        }
-    }
-
-    private async Task<PerformDatabaseBackupResponse> OnSuccess(string backupFilePath) {
-        await _notificationService.NotifySuccessAsync(backupFilePath)
-                                  .SkipContextSync();
-
-        return new PerformDatabaseBackupMetadata(backupFilePath);
-    }
-
-    private static Task<PerformDatabaseBackupResponse> OnFailure(Error error) {
-        return Task.FromResult<PerformDatabaseBackupResponse>(error);
+        return compressArchiveResponse.Value.FilePath;
     }
 }

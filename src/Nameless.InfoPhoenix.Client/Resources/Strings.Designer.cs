@@ -88,6 +88,33 @@ namespace Nameless.InfoPhoenix.Client.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Criar Backup dos Dados da Aplicação.
+        /// </summary>
+        public static string AppConfigurationPage_ApplicationBackupCard_Button_Caption {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_ApplicationBackupCard_Button_Caption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Crie uma cópia dos Dados da Aplicação para eventual arquivamento ou recuperação em caso de corrompimento de dados..
+        /// </summary>
+        public static string AppConfigurationPage_ApplicationBackupCard_Message {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_ApplicationBackupCard_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Backup dos Dados da Aplicação.
+        /// </summary>
+        public static string AppConfigurationPage_ApplicationBackupCard_Title {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_ApplicationBackupCard_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Abrir Log da Aplicação.
         /// </summary>
         public static string AppConfigurationPage_ApplicationLogCard_Button_Caption {
@@ -111,33 +138,6 @@ namespace Nameless.InfoPhoenix.Client.Resources {
         public static string AppConfigurationPage_ApplicationLogCard_Title {
             get {
                 return ResourceManager.GetString("AppConfigurationPage_ApplicationLogCard_Title", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Criar Backup da Base de Dados.
-        /// </summary>
-        public static string AppConfigurationPage_DatabaseBackupCard_Button_Caption {
-            get {
-                return ResourceManager.GetString("AppConfigurationPage_DatabaseBackupCard_Button_Caption", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Crie uma cópia da Base de Dados para evitar eventual perda de dados..
-        /// </summary>
-        public static string AppConfigurationPage_DatabaseBackupCard_Message {
-            get {
-                return ResourceManager.GetString("AppConfigurationPage_DatabaseBackupCard_Message", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Backup da Base de Dados.
-        /// </summary>
-        public static string AppConfigurationPage_DatabaseBackupCard_Title {
-            get {
-                return ResourceManager.GetString("AppConfigurationPage_DatabaseBackupCard_Title", resourceCulture);
             }
         }
         
@@ -265,11 +265,11 @@ namespace Nameless.InfoPhoenix.Client.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Executar Backup da Base de Dados.
+        ///   Looks up a localized string similar to Executar Backup dos Dados da Aplicação.
         /// </summary>
-        public static string AppConfigurationPageViewModel_PerformDatabaseBackup_TaskRunnerWindow_Title {
+        public static string AppConfigurationPageViewModel_PerformApplicationBackup_TaskRunnerWindow_Title {
             get {
-                return ResourceManager.GetString("AppConfigurationPageViewModel_PerformDatabaseBackup_TaskRunnerWindow_Title", resourceCulture);
+                return ResourceManager.GetString("AppConfigurationPageViewModel_PerformApplicationBackup_TaskRunnerWindow_Title", resourceCulture);
             }
         }
         

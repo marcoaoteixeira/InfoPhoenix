@@ -1,4 +1,6 @@
 ﻿using System.Windows;
+using Microsoft.Extensions.Configuration;
+using Nameless.Bootstrap;
 using Nameless.Infrastructure;
 using Nameless.WPF.Bootstrap;
 using Nameless.WPF.Windows;
@@ -8,12 +10,18 @@ namespace Nameless.InfoPhoenix.Client.Views.Windows;
 public partial class SplashScreenWindow : ISplashScreenWindow {
     private readonly IApplicationContext _applicationContext;
     private readonly IBootstrapper _bootstrapper;
-    private readonly IProgress<BootstrapperProgressReport> _progress;
+    private readonly IConfiguration _configuration;
+    private readonly IProgress<StepReport> _progress;
 
-    public SplashScreenWindow(IApplicationContext applicationContext, IBootstrapper bootstrapper) {
+    public SplashScreenWindow(
+        IApplicationContext applicationContext,
+        IBootstrapper bootstrapper,
+        IConfiguration configuration) {
         _applicationContext = applicationContext;
         _bootstrapper = bootstrapper;
-        _progress = new Progress<BootstrapperProgressReport>(UpdateControls);
+        _configuration = configuration;
+
+        _progress = new Progress<StepReport>(UpdateControls);
 
         InitializeComponent();
         Initialize();
@@ -30,20 +38,30 @@ public partial class SplashScreenWindow : ISplashScreenWindow {
         ApplicationVersionTextBlock.Text = _applicationContext.Version;
     }
 
-    // ReSharper disable once AsyncVoidMethod
+    // ReSharper disable once AsyncVoidEventHandlerMethod
     private async void SplashScreenReady(object? sender, EventArgs e) {
-        _bootstrapper.SetProgress(_progress);
+        var flowContext = new FlowContext().SetStepProgress(_progress);
 
-        await _bootstrapper.ExecuteAsync(CancellationToken.None)
-                           .ContinueWith(_ => Dispatcher.Invoke(Close))
+        var timeout = GetBootstrapTimeout();
+        using var cts = new CancellationTokenSource(timeout);
+
+        await _bootstrapper.ExecuteAsync(flowContext, cts.Token)
+                           .ContinueWith(_ => Dispatcher.Invoke(Close), cts.Token)
                            .SkipContextSync();
     }
 
-    private void UpdateControls(BootstrapperProgressReport report) {
+    private void UpdateControls(StepReport report) {
         Dispatcher.Invoke(() => {
             StepNameTextBlock.Text = report.Title;
             StepMessageTextBlock.Text = report.Message;
         });
+    }
+
+    private int GetBootstrapTimeout() {
+        var value = _configuration.GetSection(nameof(Bootstrapper))
+                                  .Get<int>();
+
+        return value > 0 ? value : -1;
     }
 }
 

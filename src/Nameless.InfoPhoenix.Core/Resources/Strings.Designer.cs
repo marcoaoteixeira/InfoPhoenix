@@ -79,61 +79,70 @@ namespace Nameless.InfoPhoenix.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ocorreu um erro ao executar o backup dos dados da base de dados. Erro: {0}.
+        ///   Looks up a localized string similar to Realizando limpeza de arquivos temporários....
         /// </summary>
-        internal static string PerformDatabaseBackupNotification_BackupDatabase_Failure {
+        internal static string PerformApplicationBackupNotification_CleanUp {
             get {
-                return ResourceManager.GetString("PerformDatabaseBackupNotification_BackupDatabase_Failure", resourceCulture);
+                return ResourceManager.GetString("PerformApplicationBackupNotification_CleanUp", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Backup dos dados da base de dados concluído..
+        ///   Looks up a localized string similar to Ocorreram erros durante a execução do backup dos dados da aplicação. Para mais informações consulte o log da aplicação..
         /// </summary>
-        internal static string PerformDatabaseBackupNotification_BackupDatabase_Finish {
+        internal static string PerformApplicationBackupNotification_Failure {
             get {
-                return ResourceManager.GetString("PerformDatabaseBackupNotification_BackupDatabase_Finish", resourceCulture);
+                return ResourceManager.GetString("PerformApplicationBackupNotification_Failure", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Iniciando o backup dos dados da base de dados....
+        ///   Looks up a localized string similar to Iniciando backup dos Dados da Aplicação....
         /// </summary>
-        internal static string PerformDatabaseBackupNotification_BackupDatabase_Starting {
+        internal static string PerformApplicationBackupNotification_Starting {
             get {
-                return ResourceManager.GetString("PerformDatabaseBackupNotification_BackupDatabase_Starting", resourceCulture);
+                return ResourceManager.GetString("PerformApplicationBackupNotification_Starting", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ocorreu um erro durante a preparação do arquivo de backup da base de dados. Erro: {0}.
+        ///   Looks up a localized string similar to Backup dos Dados da Aplicação foi concluído com sucesso. Localização do arquivo: {0}.
         /// </summary>
-        internal static string PerformDatabaseBackupNotification_PrepareBackupFile_Failure {
+        internal static string PerformApplicationBackupNotification_Success {
             get {
-                return ResourceManager.GetString("PerformDatabaseBackupNotification_PrepareBackupFile_Failure", resourceCulture);
+                return ResourceManager.GetString("PerformApplicationBackupNotification_Success", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Preparação do arquivo de backup da base de dados concluído..
+        ///   Looks up a localized string similar to Backup dos Dados da Aplicação.
         /// </summary>
-        internal static string PerformDatabaseBackupNotification_PrepareBackupFile_Finish {
+        internal static string PerformApplicationBackupNotification_Title {
             get {
-                return ResourceManager.GetString("PerformDatabaseBackupNotification_PrepareBackupFile_Finish", resourceCulture);
+                return ResourceManager.GetString("PerformApplicationBackupNotification_Title", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Iniciando a preparação do arquivo de backup da base de dados....
+        ///   Looks up a localized string similar to Ocorreu um erro ao executar o backup da Base de Dados. Erro: {0}.
         /// </summary>
-        internal static string PerformDatabaseBackupNotification_PrepareBackupFile_Starting {
+        internal static string PerformDatabaseBackupNotification_Failure {
             get {
-                return ResourceManager.GetString("PerformDatabaseBackupNotification_PrepareBackupFile_Starting", resourceCulture);
+                return ResourceManager.GetString("PerformDatabaseBackupNotification_Failure", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Backup da base de dados concluído com sucesso. O arquivo pode ser encontrado em: {0}.
+        ///   Looks up a localized string similar to Iniciando backup da Base de Dados....
+        /// </summary>
+        internal static string PerformDatabaseBackupNotification_Starting {
+            get {
+                return ResourceManager.GetString("PerformDatabaseBackupNotification_Starting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Backup da Base de Dados foi concluído com sucesso..
         /// </summary>
         internal static string PerformDatabaseBackupNotification_Success {
             get {
@@ -142,7 +151,7 @@ namespace Nameless.InfoPhoenix.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Realizando Backup da Base de Dados.
+        ///   Looks up a localized string similar to Backup da Base de Dados.
         /// </summary>
         internal static string PerformDatabaseBackupNotification_Title {
             get {
@@ -151,25 +160,7 @@ namespace Nameless.InfoPhoenix.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Fechando o Indíce de Documentos....
-        /// </summary>
-        internal static string PerformDocumentIndexBackupNotification_ClosingDocumentIndex {
-            get {
-                return ResourceManager.GetString("PerformDocumentIndexBackupNotification_ClosingDocumentIndex", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Criando arquivo de backup....
-        /// </summary>
-        internal static string PerformDocumentIndexBackupNotification_CreatingBackupFile {
-            get {
-                return ResourceManager.GetString("PerformDocumentIndexBackupNotification_CreatingBackupFile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Execução do backup do Indíce de Documentos finalizou com erro. Erro: {0}.
+        ///   Looks up a localized string similar to Ocorreu um erro ao executar o backup do Indíce de Documentos. Erro: {0}.
         /// </summary>
         internal static string PerformDocumentIndexBackupNotification_Failure {
             get {
@@ -187,7 +178,7 @@ namespace Nameless.InfoPhoenix.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Execução do backup do Indíce de Documentos finalizou com sucesso. Arquivo pode ser encontrado em {0}.
+        ///   Looks up a localized string similar to Backup do Indíce de Documentos foi concluído com sucesso..
         /// </summary>
         internal static string PerformDocumentIndexBackupNotification_Success {
             get {
@@ -196,7 +187,7 @@ namespace Nameless.InfoPhoenix.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Realizando Backup do Indíce de Documentos.
+        ///   Looks up a localized string similar to Backup do Indíce de Documentos.
         /// </summary>
         internal static string PerformDocumentIndexBackupNotification_Title {
             get {
