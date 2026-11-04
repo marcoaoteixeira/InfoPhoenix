@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 using Microsoft.Extensions.Configuration;
 using Nameless.Configuration;
 using Nameless.InfoPhoenix.Client.Views.Windows;
@@ -125,16 +126,27 @@ public class SplashScreenWindowTests {
             var window = CreateWindow(bootstrapper);
             window.Closed += (_, _) => closed = true;
 
+            Exception? unhandled = null;
+            window.Dispatcher.UnhandledException += (_, e) => {
+                unhandled = e.Exception;
+                e.Handled = true;
+            };
+
             window.Show(WindowStartupLocation.CenterScreen);
 
             Assert.True(closed);
 
-            // Progress<T> posts its callback asynchronously (simulated here by calling it
-            // directly after Close() already ran). Landing on a closed window must be
-            // harmless; this test intentionally does not assert on the resulting text.
+            // Progress<T> posts its callback through the SynchronizationContext the harness
+            // installed (the same DispatcherSynchronizationContext production uses), so the
+            // call below only queues the post; pumping the dispatcher once afterwards is what
+            // actually runs it against the already-closed window. Landing there must be
+            // harmless; this test intentionally does not assert on the resulting text, only
+            // that nothing thrown by the queued callback escapes unobserved.
             var error = Record.Exception(() => capturedProgress!.Report(new StepProgress { StepName = "Late", Message = "Late" }));
+            window.Dispatcher.Invoke(() => { }, DispatcherPriority.Background);
 
             Assert.Null(error);
+            Assert.Null(unhandled);
         });
     }
 

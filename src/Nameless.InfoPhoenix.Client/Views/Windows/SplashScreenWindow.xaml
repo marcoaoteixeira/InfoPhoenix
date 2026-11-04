@@ -41,7 +41,7 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Image Grid.Column="0"
-                   Source="pack://application:,,,/Resources/imgs/application_64x64.png"
+                   Source="pack://application:,,,/Nameless.InfoPhoenix.Client;component/Resources/imgs/application_64x64.png"
                    VerticalAlignment="Center" />
 
             <TextBlock Grid.Column="1"
@@ -102,7 +102,7 @@
         <Image Grid.Column="1"
                Grid.Row="0"
                Grid.RowSpan="2"
-               Source="pack://application:,,,/Resources/imgs/splash_screen_256x256.png"
+               Source="pack://application:,,,/Nameless.InfoPhoenix.Client;component/Resources/imgs/splash_screen_256x256.png"
                VerticalAlignment="Center"
                HorizontalAlignment="Center" />
     </Grid>
