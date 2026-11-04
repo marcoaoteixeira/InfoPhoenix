@@ -1,0 +1,41 @@
+﻿<ui:FluentWindow x:Class="Nameless.InfoPhoenix.Client.Views.Windows.MainWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+
+                 x:Name="MainWindowRoot"
+
+                 mc:Ignorable="d"
+
+                 Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                 ExtendsContentIntoTitleBar="True"
+                 MinHeight="420"
+                 MinWidth="640"
+                 WindowBackdropType="Mica"
+                 WindowCornerPreference="Round"
+                 WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0"
+                     Name="TitleBarRoot"
+                     Title="{Binding ElementName=MainWindowRoot, Path=ViewModel.AppTitle}" />
+
+        <ui:NavigationView Grid.Row="1"
+                           FooterMenuItemsSource="{Binding ElementName=MainWindowRoot, Path=ViewModel.FooterMenuItemsSource}"
+                           MenuItemsSource="{Binding ElementName=MainWindowRoot, Path=ViewModel.MainMenuItemsSource}"
+                           Name="NavigationViewRoot"
+                           PaneDisplayMode="Left">
+            <ui:NavigationView.ContentOverlay>
+                <ui:SnackbarPresenter x:Name="SnackBarPresenterRoot" />
+            </ui:NavigationView.ContentOverlay>
+        </ui:NavigationView>
+
+        <ui:ContentDialogHost Grid.Row="1" x:Name="ContentDialogHostRoot" />
+    </Grid>
+</ui:FluentWindow>

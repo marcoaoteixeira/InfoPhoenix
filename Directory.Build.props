@@ -1,0 +1,60 @@
+<!--
+	We use this file to define properties and settings that are common across all
+	projects in the solution. Other properties or actions can be defined in this
+	file too, if they are common across all projects.
+	
+	You can learn more about here: https://learn.microsoft.com/en-us/visualstudio/msbuild/customize-by-directory?view=vs-2022
+-->
+
+<Project>
+	<!-- Boolean variables -->
+	<PropertyGroup>
+		<IsSrcProject>$([System.Text.RegularExpressions.Regex]::IsMatch($(MSBuildProjectFullPath), `[\\|\/]src[\\|\/]`))</IsSrcProject>
+		<IsTestsProject>$(MSBuildProjectFile.ToLower().EndsWith('.tests.csproj'))</IsTestsProject>
+
+		<EnableCodeAnalysis>False</EnableCodeAnalysis>
+		<EnableCodeAnalysis Condition="$(IsSrcProject) == 'True'">True</EnableCodeAnalysis>
+	</PropertyGroup>
+
+	<!-- All projects must include these properties. -->
+	<PropertyGroup>
+		<TargetFramework>net10.0-windows</TargetFramework>
+		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+		<AssemblyVersion>1.0.0</AssemblyVersion>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<IsPackable>False</IsPackable>
+		<LangVersion>latest</LangVersion>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<UseWPF>true</UseWPF>
+	</PropertyGroup>
+
+	<!-- Analyzers / warnings-as-errors apply to src/ projects only. -->
+	<PropertyGroup Condition="$(IsSrcProject) == 'True'">
+		<AnalysisLevel>latest</AnalysisLevel>
+		<EnableNETAnalyzers>True</EnableNETAnalyzers>
+		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+		<RunAnalyzersDuringBuild>True</RunAnalyzersDuringBuild>
+		<RunAnalyzersDuringLiveAnalysis>True</RunAnalyzersDuringLiveAnalysis>
+		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+	</PropertyGroup>
+
+	<ItemGroup Condition="$(IsSrcProject)">
+		<PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" />
+	</ItemGroup>
+
+	<!-- For test projects, use these properties -->
+	<PropertyGroup Condition="$(IsTestsProject)">
+		<IsPackable>False</IsPackable>
+		<OutputType>Exe</OutputType>
+		<GenerateDocumentationFile>False</GenerateDocumentationFile>
+		<NoWarn>$(NoWarn);CS1591</NoWarn>
+	</PropertyGroup>
+
+	<!-- Test projects must include these properties -->
+	<ItemGroup Condition="$(IsTestsProject)">
+		<Using Include="Xunit" />
+	</ItemGroup>
+</Project>
