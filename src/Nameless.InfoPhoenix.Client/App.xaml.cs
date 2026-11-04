@@ -57,7 +57,12 @@ public partial class App {
             provider.GetService<ITranslator>() ?? NullTranslator.Instance
         );
 
+        // Resolve `main` before the splash. If the splash were created or
+        // shown first, it would become `Application.MainWindow`, and
+        // closing it would shut the app down (default ShutdownMode).
         var main = provider.GetRequiredService<INavigationWindow>();
+
+        provider.GetRequiredService<ISplashScreenWindow>().Show(WindowStartupLocation.CenterScreen);
 
         main.ShowWindow();
 
