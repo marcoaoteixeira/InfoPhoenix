@@ -67,6 +67,10 @@ public class SplashScreenWindowTests {
             window.Show(WindowStartupLocation.CenterScreen);
 
             Assert.True(closed);
+            // Guards against ArmContentRendered's native-signal/forced-fallback race running
+            // SplashScreenReady (and therefore RunAsync) twice on a host where ContentRendered
+            // fires natively after the forced ContextIdle callback already ran.
+            Assert.Equal(1, bootstrapper.RunAsyncCallCount);
         });
     }
 
@@ -140,13 +144,16 @@ public class SplashScreenWindowTests {
             // installed (the same DispatcherSynchronizationContext production uses), so the
             // call below only queues the post; pumping the dispatcher once afterwards is what
             // actually runs it against the already-closed window. Landing there must be
-            // harmless; this test intentionally does not assert on the resulting text, only
-            // that nothing thrown by the queued callback escapes unobserved.
+            // harmless. Asserting the text below (rather than only "nothing threw") proves the
+            // late callback actually ran through the dispatcher - so this test still fails if a
+            // future change (e.g. reporting off the UI thread) stops exercising that path.
             var error = Record.Exception(() => capturedProgress!.Report(new StepProgress { StepName = "Late", Message = "Late" }));
             window.Dispatcher.Invoke(() => { }, DispatcherPriority.Background);
 
             Assert.Null(error);
             Assert.Null(unhandled);
+            Assert.Equal("Late", GetText(window, "StepNameTextBlock"));
+            Assert.Equal("Late", GetText(window, "StepMessageTextBlock"));
         });
     }
 
