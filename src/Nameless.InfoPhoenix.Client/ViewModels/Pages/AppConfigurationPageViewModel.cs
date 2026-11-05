@@ -1,3 +1,6 @@
+using System.Globalization;
+using System.IO;
+using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
@@ -8,13 +11,13 @@ using Nameless.InfoPhoenix.Client.Infrastructure;
 using Nameless.Mediator;
 using Nameless.Windows;
 using Nameless.Windows.AppConfiguration;
+using Nameless.Windows.Events;
 using Nameless.Windows.Helpers;
 using Nameless.Windows.Localization;
 using Nameless.Windows.Mvvm;
+using Nameless.Windows.Notification;
+using Nameless.Windows.Notification.SnackBar;
 using Nameless.Windows.UI;
-using System.Globalization;
-using System.IO;
-using System.Windows.Controls;
 using Wpf.Ui.Abstractions.Controls;
 
 namespace Nameless.InfoPhoenix.Client.ViewModels.Pages;
@@ -28,6 +31,7 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
     private readonly IAppConfigurationManager _appConfigurationManager;
     private readonly IApplicationContext _applicationContext;
     private readonly IApplicationThemeApplier _applicationThemeApplier;
+    private readonly IEventPublisher _eventPublisher;
     private readonly IMediator _mediator;
     private readonly ILogger<AppConfigurationPageViewModel> _logger;
 
@@ -71,20 +75,32 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
         IApplicationThemeApplier applicationThemeApplier,
         ITranslator translator,
         IMediator mediator,
+        IEventPublisher eventPublisher,
         ILogger<AppConfigurationPageViewModel> logger) {
         _appConfigurationManager = Throws.When.Null(appConfigurationManager);
         _applicationContext = Throws.When.Null(applicationContext);
         _applicationThemeApplier = Throws.When.Null(applicationThemeApplier);
+        _eventPublisher = Throws.When.Null(eventPublisher);
         _mediator = Throws.When.Null(mediator);
         _logger = Throws.When.Null(logger);
 
         T = Throws.When.Null(translator);
     }
 
-    public Task OnNavigatedToAsync() {
-        Initialize();
+    public async Task OnNavigatedToAsync() {
+        var recovered = Initialize();
 
-        return Task.CompletedTask;
+        if (!recovered) { return; }
+
+        // A failing notification must not break navigation (plan 2.3 step 5).
+        try {
+            await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
+                message: T["AppConfigurationPage_InvalidSettings_Message"],
+                title: T["AppConfigurationPage_InvalidSettings_Title"]);
+        }
+        catch (Exception ex) {
+            _logger.LogWarning(ex, "Failed to publish the application configuration recovery notification.");
+        }
     }
 
     public Task OnNavigatedFromAsync() {
@@ -103,23 +119,153 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
         await _mediator.ExecuteAsync(new OpenCurrentLogFileRequest(), cancellationToken);
     }
 
-    private void Initialize() {
-        if (_initialized) { return; }
+    /// <summary>
+    /// Reads and validates the stored settings (plan 2.3). Returns <see langword="true"/> when
+    /// recovery fired (any setting was invalid/unreadable, so all three were reset to
+    /// defaults), <see langword="false"/> on the happy path (absent counts as valid/default).
+    /// Guarded by <see cref="_initialized"/> so it runs once per VM instance (the VM is
+    /// transient, so once per navigation to the page).
+    /// </summary>
+    private bool Initialize() {
+        if (_initialized) { return false; }
 
         AppVersion = _applicationContext.Version;
 
-        var theme = _appConfigurationManager.Theme;
-        var culture = CultureResolver.TryGet(_appConfigurationManager.Language, out var resolved)
-            ? resolved
-            : CultureInfo.CurrentUICulture;
+        Theme theme;
+        CultureInfo language;
+        bool confirmBeforeExit;
+        var issues = new List<string>();
+
+        try {
+            theme = ReadTheme(issues);
+            language = ReadLanguage(issues);
+            confirmBeforeExit = ReadConfirmBeforeExit(issues);
+        }
+        catch (Exception ex) {
+            _logger.LogWarning(ex, "Application configuration is invalid or unreadable; resetting to defaults.");
+
+            Recover();
+
+            return true;
+        }
+
+        if (issues.Count > 0) {
+            _logger.LogWarning(
+                "Application configuration is invalid or unreadable; resetting to defaults. Affected settings: {Issues}",
+                string.Join(", ", issues));
+
+            Recover();
+
+            return true;
+        }
 
         CurrentTheme = theme.Find(AvailableThemes);
-        CurrentLanguage = culture.Find(AvailableLanguages);
-        CurrentConfirmBeforeExit = _appConfigurationManager.ConfirmBeforeExit;
+        CurrentLanguage = language.Find(AvailableLanguages);
+        CurrentConfirmBeforeExit = confirmBeforeExit;
 
         // Set after assigning the properties above, so the On<X>Changed
         // partials (guarded by this flag) never queue a save for initialization.
         _initialized = true;
+
+        return false;
+    }
+
+    /// <summary>
+    /// Resets all three settings to their defaults (AC2: never only the bad one), in the order
+    /// in-memory reset -> live apply -> VM assignment (plan 2.3 step 2b). Live apply and the VM
+    /// assignment always run, even when the reset could not be saved (a persistently
+    /// unreadable file, AC2 "no stuck/blank state").
+    /// </summary>
+    private void Recover() {
+        try {
+            _appConfigurationManager.Theme = Constants.AppConfiguration.Defaults.Theme;
+            _appConfigurationManager.Language = Constants.AppConfiguration.Defaults.Language;
+            _appConfigurationManager.ConfirmBeforeExit = Constants.AppConfiguration.Defaults.ConfirmBeforeExit;
+
+            QueueSave();
+        }
+        catch (Exception ex) {
+            _logger.LogWarning(ex, "Failed to reset application configuration to defaults; the reset will not be saved.");
+        }
+
+        _applicationThemeApplier.Apply(Constants.AppConfiguration.Defaults.Theme);
+        T.SetCulture(Constants.AppConfiguration.Defaults.Language);
+
+        CurrentTheme = Constants.AppConfiguration.Defaults.Theme.Find(AvailableThemes);
+        CurrentLanguage = CultureInfo.GetCultureInfo(Constants.AppConfiguration.Defaults.Language).Find(AvailableLanguages);
+        CurrentConfirmBeforeExit = Constants.AppConfiguration.Defaults.ConfirmBeforeExit;
+
+        // Set after assigning the properties above (same reason as Initialize's happy path).
+        _initialized = true;
+    }
+
+    /// <summary>
+    /// Absent counts as valid/default (plan 2.3 step 1-2): this is what keeps the happy path
+    /// (first run, or an empty <c>{}</c> file) free of false-positive recovery.
+    /// </summary>
+    private Theme ReadTheme(List<string> issues) {
+        var key = Constants.AppConfiguration.Keys.Theme;
+
+        if (!_appConfigurationManager.TryGet<object>(key, out _)) {
+            return Constants.AppConfiguration.Defaults.Theme;
+        }
+
+        if (!_appConfigurationManager.TryGet<Theme>(key, out var theme)) {
+            issues.Add($"{key}:WrongType");
+
+            return Constants.AppConfiguration.Defaults.Theme;
+        }
+
+        // ComboBoxItemHelper.EmptyComboBoxItem returns a new instance on every call (no value
+        // equality to compare against), so "not found" is detected through its Tag instead -
+        // every real entry in AvailableThemes/AvailableLanguages has a non-null Tag.
+        if (theme.Find(AvailableThemes).Tag is null) {
+            issues.Add($"{key}:Unsupported");
+
+            return Constants.AppConfiguration.Defaults.Theme;
+        }
+
+        return theme;
+    }
+
+    private CultureInfo ReadLanguage(List<string> issues) {
+        var key = Constants.AppConfiguration.Keys.Language;
+        var defaultCulture = CultureInfo.GetCultureInfo(Constants.AppConfiguration.Defaults.Language);
+
+        if (!_appConfigurationManager.TryGet<object>(key, out _)) {
+            return defaultCulture;
+        }
+
+        if (!_appConfigurationManager.TryGet<string>(key, out var isoCode)) {
+            issues.Add($"{key}:WrongType");
+
+            return defaultCulture;
+        }
+
+        if (!CultureResolver.TryGet(isoCode, out var culture)
+            || culture.Find(AvailableLanguages).Tag is null) {
+            issues.Add($"{key}:Unsupported");
+
+            return defaultCulture;
+        }
+
+        return culture;
+    }
+
+    private bool ReadConfirmBeforeExit(List<string> issues) {
+        var key = Constants.AppConfiguration.Keys.ConfirmBeforeExit;
+
+        if (!_appConfigurationManager.TryGet<object>(key, out _)) {
+            return Constants.AppConfiguration.Defaults.ConfirmBeforeExit;
+        }
+
+        if (!_appConfigurationManager.TryGet<bool>(key, out var confirmBeforeExit)) {
+            issues.Add($"{key}:WrongType");
+
+            return Constants.AppConfiguration.Defaults.ConfirmBeforeExit;
+        }
+
+        return confirmBeforeExit;
     }
 
     partial void OnCurrentThemeChanged(ComboBoxItem oldValue, ComboBoxItem newValue) {
@@ -131,7 +277,16 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
 
         _applicationThemeApplier.Apply(theme);
 
-        _appConfigurationManager.Theme = theme;
+        // Only the Set is guarded (plan 2.4): the live change already happened, and the combo
+        // keeps the user's choice even when a persistently unreadable file cannot save it.
+        try {
+            _appConfigurationManager.Theme = theme;
+        }
+        catch (Exception ex) {
+            _logger.LogWarning(ex, "Failed to persist the theme change; the change was applied but not saved.");
+
+            return;
+        }
 
         QueueSave();
     }
@@ -143,7 +298,14 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
 
         T.SetCulture(isoCode);
 
-        _appConfigurationManager.Language = isoCode;
+        try {
+            _appConfigurationManager.Language = isoCode;
+        }
+        catch (Exception ex) {
+            _logger.LogWarning(ex, "Failed to persist the language change; the change was applied but not saved.");
+
+            return;
+        }
 
         QueueSave();
     }
@@ -151,7 +313,14 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
     partial void OnCurrentConfirmBeforeExitChanged(bool oldValue, bool newValue) {
         if (!_initialized || oldValue == newValue) { return; }
 
-        _appConfigurationManager.ConfirmBeforeExit = newValue;
+        try {
+            _appConfigurationManager.ConfirmBeforeExit = newValue;
+        }
+        catch (Exception ex) {
+            _logger.LogWarning(ex, "Failed to persist the 'confirm before exit' change; the change was applied but not saved.");
+
+            return;
+        }
 
         QueueSave();
     }

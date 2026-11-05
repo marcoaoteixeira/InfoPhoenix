@@ -43,6 +43,7 @@ public class AppConfigurationPageTests {
                 new FakeApplicationThemeApplier(),
                 new FakeTranslator(),
                 new FakeMediator(),
+                new FakeEventPublisher(),
                 NullLogger<AppConfigurationPageViewModel>.Instance
             );
 
@@ -173,6 +174,7 @@ public class AppConfigurationPageTests {
             new FakeApplicationThemeApplier(),
             new FakeTranslator(),
             new FakeMediator(),
+            new FakeEventPublisher(),
             NullLogger<AppConfigurationPageViewModel>.Instance
         );
 

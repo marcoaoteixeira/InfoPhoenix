@@ -11,15 +11,33 @@ namespace Nameless.InfoPhoenix.Client.Tests.Fakes;
 internal sealed class FakeEventPublisher : IEventPublisher {
     public List<Event> PublishedEvents { get; } = [];
 
+    /// <summary>
+    /// Every active registration, in the order <see cref="Register{TEvent}"/> was called.
+    /// <see cref="Unregister{TEvent}"/> removes the matching entry. Needed now that
+    /// <c>MainWindow</c> registers for <c>SnackBarNotificationEvent</c> (plan 2.5/M1).
+    /// </summary>
+    public List<(Type EventType, object Subscriber, Delegate Handler)> Registrations { get; } = [];
+
+    /// <summary>
+    /// When set, every <see cref="PublishAsync{TEvent}"/> throws this instead of recording the
+    /// event - simulates a failing notification (plan 2.3 step 5/B14), which must not break the
+    /// caller that already applied/saved its change.
+    /// </summary>
+    public Exception? ThrowOnPublish { get; set; }
+
     public void Register<TEvent>(object subscriber, Action<object, TEvent> handler) where TEvent : Event {
-        throw new NotSupportedException();
+        Registrations.Add((typeof(TEvent), subscriber, handler));
     }
 
     public void Unregister<TEvent>(object subscriber) where TEvent : Event {
-        throw new NotSupportedException();
+        Registrations.RemoveAll(r => r.EventType == typeof(TEvent) && ReferenceEquals(r.Subscriber, subscriber));
     }
 
     public Task PublishAsync<TEvent>(TEvent @event) where TEvent : Event {
+        if (ThrowOnPublish is not null) {
+            throw ThrowOnPublish;
+        }
+
         PublishedEvents.Add(@event);
 
         return Task.CompletedTask;

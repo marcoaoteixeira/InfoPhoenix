@@ -1,9 +1,13 @@
 ﻿using System.ComponentModel;
+using Microsoft.Extensions.Logging;
 using Nameless.InfoPhoenix.Client.Infrastructure;
 using Nameless.InfoPhoenix.Client.ViewModels.Windows;
 using Nameless.Windows.AppConfiguration;
 using Nameless.Windows.Dialogs.Message;
+using Nameless.Windows.Events;
 using Nameless.Windows.Localization;
+using Nameless.Windows.Notification.SnackBar;
+using Nameless.Windows.UI;
 using Wpf.Ui;
 using Wpf.Ui.Abstractions;
 using Wpf.Ui.Controls;
@@ -14,6 +18,8 @@ public partial class MainWindow : INavigationWindow {
     private readonly IAppConfigurationManager _appConfigurationManager;
     private readonly IApplicationThemeApplier _applicationThemeApplier;
     private readonly IContentDialogService _contentDialogService;
+    private readonly IEventPublisher _eventPublisher;
+    private readonly ILogger<MainWindow> _logger;
     private readonly IMessageDialog _messageDialog;
     private readonly INavigationService _navigationService;
     private readonly INavigationViewPageProvider _navigationViewPageProvider;
@@ -34,6 +40,8 @@ public partial class MainWindow : INavigationWindow {
         IAppConfigurationManager appConfigurationManager,
         IApplicationThemeApplier applicationThemeApplier,
         IContentDialogService contentDialogService,
+        IEventPublisher eventPublisher,
+        ILogger<MainWindow> logger,
         ITranslator translator,
         IMessageDialog messageDialog,
         INavigationService navigationService,
@@ -42,6 +50,8 @@ public partial class MainWindow : INavigationWindow {
         _appConfigurationManager = appConfigurationManager;
         _applicationThemeApplier = applicationThemeApplier;
         _contentDialogService = contentDialogService;
+        _eventPublisher = eventPublisher;
+        _logger = logger;
         _messageDialog = messageDialog;
         _navigationService = navigationService;
         _navigationViewPageProvider = navigationViewPageProvider;
@@ -95,7 +105,7 @@ public partial class MainWindow : INavigationWindow {
     /// continuation needs the same thread to resume.
     /// </remarks>
     private async void ClosingHandler(object? sender, CancelEventArgs args) {
-        if (_closeConfirmed || !_appConfigurationManager.ConfirmBeforeExit) { return; }
+        if (_closeConfirmed || !TryReadConfirmBeforeExit()) { return; }
 
         var result = _messageDialog.ShowQuestion(
             title: T["MainWindow_ConfirmApplicationExit_MessageBox_Title"],
@@ -114,13 +124,16 @@ public partial class MainWindow : INavigationWindow {
         }
 
         args.Cancel = true;
-        _appConfigurationManager.ConfirmBeforeExit = false;
 
         try {
+            _appConfigurationManager.ConfirmBeforeExit = false;
+
             await _appConfigurationManager.SaveChangesAsync(CancellationToken.None);
-        } catch (Exception) {
-            // Unexpected failure: still honour the user's choice to close rather than
-            // leaving the app stuck with the close silently swallowed.
+        }
+        catch (Exception) {
+            // Unexpected failure (including a Set that throws on a persistently unreadable
+            // file, plan 2.2): still honour the user's choice to close rather than leaving the
+            // app stuck with the close silently swallowed.
         }
 
         _closeConfirmed = true;
@@ -135,13 +148,60 @@ public partial class MainWindow : INavigationWindow {
     private void InitializeWindow() {
         if (_initialized) { return; }
 
-        _applicationThemeApplier.Apply(this, _appConfigurationManager.Theme);
+        _applicationThemeApplier.Apply(this, TryReadTheme());
 
         _contentDialogService.SetDialogHost(ContentDialogHostRoot);
         _navigationService.SetNavigationControl(NavigationViewRoot);
         SetPageService(_navigationViewPageProvider);
         _snackBarService.SetSnackbarPresenter(SnackBarPresenterRoot);
 
+        SubscribeForNotifications();
+
         _initialized = true;
+    }
+
+    /// <summary>
+    /// Ports the sample's subscription (plan 2.5) - without it, no snackbar published through
+    /// <see cref="IEventPublisher"/> is ever shown, including this ticket's recovery
+    /// notification and IPX-0004's "missing log file" warning (a latent bug, required for AC1).
+    /// <c>MainWindow</c> is resolved once, before the splash, and lives for the whole process,
+    /// so no <c>Unregister</c> is needed.
+    /// </summary>
+    private void SubscribeForNotifications() {
+        _eventPublisher.Register<SnackBarNotificationEvent>(this, ShowNotificationInSnackBar);
+    }
+
+    private void ShowNotificationInSnackBar(object sender, SnackBarNotificationEvent evt) {
+        Dispatcher.InvokeAsync(() => _snackBarService.Show(evt));
+    }
+
+    /// <summary>
+    /// Guards the startup theme read (plan 2.2): an unreadable <c>app.config</c> must not crash
+    /// the app before the page can ever recover anything (plan risk "or the app").
+    /// </summary>
+    private Theme TryReadTheme() {
+        try {
+            return _appConfigurationManager.Theme;
+        }
+        catch (Exception ex) {
+            _logger.LogWarning(ex, "Failed to read the stored theme; falling back to the default.");
+
+            return Constants.AppConfiguration.Defaults.Theme;
+        }
+    }
+
+    /// <summary>
+    /// Guards the closing-time read (plan 2.2): on an unreadable manager, treat it as "do not
+    /// ask" so the window still closes rather than crashing the <c>async void</c> handler.
+    /// </summary>
+    private bool TryReadConfirmBeforeExit() {
+        try {
+            return _appConfigurationManager.ConfirmBeforeExit;
+        }
+        catch (Exception ex) {
+            _logger.LogWarning(ex, "Failed to read the stored 'confirm before exit' setting; closing without asking.");
+
+            return false;
+        }
     }
 }
