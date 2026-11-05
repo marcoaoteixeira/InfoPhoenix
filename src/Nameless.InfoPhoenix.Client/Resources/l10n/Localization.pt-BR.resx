@@ -51,6 +51,33 @@
 	<data name="AppConfigurationPage_ApplicationLanguageCard_Message" xml:space="preserve">
 		<value>Escolha o idioma utilizado em toda a aplicação.</value>
 	</data>
+	<data name="AppConfigurationPage_VersionCard_Button_Caption" xml:space="preserve">
+		<value>Verificar atualização</value>
+	</data>
+	<data name="AppConfigurationPage_ApplicationBackupCard_Title" xml:space="preserve">
+		<value>Cópia de segurança</value>
+	</data>
+	<data name="AppConfigurationPage_ApplicationBackupCard_Message" xml:space="preserve">
+		<value>Cria uma cópia de segurança dos dados da aplicação.</value>
+	</data>
+	<data name="AppConfigurationPage_ApplicationBackupCard_Button_Caption" xml:space="preserve">
+		<value>Criar cópia de segurança</value>
+	</data>
+	<data name="AppConfigurationPage_ApplicationRestoreCard_Title" xml:space="preserve">
+		<value>Restauração</value>
+	</data>
+	<data name="AppConfigurationPage_ApplicationRestoreCard_Message" xml:space="preserve">
+		<value>Restaura os dados da aplicação a partir de uma cópia de segurança.</value>
+	</data>
+	<data name="AppConfigurationPage_ApplicationRestoreCard_Button_Caption" xml:space="preserve">
+		<value>Restaurar cópia de segurança</value>
+	</data>
+	<data name="AppConfigurationPage_ComingSoon_Badge" xml:space="preserve">
+		<value>Em breve</value>
+	</data>
+	<data name="AppConfigurationPage_ComingSoon_Tooltip" xml:space="preserve">
+		<value>Ainda não disponível. Este recurso virá em uma versão futura.</value>
+	</data>
 	<data name="AppConfigurationPage_ThemeCard_Title" xml:space="preserve">
 		<value>Tema</value>
 	</data>

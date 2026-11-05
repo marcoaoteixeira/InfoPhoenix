@@ -16,7 +16,8 @@
                       Margin="0 0 0 20"
                       Text="{loc:Translator AppConfigurationPage_Title}" />
 
-        <ui:CardControl Icon="{ui:ImageIcon 'pack://application:,,,/Nameless.InfoPhoenix.Client;component/Resources/imgs/application_64x64.png'}"
+        <ui:CardControl Name="AppVersionCard"
+                        Icon="{ui:ImageIcon 'pack://application:,,,/Nameless.InfoPhoenix.Client;component/Resources/imgs/application_64x64.png'}"
                         Margin="0 0 0 10">
             <ui:CardControl.Header>
                 <Grid>
@@ -24,14 +25,29 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <ui:TextBlock FontTypography="BodyStrong"
-                                  Grid.Row="0"
-                                  Text="{loc:Translator AppConfigurationPage_VersionCard_Title}" />
+                    <StackPanel Grid.Row="0"
+                                Orientation="Horizontal">
+                        <ui:TextBlock FontTypography="BodyStrong"
+                                      Text="{loc:Translator AppConfigurationPage_VersionCard_Title}" />
+                        <ui:Badge Name="CheckForUpdateBadge"
+                                  Appearance="Info"
+                                  Content="{loc:Translator AppConfigurationPage_ComingSoon_Badge}"
+                                  Margin="8 0 0 0"
+                                  VerticalAlignment="Center" />
+                    </StackPanel>
                     <TextBlock Grid.Row="1"
                                Name="AppVersionTextBlock"
                                Text="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.AppVersion, Mode=OneTime}" />
                 </Grid>
             </ui:CardControl.Header>
+            <ui:Button Name="CheckForUpdateButton"
+                       Appearance="Primary"
+                       Icon="{ui:SymbolIcon Globe32}"
+                       Content="{loc:Translator AppConfigurationPage_VersionCard_Button_Caption}"
+                       Padding="30 8"
+                       IsEnabled="False"
+                       ToolTip="{loc:Translator AppConfigurationPage_ComingSoon_Tooltip}"
+                       ToolTipService.ShowOnDisabled="True" />
         </ui:CardControl>
 
         <ui:CardControl Icon="{ui:SymbolIcon LocalLanguage28}"
@@ -53,6 +69,72 @@
                       SelectedValue="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.CurrentLanguage, Mode=TwoWay}"
                       IsSynchronizedWithCurrentItem="True"
                       MinWidth="200" />
+        </ui:CardControl>
+
+        <ui:CardControl Name="ApplicationBackupCard"
+                        Icon="{ui:SymbolIcon DatabaseMultiple20}"
+                        Margin="0 0 0 10"
+                        IsEnabled="False"
+                        ToolTip="{loc:Translator AppConfigurationPage_ComingSoon_Tooltip}"
+                        ToolTipService.ShowOnDisabled="True">
+            <ui:CardControl.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0"
+                                Orientation="Horizontal">
+                        <ui:TextBlock FontTypography="BodyStrong"
+                                      Text="{loc:Translator AppConfigurationPage_ApplicationBackupCard_Title}" />
+                        <ui:Badge Name="ApplicationBackupBadge"
+                                  Appearance="Info"
+                                  Content="{loc:Translator AppConfigurationPage_ComingSoon_Badge}"
+                                  Margin="8 0 0 0"
+                                  VerticalAlignment="Center" />
+                    </StackPanel>
+                    <ui:TextBlock Grid.Row="1"
+                                  Text="{loc:Translator AppConfigurationPage_ApplicationBackupCard_Message}" />
+                </Grid>
+            </ui:CardControl.Header>
+            <ui:Button Name="ApplicationBackupButton"
+                       Appearance="Success"
+                       Icon="{ui:SymbolIcon DatabaseArrowDown20}"
+                       Content="{loc:Translator AppConfigurationPage_ApplicationBackupCard_Button_Caption}"
+                       Padding="30 8" />
+        </ui:CardControl>
+
+        <ui:CardControl Name="ApplicationRestoreCard"
+                        Icon="{ui:SymbolIcon DatabaseLightning20}"
+                        Margin="0 0 0 10"
+                        IsEnabled="False"
+                        ToolTip="{loc:Translator AppConfigurationPage_ComingSoon_Tooltip}"
+                        ToolTipService.ShowOnDisabled="True">
+            <ui:CardControl.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0"
+                                Orientation="Horizontal">
+                        <ui:TextBlock FontTypography="BodyStrong"
+                                      Text="{loc:Translator AppConfigurationPage_ApplicationRestoreCard_Title}" />
+                        <ui:Badge Name="ApplicationRestoreBadge"
+                                  Appearance="Info"
+                                  Content="{loc:Translator AppConfigurationPage_ComingSoon_Badge}"
+                                  Margin="8 0 0 0"
+                                  VerticalAlignment="Center" />
+                    </StackPanel>
+                    <ui:TextBlock Grid.Row="1"
+                                  Text="{loc:Translator AppConfigurationPage_ApplicationRestoreCard_Message}" />
+                </Grid>
+            </ui:CardControl.Header>
+            <ui:Button Name="ApplicationRestoreButton"
+                       Appearance="Success"
+                       Icon="{ui:SymbolIcon DatabaseArrowUp20}"
+                       Content="{loc:Translator AppConfigurationPage_ApplicationRestoreCard_Button_Caption}"
+                       Padding="30 8" />
         </ui:CardControl>
 
         <ui:CardControl Icon="{ui:SymbolIcon Color24}"

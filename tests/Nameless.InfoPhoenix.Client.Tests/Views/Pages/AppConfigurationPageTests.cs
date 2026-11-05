@@ -1,3 +1,4 @@
+using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nameless.InfoPhoenix.Client.Tests.Fakes;
@@ -57,5 +58,133 @@ public class AppConfigurationPageTests {
             Assert.IsType<TextBlock>(versionElement);
             Assert.IsNotType<TextBox>(versionElement);
         });
+    }
+
+    /// <summary>
+    /// AC1/AC2: the Backup and Restore cards and the Check-for-update button are present but
+    /// stubbed - disabled and bound to no command - so interacting with them cannot execute
+    /// anything (plan D2/D3, F1).
+    /// </summary>
+    [Theory]
+    [InlineData("ApplicationBackupCard")]
+    [InlineData("ApplicationRestoreCard")]
+    [InlineData("CheckForUpdateButton")]
+    public void StubElement_IsDisabledAndHasNoCommand(string elementName) {
+        StaWindowTestHarness.Run(() => {
+            var page = CreatePage();
+
+            var element = page.FindName(elementName);
+
+            Assert.NotNull(element);
+
+            var isEnabled = Assert.IsAssignableFrom<UIElement>(element).IsEnabled;
+            Assert.False(isEnabled);
+
+            var command = element switch {
+                Wpf.Ui.Controls.CardControl card => card.Command,
+                Wpf.Ui.Controls.Button button => button.Command,
+                _ => throw new InvalidOperationException($"Unexpected element type for '{elementName}': {element.GetType()}.")
+            };
+            Assert.Null(command);
+        });
+    }
+
+    /// <summary>
+    /// R1: a tooltip set without <c>ToolTipService.ShowOnDisabled="True"</c> never appears on a
+    /// disabled element, which would silently defeat the "coming soon" indicator (plan D4).
+    /// </summary>
+    [Theory]
+    [InlineData("ApplicationBackupCard")]
+    [InlineData("ApplicationRestoreCard")]
+    [InlineData("CheckForUpdateButton")]
+    public void StubElement_HasTooltipThatShowsWhileDisabled(string elementName) {
+        StaWindowTestHarness.Run(() => {
+            var page = CreatePage();
+
+            var element = Assert.IsAssignableFrom<FrameworkElement>(page.FindName(elementName));
+
+            Assert.NotNull(element.ToolTip);
+            Assert.True(ToolTipService.GetShowOnDisabled(element));
+        });
+    }
+
+    /// <summary>
+    /// AC2: the inner action button of each stub card has no command either, and is effectively
+    /// disabled through the disabled parent card (plan 2.3, T2).
+    /// </summary>
+    [Theory]
+    [InlineData("ApplicationBackupButton")]
+    [InlineData("ApplicationRestoreButton")]
+    public void StubCardInnerButton_HasNoCommandAndIsDisabled(string elementName) {
+        StaWindowTestHarness.Run(() => {
+            var page = CreatePage();
+
+            var button = Assert.IsType<Wpf.Ui.Controls.Button>(page.FindName(elementName));
+
+            Assert.Null(button.Command);
+            Assert.False(button.IsEnabled);
+        });
+    }
+
+    /// <summary>
+    /// AC1: the Version card itself stays enabled (IPX-0004 AC4: the version text must stay
+    /// readable) - only its Check-for-update button is disabled (plan D3).
+    /// </summary>
+    [Fact]
+    public void VersionCard_RemainsEnabled_WhileItsCheckForUpdateButtonIsDisabled() {
+        StaWindowTestHarness.Run(() => {
+            var page = CreatePage();
+
+            var versionCard = Assert.IsType<Wpf.Ui.Controls.CardControl>(page.FindName("AppVersionCard"));
+            var checkForUpdateButton = Assert.IsType<Wpf.Ui.Controls.Button>(page.FindName("CheckForUpdateButton"));
+
+            Assert.True(versionCard.IsEnabled);
+            Assert.False(checkForUpdateButton.IsEnabled);
+        });
+    }
+
+    /// <summary>
+    /// F2 complement: the "coming soon" badges resolve through the translator to the dedicated
+    /// key, not a hardcoded placeholder, so a language switch updates them like every other
+    /// localized string on the page.
+    /// </summary>
+    [Theory]
+    [InlineData("CheckForUpdateBadge")]
+    [InlineData("ApplicationBackupBadge")]
+    [InlineData("ApplicationRestoreBadge")]
+    public void StubBadge_ContentResolvesThroughTranslator(string badgeName) {
+        StaWindowTestHarness.Run(() => {
+            var page = CreatePage();
+
+            var badge = Assert.IsType<Wpf.Ui.Controls.Badge>(page.FindName(badgeName));
+
+            Assert.Equal("AppConfigurationPage_ComingSoon_Badge", badge.Content);
+        });
+    }
+
+    private static AppConfigurationPage CreatePage() {
+        // {loc:Translator} bindings resolve through this static translator during
+        // construction; the real one is only set up by App's host startup.
+        TranslatorExtension.SetTranslator(new FakeTranslator());
+
+        var viewModel = new AppConfigurationPageViewModel(
+            new FakeAppConfigurationManager(),
+            new FakeApplicationContext(),
+            new FakeApplicationThemeApplier(),
+            new FakeTranslator(),
+            new FakeMediator(),
+            NullLogger<AppConfigurationPageViewModel>.Instance
+        );
+
+        var page = new AppConfigurationPage(viewModel);
+
+        // IsEnabled only propagates from a disabled CardControl down to its content once the
+        // control's template is applied and its content joins the visual tree - a layout pass
+        // forces that, matching what showing the page in the real window does.
+        page.Measure(new Size(800, 600));
+        page.Arrange(new Rect(0, 0, 800, 600));
+        page.UpdateLayout();
+
+        return page;
     }
 }
