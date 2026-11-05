@@ -1,10 +1,13 @@
 using System.IO;
+using System.Linq;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nameless.InfoPhoenix.Client.Tests.Fakes;
 using Nameless.InfoPhoenix.Client.Tests.Views.Windows;
 using Nameless.InfoPhoenix.Client.ViewModels.Pages;
 using Nameless.IO.Physical;
 using Nameless.Windows.AppConfiguration;
+using Nameless.Windows.Notification.SnackBar;
+using Nameless.Windows.UI;
 
 namespace Nameless.InfoPhoenix.Client.Tests.ViewModels.Pages;
 
@@ -61,6 +64,54 @@ public sealed class AppConfigurationPageViewModelIntegrationTests : IDisposable 
         });
     }
 
+    /// <summary>
+    /// B18: the recovery path works end-to-end against the real <see cref="AppConfigurationManager"/>
+    /// - an unsupported stored value (<c>Theme</c> as a JSON number with no matching enum
+    /// member) publishes one Failure snackbar, and the reset round-trips through an actual
+    /// save (a new manager instance reads back the default <see cref="Theme.System"/>).
+    /// </summary>
+    [Fact]
+    public void OnNavigatedToAsync_WithAnUnsupportedStoredValue_RecoversAndPersistsTheDefault_OverTheRealManager() {
+        StaWindowTestHarness.Run(() => {
+            File.WriteAllText(Path.Combine(_rootDirectory, "app.config"), """{"Theme":999}""");
+
+            var manager = CreateManager();
+            var eventPublisher = new FakeEventPublisher();
+            var vm = CreateViewModel(manager, eventPublisher);
+
+            vm.OnNavigatedToAsync().GetAwaiter().GetResult();
+
+            Assert.Single(eventPublisher.PublishedEvents.OfType<SnackBarNotificationEvent>());
+
+            WaitForConfigFileToStopContaining("999");
+
+            var reloaded = CreateManager();
+            Assert.Equal(Theme.System, reloaded.Theme);
+        });
+    }
+
+    /// <summary>
+    /// B19 (documents accepted gap D-1): malformed JSON is swallowed by the real manager and
+    /// returns an empty dictionary, indistinguishable from a first run - so no snackbar
+    /// appears, but the app does not crash and the page shows the defaults.
+    /// </summary>
+    [Fact]
+    public void OnNavigatedToAsync_WithMalformedJson_ShowsDefaults_WithoutCrashingOrPublishing_D1Gap() {
+        StaWindowTestHarness.Run(() => {
+            File.WriteAllText(Path.Combine(_rootDirectory, "app.config"), "{{{");
+
+            var manager = CreateManager();
+            var eventPublisher = new FakeEventPublisher();
+            var vm = CreateViewModel(manager, eventPublisher);
+
+            var exception = Record.Exception(() => vm.OnNavigatedToAsync().GetAwaiter().GetResult());
+
+            Assert.Null(exception);
+            Assert.Empty(eventPublisher.PublishedEvents);
+            Assert.Equal(Theme.System, vm.CurrentTheme.Tag);
+        });
+    }
+
     private AppConfigurationManager CreateManager() {
         var applicationContext = new FakeApplicationContext {
             FileManager = new PhysicalFileManagerFactory().GetOrCreate(_rootDirectory)
@@ -69,16 +120,37 @@ public sealed class AppConfigurationPageViewModelIntegrationTests : IDisposable 
         return new AppConfigurationManager(applicationContext, NullLogger<AppConfigurationManager>.Instance);
     }
 
-    private static AppConfigurationPageViewModel CreateViewModel(IAppConfigurationManager manager) {
+    private static AppConfigurationPageViewModel CreateViewModel(
+        IAppConfigurationManager manager, FakeEventPublisher? eventPublisher = null) {
         return new AppConfigurationPageViewModel(
             manager,
             new FakeApplicationContext(),
             new FakeApplicationThemeApplier(),
             new FakeTranslator(),
             new FakeMediator(),
-            new FakeEventPublisher(),
+            eventPublisher ?? new FakeEventPublisher(),
             NullLogger<AppConfigurationPageViewModel>.Instance
         );
+    }
+
+    /// <summary>
+    /// Unlike <see cref="WaitForConfigFile"/> (which only waits for the file to exist), this
+    /// waits until a save actually overwrites the given marker - needed when the file is
+    /// pre-seeded by the test itself (B18), so its mere existence proves nothing about whether
+    /// the recovery's save has landed yet.
+    /// </summary>
+    private void WaitForConfigFileToStopContaining(string marker) {
+        var configFile = Path.Combine(_rootDirectory, "app.config");
+        var deadline = DateTime.UtcNow + TimeSpan.FromSeconds(5);
+
+        while (File.ReadAllText(configFile).Contains(marker, StringComparison.Ordinal) && DateTime.UtcNow < deadline) {
+            System.Windows.Threading.Dispatcher.CurrentDispatcher.Invoke(
+                () => { },
+                System.Windows.Threading.DispatcherPriority.Background
+            );
+        }
+
+        Assert.DoesNotContain(marker, File.ReadAllText(configFile));
     }
 
     private void WaitForConfigFile() {
