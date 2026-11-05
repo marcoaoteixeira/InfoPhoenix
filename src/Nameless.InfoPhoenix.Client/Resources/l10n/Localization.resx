@@ -110,6 +110,33 @@
 	<data name="AppConfigurationPage_ApplicationLanguageCard_Message" xml:space="preserve">
 		<value>Choose the language used across the application.</value>
 	</data>
+	<data name="AppConfigurationPage_VersionCard_Button_Caption" xml:space="preserve">
+		<value>Check for update</value>
+	</data>
+	<data name="AppConfigurationPage_ApplicationBackupCard_Title" xml:space="preserve">
+		<value>Backup</value>
+	</data>
+	<data name="AppConfigurationPage_ApplicationBackupCard_Message" xml:space="preserve">
+		<value>Create a backup of the application data.</value>
+	</data>
+	<data name="AppConfigurationPage_ApplicationBackupCard_Button_Caption" xml:space="preserve">
+		<value>Create backup</value>
+	</data>
+	<data name="AppConfigurationPage_ApplicationRestoreCard_Title" xml:space="preserve">
+		<value>Restore</value>
+	</data>
+	<data name="AppConfigurationPage_ApplicationRestoreCard_Message" xml:space="preserve">
+		<value>Restore the application data from a backup.</value>
+	</data>
+	<data name="AppConfigurationPage_ApplicationRestoreCard_Button_Caption" xml:space="preserve">
+		<value>Restore backup</value>
+	</data>
+	<data name="AppConfigurationPage_ComingSoon_Badge" xml:space="preserve">
+		<value>Coming soon</value>
+	</data>
+	<data name="AppConfigurationPage_ComingSoon_Tooltip" xml:space="preserve">
+		<value>Not available yet. This feature is coming in a future version.</value>
+	</data>
 	<data name="AppConfigurationPage_ThemeCard_Title" xml:space="preserve">
 		<value>Theme</value>
 	</data>
