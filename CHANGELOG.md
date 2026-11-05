@@ -29,6 +29,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   back to its default, applies the defaults immediately and shows a
   failure snackbar notification, instead of leaving the page stuck or
   blank. ([IPX-0006](https://github.com/marcoaoteixeira/InfoPhoenix/issues/15))
+- A working Backup button on the application configuration page: creates a
+  local backup archive (settings, database and search index) under
+  `backups\`, reporting progress and any missing-artifact warnings through
+  snackbar notifications, with the application configuration page's Backup
+  card enabled accordingly.
+  ([IPX-0009](https://github.com/marcoaoteixeira/InfoPhoenix/issues/25))
 
 ### Fixed
 
