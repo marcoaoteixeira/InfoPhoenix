@@ -21,6 +21,10 @@ public partial class MainWindow : INavigationWindow {
 
     private bool _initialized;
 
+    // Guards the re-entrant Close() call below: without it, the second pass through
+    // ClosingHandler would ask the "stop asking" question again.
+    private bool _closeConfirmed;
+
     private ITranslator T { get; }
 
     public MainWindowViewModel ViewModel { get; }
@@ -80,8 +84,18 @@ public partial class MainWindow : INavigationWindow {
     /// close, No also stops asking (clears the setting) and closes, Yes closes without
     /// changing the setting (plan task 7/A1, ported from the sample).
     /// </summary>
-    private void ClosingHandler(object? sender, CancelEventArgs args) {
-        if (!_appConfigurationManager.ConfirmBeforeExit) { return; }
+    /// <remarks>
+    /// On No, the "stop asking" change must be on disk before the process actually exits -
+    /// relying on <c>App.OnCurrentHostStop</c> is not enough, since <c>OnExit</c> is
+    /// <c>async void</c> and the process can end as soon as it hits its first incomplete
+    /// await, before that save's write lands. So this cancels the current close attempt,
+    /// awaits the save (the dispatcher is still alive here, unlike inside <c>OnExit</c>), then
+    /// re-triggers <see cref="Close"/> now that it is safely persisted. Never blocks with
+    /// <c>GetAwaiter().GetResult()</c> instead: that would deadlock the UI thread if the save's
+    /// continuation needs the same thread to resume.
+    /// </remarks>
+    private async void ClosingHandler(object? sender, CancelEventArgs args) {
+        if (_closeConfirmed || !_appConfigurationManager.ConfirmBeforeExit) { return; }
 
         var result = _messageDialog.ShowQuestion(
             title: T["MainWindow_ConfirmApplicationExit_MessageBox_Title"],
@@ -89,11 +103,23 @@ public partial class MainWindow : INavigationWindow {
             buttons: MessageDialogButtons.YesNoCancel
         );
 
-        if (result == MessageDialogResult.No) {
-            _appConfigurationManager.ConfirmBeforeExit = false;
+        if (result == MessageDialogResult.Cancel) {
+            args.Cancel = true;
+            return;
         }
 
-        args.Cancel = result == MessageDialogResult.Cancel;
+        if (result != MessageDialogResult.No) {
+            // Yes: close without changing the setting.
+            return;
+        }
+
+        args.Cancel = true;
+        _appConfigurationManager.ConfirmBeforeExit = false;
+
+        await _appConfigurationManager.SaveChangesAsync(CancellationToken.None);
+
+        _closeConfirmed = true;
+        Close();
     }
 
     private void InitializeWindow() {

@@ -75,8 +75,16 @@ public class MainWindowTests {
         });
     }
 
+    /// <summary>
+    /// The first pass must cancel this close attempt (not let it through immediately): the fix
+    /// for the "No" choice being lost on most exits (review round 1, finding 1) relies on
+    /// awaiting the save on the UI thread before re-triggering <see cref="System.Windows.Window.Close"/>,
+    /// which is only possible if the current attempt is cancelled first. See
+    /// <c>ClosingHandler_WhenConfirmBeforeExitIsTrue_AndUserPicksNo_WaitsForTheSaveBeforeClosingAgain</c>
+    /// below for proof the window actually waits.
+    /// </summary>
     [Fact]
-    public void ClosingHandler_WhenConfirmBeforeExitIsTrue_AndUserPicksNo_StopsAskingAndCloses() {
+    public void ClosingHandler_WhenConfirmBeforeExitIsTrue_AndUserPicksNo_CancelsThisAttempt_ThenSavesAndClosesWithoutAskingAgain() {
         StaWindowTestHarness.Run(() => {
             var manager = new FakeAppConfigurationManager { ConfirmBeforeExit = true };
             var messageDialog = new FakeMessageDialog { ResultToReturn = MessageDialogResult.No };
@@ -85,10 +93,48 @@ public class MainWindowTests {
             var args = new CancelEventArgs();
             InvokeClosingHandler(window, args);
 
-            Assert.False(args.Cancel);
+            Assert.True(args.Cancel);
             Assert.False(manager.ConfirmBeforeExit);
+            Assert.Equal(1, manager.SaveChangesAsyncCallCount);
+            // The re-entrant Close() this triggers must not ask again.
+            Assert.Equal(1, messageDialog.ShowCount);
+        });
+    }
 
-            window.Close();
+    /// <summary>
+    /// Manual QA note (not automatable without a real restart): pick "No" on a build with
+    /// ConfirmBeforeExit on, then relaunch the app and confirm it does not ask again - proving
+    /// the save actually lands on disk before the process exits, not just in memory.
+    /// </summary>
+    [Fact]
+    public void ClosingHandler_WhenConfirmBeforeExitIsTrue_AndUserPicksNo_WaitsForTheSaveBeforeClosingAgain() {
+        StaWindowTestHarness.Run(() => {
+            var manager = new FakeAppConfigurationManager { ConfirmBeforeExit = true };
+            var saveGate = new TaskCompletionSource();
+            manager.OnSaveChangesAsync = _ => saveGate.Task;
+            var messageDialog = new FakeMessageDialog { ResultToReturn = MessageDialogResult.No };
+            var window = CreateWindow(manager: manager, messageDialog: messageDialog);
+
+            var closed = false;
+            window.Closed += (_, _) => closed = true;
+
+            var args = new CancelEventArgs();
+            InvokeClosingHandler(window, args);
+
+            Assert.True(args.Cancel);
+            Assert.False(closed);
+
+            saveGate.SetResult();
+
+            // The continuation resumes through the dispatcher; pump the queue until the
+            // re-entrant Close() actually runs.
+            var deadline = DateTime.UtcNow + TimeSpan.FromSeconds(5);
+            while (!closed && DateTime.UtcNow < deadline) {
+                System.Windows.Threading.Dispatcher.CurrentDispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Background);
+            }
+
+            Assert.True(closed);
+            Assert.Equal(1, messageDialog.ShowCount);
         });
     }
 
@@ -224,10 +270,12 @@ public class MainWindowTests {
     private sealed class FakeMessageDialog : IMessageDialog {
         public MessageDialogResult ResultToReturn { get; set; } = MessageDialogResult.Ok;
 
-        public bool WasShown { get; private set; }
+        public bool WasShown => ShowCount > 0;
+
+        public int ShowCount { get; private set; }
 
         public MessageDialogResult Show(string message, Action<MessageDialogOptions> configure) {
-            WasShown = true;
+            ShowCount++;
 
             return ResultToReturn;
         }
