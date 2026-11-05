@@ -135,9 +135,11 @@ public class AppConfigurationPageTests {
         StaWindowTestHarness.Run(() => {
             var page = CreatePage();
 
-            var versionCard = Assert.IsType<TextBlock>(page.FindName("AppVersionTextBlock"));
+            var versionCard = Assert.IsType<Wpf.Ui.Controls.CardControl>(page.FindName("AppVersionCard"));
+            var checkForUpdateButton = Assert.IsType<Wpf.Ui.Controls.Button>(page.FindName("CheckForUpdateButton"));
 
             Assert.True(versionCard.IsEnabled);
+            Assert.False(checkForUpdateButton.IsEnabled);
         });
     }
 
