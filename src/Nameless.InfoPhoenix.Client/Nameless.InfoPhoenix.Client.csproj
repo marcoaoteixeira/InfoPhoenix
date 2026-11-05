@@ -12,6 +12,8 @@
 	<ItemGroup>
 		<None Remove="appsettings.json" />
 		<None Remove="Resources\xaml\ValidationResourceDictionary.xaml" />
+		<None Remove="Resources\imgs\application_64x64.png" />
+		<None Remove="Resources\imgs\splash_screen_256x256.png" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -25,6 +27,8 @@
 			<SubType>Designer</SubType>
 			<Generator>MSBuild:Compile</Generator>
 		</Resource>
+		<Resource Include="Resources\imgs\application_64x64.png" />
+		<Resource Include="Resources\imgs\splash_screen_256x256.png" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -34,6 +38,21 @@
 		<PackageReference Include="Nameless.Windows" />
 		<PackageReference Include="Serilog.Formatting.Compact" />
 		<PackageReference Include="Serilog.Sinks.File" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Resources\l10n\Localization.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Localization.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Update="Resources\l10n\Localization.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>Localization.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
 	</ItemGroup>
 
 </Project>

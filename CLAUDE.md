@@ -13,6 +13,11 @@ Test project (mirrors main project): `Nameless.InfoPhoenix.Client.Tests`
 
 See `README.md` for release info, contribution and issue-filing process.
 
+## Dev-Team Detected Facts
+
+- Stack: backend `dotnet` (marker: `src/Nameless.InfoPhoenix.Client/Nameless.InfoPhoenix.Client.csproj`), no separate frontend (WPF UI is part of the dotnet project) — detected 2026-11-04 by stack-detection. Delete this line to force re-detection.
+- Tracker: `github-issues` (evidence: `gh auth status` + `gh project list --owner marcoaoteixeira` succeed; no github MCP connected, operations go through `gh` CLI directly) — detected 2026-11-04 by tracker-detection. Delete this line to force re-detection.
+
 ## Stack
 
 - C# — latest stable language version, most modern idioms available
