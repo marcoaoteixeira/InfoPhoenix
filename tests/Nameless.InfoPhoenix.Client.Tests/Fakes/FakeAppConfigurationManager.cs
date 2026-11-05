@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Nameless.Windows.AppConfiguration;
 
 namespace Nameless.InfoPhoenix.Client.Tests.Fakes;
@@ -18,7 +19,7 @@ internal sealed class FakeAppConfigurationManager : IAppConfigurationManager {
 
     public int SaveChangesAsyncCallCount { get; private set; }
 
-    public bool TryGet<TValue>(string key, [System.Diagnostics.CodeAnalysis.MaybeNull] out TValue value) {
+    public bool TryGet<TValue>(string key, [NotNullWhen(true)] out TValue? value) {
         if (_values.TryGetValue(key, out var stored) && stored is TValue typed) {
             value = typed;
             return true;

@@ -116,10 +116,20 @@ public partial class MainWindow : INavigationWindow {
         args.Cancel = true;
         _appConfigurationManager.ConfirmBeforeExit = false;
 
-        await _appConfigurationManager.SaveChangesAsync(CancellationToken.None);
+        try {
+            await _appConfigurationManager.SaveChangesAsync(CancellationToken.None);
+        } catch (Exception) {
+            // Unexpected failure: still honour the user's choice to close rather than
+            // leaving the app stuck with the close silently swallowed.
+        }
 
         _closeConfirmed = true;
-        Close();
+
+        // Queue the re-entrant Close() instead of calling it inline: if the save above
+        // completed synchronously, WPF is still inside this Closing event, and calling
+        // Close() again right now throws InvalidOperationException ("a Window is closing").
+        // Dispatching it defers the call until this Closing event has fully unwound.
+        _ = Dispatcher.BeginInvoke(Close);
     }
 
     private void InitializeWindow() {

@@ -138,6 +138,41 @@ public class MainWindowTests {
         });
     }
 
+    /// <summary>
+    /// Review round 2 finding: if <c>SaveChangesAsync</c> completes synchronously (e.g. the
+    /// real <c>AppConfigurationManager</c> swallowing an I/O failure and returning an
+    /// already-completed task), calling <see cref="System.Windows.Window.Close"/> right after
+    /// the <c>await</c> throws <see cref="InvalidOperationException"/> because WPF is still
+    /// inside this same <c>Closing</c> event - and since the handler is <c>async void</c>, that
+    /// exception is unhandled and crashes the app. Exercises the real <see cref="System.Windows.Window.Close"/>
+    /// (not reflection) so the second, re-entrant close actually goes through WPF's own
+    /// re-entrancy guard, and pumps the dispatcher so the deferred <c>Close()</c> gets a chance
+    /// to run.
+    /// </summary>
+    [Fact]
+    public void ClosingHandler_WhenSaveCompletesSynchronously_ClosesWithoutThrowing() {
+        StaWindowTestHarness.Run(() => {
+            var manager = new FakeAppConfigurationManager { ConfirmBeforeExit = true };
+            manager.OnSaveChangesAsync = _ => Task.CompletedTask;
+            var messageDialog = new FakeMessageDialog { ResultToReturn = MessageDialogResult.No };
+            var window = CreateWindow(manager: manager, messageDialog: messageDialog);
+
+            var closed = false;
+            window.Closed += (_, _) => closed = true;
+
+            var exception = Record.Exception(window.Close);
+            Assert.Null(exception);
+
+            var deadline = DateTime.UtcNow + TimeSpan.FromSeconds(5);
+            while (!closed && DateTime.UtcNow < deadline) {
+                System.Windows.Threading.Dispatcher.CurrentDispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Background);
+            }
+
+            Assert.True(closed);
+            Assert.Equal(1, messageDialog.ShowCount);
+        });
+    }
+
     [Fact]
     public void ClosingHandler_WhenConfirmBeforeExitIsTrue_AndUserPicksYes_ClosesWithoutChangingTheSetting() {
         StaWindowTestHarness.Run(() => {
