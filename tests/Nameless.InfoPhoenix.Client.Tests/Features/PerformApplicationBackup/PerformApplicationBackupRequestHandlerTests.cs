@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
@@ -143,6 +144,41 @@ public sealed class PerformApplicationBackupRequestHandlerTests : IDisposable {
         using var archive = ZipFile.OpenRead(result.BackupFilePath!);
         Assert.DoesNotContain(archive.Entries, e => e.FullName.EndsWith("write.lock", StringComparison.Ordinal));
         Assert.Contains(archive.Entries, e => e.FullName == "search-index/segment1.bin");
+    }
+
+    /// <summary>
+    /// B12: a directory junction under the index root is a reparse point - production code
+    /// already checks <see cref="FileAttributes.ReparsePoint"/> and skips it (plan §5); this
+    /// proves it, rather than requiring elevation (a directory junction, unlike a symbolic link,
+    /// needs none).
+    /// </summary>
+    [Fact]
+    public async Task HandleAsync_WithAReparsePointJunctionUnderTheIndexRoot_ExcludesTheLinkedContentFromTheArchive() {
+        SeedIndex("segment1.bin");
+        var indexDirectory = Path.Combine(_luceneRoot, LuceneRelativePath);
+        var targetDirectory = Directory.CreateTempSubdirectory("ipx-0009-junction-target-").FullName;
+        File.WriteAllText(Path.Combine(targetDirectory, "secret.bin"), "outside-content");
+        var junctionPath = Path.Combine(indexDirectory, "linked");
+
+        CreateDirectoryJunction(junctionPath, targetDirectory);
+
+        try {
+            var applicationContext = new FakeApplicationContext {
+                FileManager = new PhysicalFileManagerFactory().GetOrCreate(_appRoot)
+            };
+            var handler = CreateHandler(applicationContext);
+
+            var result = await handler.HandleAsync(new PerformApplicationBackupRequest(), CancellationToken.None);
+
+            Assert.True(result.Succeeded);
+            using var archive = ZipFile.OpenRead(result.BackupFilePath!);
+            Assert.DoesNotContain(archive.Entries, e => e.FullName.Contains("secret.bin", StringComparison.Ordinal));
+            Assert.Contains(archive.Entries, e => e.FullName == "search-index/segment1.bin");
+        }
+        finally {
+            Directory.Delete(junctionPath);
+            Directory.Delete(targetDirectory, recursive: true);
+        }
     }
 
     /// <summary>B2: cleanup also runs on the success path, not only on failure.</summary>
@@ -490,6 +526,23 @@ public sealed class PerformApplicationBackupRequestHandlerTests : IDisposable {
         foreach (var fileName in fileNames) {
             File.WriteAllText(Path.Combine(indexDirectory, fileName), "lucene-data");
         }
+    }
+
+    /// <summary>
+    /// Creates a directory junction at <paramref name="linkPath"/> pointing at
+    /// <paramref name="targetPath"/> via <c>mklink /J</c> - unlike a symbolic link
+    /// (<c>mklink /D</c>), a junction needs no elevation, so this runs unattended in CI.
+    /// </summary>
+    private static void CreateDirectoryJunction(string linkPath, string targetPath) {
+        using var process = Process.Start(new ProcessStartInfo("cmd.exe", $"""/c mklink /J "{linkPath}" "{targetPath}" """) {
+            UseShellExecute = false,
+            CreateNoWindow = true,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true
+        })!;
+        process.WaitForExit();
+
+        Assert.Equal(0, process.ExitCode);
     }
 
     /// <summary>
