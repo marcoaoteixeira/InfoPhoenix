@@ -18,6 +18,17 @@ See `README.md` for release info, contribution and issue-filing process.
 - Stack: backend `dotnet` (marker: `src/Nameless.InfoPhoenix.Client/Nameless.InfoPhoenix.Client.csproj`), no separate frontend (WPF UI is part of the dotnet project) — detected 2026-11-04 by stack-detection. Delete this line to force re-detection.
 - Tracker: `github-issues` (evidence: `gh auth status` + `gh project list --owner marcoaoteixeira` succeed; no github MCP connected, operations go through `gh` CLI directly) — detected 2026-11-04 by tracker-detection. Delete this line to force re-detection.
 
+## development-pipeline notes
+
+- Stack is fixed for the life of this project (see Dev-Team Detected Facts
+  above) — skip re-running `stack-detection` / `tracker-detection` preflight
+  each time, use the facts above directly.
+- No frontend developer/reviewer agent for WPF — WPF UI is part of
+  `Nameless.InfoPhoenix.Client` itself, covered by `backend-developer-dotnet`
+  / `backend-reviewer-dotnet`. This is expected, not a gap.
+- Skip `ux-specialist` (spec / design-qa) — not needed for this project.
+- Skip `sonarqube-check` — SonarQube is not set up for this project.
+
 ## Stack
 
 - C# — latest stable language version, most modern idioms available
