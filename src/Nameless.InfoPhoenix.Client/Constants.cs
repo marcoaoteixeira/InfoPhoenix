@@ -22,6 +22,27 @@ internal static class Constants {
         internal const string Name = "InfoPhoenix";
     }
 
+    /// <summary>
+    /// Key names and default values for the three settings <c>Nameless.Windows</c>'
+    /// <c>AppConfigurationManagerExtensions</c> reads/writes through <c>IAppConfigurationManager</c>.
+    /// The package keeps its key names and defaults private, so they are duplicated here
+    /// (plan 2.2/4); fitness tests F1/F2 (<c>ConstantsFitnessTests</c>) guard both against a
+    /// silent drift at the next package bump.
+    /// </summary>
+    internal static class AppConfiguration {
+        internal static class Keys {
+            internal const string Theme = "Theme";
+            internal const string Language = "UILanguage";
+            internal const string ConfirmBeforeExit = "ConfirmBeforeExit";
+        }
+
+        internal static class Defaults {
+            internal const Nameless.Windows.UI.Theme Theme = Nameless.Windows.UI.Theme.System;
+            internal const string Language = "pt-BR";
+            internal const bool ConfirmBeforeExit = false;
+        }
+    }
+
     internal static class Labels {
         internal static class NavigationMenuItems {
             // The nav item title comes from a `const` in an attribute, so it
