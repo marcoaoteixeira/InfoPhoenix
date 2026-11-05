@@ -91,6 +91,42 @@ public sealed class AppConfigurationPageViewModelIntegrationTests : IDisposable 
     }
 
     /// <summary>
+    /// Happy path over the real manager (review round 2, finding 1): non-default valid values
+    /// written and saved through one manager instance must read back unchanged, as themselves
+    /// (not the defaults), through a fresh manager/VM pair, and recovery must stay silent -
+    /// proving B18's "unsupported value" snackbar isn't firing on every navigation regardless
+    /// of content.
+    /// </summary>
+    [Fact]
+    public void OnNavigatedToAsync_WithNonDefaultValidStoredValues_ShowsStoredValues_WithoutPublishing() {
+        StaWindowTestHarness.Run(() => {
+            var writingManager = CreateManager();
+            writingManager.Theme = Theme.Dark;
+            writingManager.Language = "en-GB";
+            writingManager.ConfirmBeforeExit = true;
+
+            // Must not block with .GetAwaiter().GetResult(): the real manager's save genuinely
+            // awaits I/O, and its continuation resumes through this very STA thread's
+            // Dispatcher - blocking it here would deadlock. Pump the dispatcher instead, same
+            // as the other real-manager tests below.
+            var saveTask = writingManager.SaveChangesAsync(CancellationToken.None);
+            PumpDispatcherUntil(() => saveTask.IsCompleted);
+            saveTask.GetAwaiter().GetResult();
+
+            var manager = CreateManager();
+            var eventPublisher = new FakeEventPublisher();
+            var vm = CreateViewModel(manager, eventPublisher);
+
+            vm.OnNavigatedToAsync().GetAwaiter().GetResult();
+
+            Assert.Empty(eventPublisher.PublishedEvents.OfType<SnackBarNotificationEvent>());
+            Assert.Equal(Theme.Dark, vm.CurrentTheme.Tag);
+            Assert.Equal("en-GB", vm.CurrentLanguage.Tag);
+            Assert.True(vm.CurrentConfirmBeforeExit);
+        });
+    }
+
+    /// <summary>
     /// B19 (documents accepted gap D-1): malformed JSON is swallowed by the real manager and
     /// returns an empty dictionary, indistinguishable from a first run - so no snackbar
     /// appears, but the app does not crash and the page shows the defaults.
@@ -151,6 +187,19 @@ public sealed class AppConfigurationPageViewModelIntegrationTests : IDisposable 
         }
 
         Assert.DoesNotContain(marker, File.ReadAllText(configFile));
+    }
+
+    private static void PumpDispatcherUntil(Func<bool> condition) {
+        var deadline = DateTime.UtcNow + TimeSpan.FromSeconds(5);
+
+        while (!condition() && DateTime.UtcNow < deadline) {
+            System.Windows.Threading.Dispatcher.CurrentDispatcher.Invoke(
+                () => { },
+                System.Windows.Threading.DispatcherPriority.Background
+            );
+        }
+
+        Assert.True(condition(), "Timed out waiting for the condition.");
     }
 
     private void WaitForConfigFile() {
