@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Nameless.InfoPhoenix.Client.Infrastructure;
 using Nameless.InfoPhoenix.Client.Views.Windows;
 using Nameless.Windows;
+using Nameless.Windows.AppConfiguration;
 using Nameless.Windows.Hosting;
 using Nameless.Windows.Hosting.Wrappers;
 using Nameless.Windows.Localization;
@@ -69,7 +70,11 @@ public partial class App {
         return Task.CompletedTask;
     }
 
-    private static Task OnCurrentHostStop(IServiceProvider provider, CancellationToken cancellationToken) {
-        return Task.CompletedTask;
+    // Safety net only (plan 2.4/D1): AppConfigurationPageViewModel already persists every
+    // change immediately. This covers in-memory changes made outside the page (the closing
+    // handler's "stop asking") and any immediate save that failed. Best-effort: OnExit is
+    // async void, so the process may end before this completes.
+    private static async Task OnCurrentHostStop(IServiceProvider provider, CancellationToken cancellationToken) {
+        await provider.GetRequiredService<IAppConfigurationManager>().SaveChangesAsync(cancellationToken);
     }
 }
