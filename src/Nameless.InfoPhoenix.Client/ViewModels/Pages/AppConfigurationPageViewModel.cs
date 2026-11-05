@@ -166,13 +166,24 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
     }
 
     private async Task SaveAfterAsync(Task previous) {
-        await previous;
+        try {
+            await previous;
+        }
+        catch (Exception ex) {
+            // A faulted previous save must not poison this (or any later) link in the chain -
+            // every subsequent SaveAfterAsync awaits this task, and an unhandled fault here
+            // would propagate and silently drop every save queued after it.
+            _logger.LogWarning(ex, "A previous application configuration save failed.");
+        }
 
         try {
             await _appConfigurationManager.SaveChangesAsync(CancellationToken.None);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
             _logger.LogWarning(ex, "Failed to persist application configuration changes.");
+        }
+        catch (Exception ex) {
+            _logger.LogWarning(ex, "Unexpected failure while persisting application configuration changes.");
         }
     }
 

@@ -70,6 +70,37 @@ public class AppConfigurationPageViewModelTests {
         });
     }
 
+    /// <summary>
+    /// Review round 1, finding 2: an unexpected exception from one save must not permanently
+    /// break the save chain - previously, a faulted <c>_pendingSave</c> made every later
+    /// <c>SaveAfterAsync</c> rethrow at its unguarded <c>await previous</c> before ever reaching
+    /// its own save, silently dropping every save queued after the failure.
+    /// </summary>
+    [Fact]
+    public void UnexpectedSaveFailure_DoesNotPreventALaterSaveFromRunning() {
+        StaWindowTestHarness.Run(() => {
+            var manager = new FakeAppConfigurationManager();
+            var saveAttempts = 0;
+            manager.OnSaveChangesAsync = _ => {
+                saveAttempts++;
+
+                // Not IOException/UnauthorizedAccessException - the kind of failure that used
+                // to escape SaveAfterAsync entirely and fault the chain.
+                return saveAttempts == 1
+                    ? throw new ObjectDisposedException(nameof(FakeAppConfigurationManager))
+                    : Task.CompletedTask;
+            };
+
+            var vm = CreateViewModel(manager: manager);
+            vm.OnNavigatedToAsync();
+
+            vm.CurrentConfirmBeforeExit = true;
+            vm.CurrentConfirmBeforeExit = false;
+
+            Assert.Equal(2, manager.SaveChangesAsyncCallCount);
+        });
+    }
+
     [Fact]
     public void OnNavigatedToAsync_ReadsBackConfirmBeforeExitChangeImmediately_WithExactlyOneSave() {
         StaWindowTestHarness.Run(() => {
