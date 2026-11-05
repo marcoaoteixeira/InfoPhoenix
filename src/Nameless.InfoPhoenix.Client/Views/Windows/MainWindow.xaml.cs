@@ -129,7 +129,8 @@ public partial class MainWindow : INavigationWindow {
             _appConfigurationManager.ConfirmBeforeExit = false;
 
             await _appConfigurationManager.SaveChangesAsync(CancellationToken.None);
-        } catch (Exception) {
+        }
+        catch (Exception) {
             // Unexpected failure (including a Set that throws on a persistently unreadable
             // file, plan 2.2): still honour the user's choice to close rather than leaving the
             // app stuck with the close silently swallowed.

@@ -1,3 +1,5 @@
+using System.Globalization;
+using System.IO;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -6,6 +8,9 @@ using Nameless.InfoPhoenix.Client.Tests.Fakes;
 using Nameless.InfoPhoenix.Client.Tests.Views.Windows;
 using Nameless.InfoPhoenix.Client.ViewModels.Pages;
 using Nameless.Windows.AppConfiguration;
+using Nameless.Windows.Localization;
+using Nameless.Windows.Notification;
+using Nameless.Windows.Notification.SnackBar;
 using Nameless.Windows.UI;
 
 namespace Nameless.InfoPhoenix.Client.Tests.ViewModels.Pages;
@@ -219,18 +224,282 @@ public class AppConfigurationPageViewModelTests {
         });
     }
 
+    /// <summary>
+    /// B1 (plan 2.3 step 2b): an unreadable manager must not throw out of navigation, and
+    /// publishes exactly one Failure snackbar.
+    /// </summary>
+    [Fact]
+    public void OnNavigatedToAsync_WithAnUnreadableManager_PublishesOneFailureSnackbar_AndDoesNotThrow() {
+        StaWindowTestHarness.Run(() => {
+            var manager = new FakeAppConfigurationManager { ThrowOnTryGet = new IOException() };
+            var eventPublisher = new FakeEventPublisher();
+            var vm = CreateViewModel(manager: manager, eventPublisher: eventPublisher);
+
+            var exception = Record.Exception(() => vm.OnNavigatedToAsync().GetAwaiter().GetResult());
+
+            Assert.Null(exception);
+            var notification = Assert.Single(eventPublisher.PublishedEvents.OfType<SnackBarNotificationEvent>());
+            Assert.Equal(NotificationType.Failure, notification.Type);
+        });
+    }
+
+    /// <summary>
+    /// B2 (plan 2.3, table in 2.3): any single invalid value - wrong type, an undefined enum
+    /// value, or a well-formed but unsupported culture - triggers exactly one Failure snackbar.
+    /// </summary>
+    [Theory]
+    [InlineData("Theme", "Dark")] // wrong type (string instead of Theme)
+    [InlineData("Theme", (Theme)42)] // undefined enum value
+    [InlineData("UILanguage", 5)] // wrong type (int instead of string)
+    [InlineData("UILanguage", "xx-INVALID")] // unresolvable culture tag
+    [InlineData("UILanguage", "fr-FR")] // valid culture, not in AvailableLanguages
+    public void OnNavigatedToAsync_WithOneInvalidSetting_PublishesExactlyOneFailureSnackbar(string key, object badValue) {
+        StaWindowTestHarness.Run(() => {
+            var manager = new FakeAppConfigurationManager();
+            manager.Seed(key, badValue);
+            var eventPublisher = new FakeEventPublisher();
+            var vm = CreateViewModel(manager: manager, eventPublisher: eventPublisher);
+
+            vm.OnNavigatedToAsync().GetAwaiter().GetResult();
+
+            var notification = Assert.Single(eventPublisher.PublishedEvents.OfType<SnackBarNotificationEvent>());
+            Assert.Equal(NotificationType.Failure, notification.Type);
+        });
+    }
+
+    /// <summary>
+    /// B3: a wrong-typed <c>ConfirmBeforeExit</c> triggers recovery the same way as the other
+    /// two settings.
+    /// </summary>
+    [Fact]
+    public void OnNavigatedToAsync_WithWrongTypedConfirmBeforeExit_PublishesExactlyOneFailureSnackbar() {
+        StaWindowTestHarness.Run(() => {
+            var manager = new FakeAppConfigurationManager();
+            manager.Seed("ConfirmBeforeExit", "yes");
+            var eventPublisher = new FakeEventPublisher();
+            var vm = CreateViewModel(manager: manager, eventPublisher: eventPublisher);
+
+            vm.OnNavigatedToAsync().GetAwaiter().GetResult();
+
+            var notification = Assert.Single(eventPublisher.PublishedEvents.OfType<SnackBarNotificationEvent>());
+            Assert.Equal(NotificationType.Failure, notification.Type);
+        });
+    }
+
+    /// <summary>
+    /// B4 (AC2): one bad setting resets ALL three, not only the bad one - exactly three Sets
+    /// (in Theme/Language/ConfirmBeforeExit order) followed by exactly one Save, both the
+    /// applier and the translator receive the defaults, and neither combo ends up Empty.
+    /// </summary>
+    [Fact]
+    public void OnNavigatedToAsync_WithOneBadSettingAmongThree_ResetsAllThreeToDefaults() {
+        StaWindowTestHarness.Run(() => {
+            var manager = new FakeAppConfigurationManager();
+            manager.Seed("Theme", (Theme)42); // the only bad one
+            manager.Seed("UILanguage", "en-GB"); // valid, non-default
+            manager.Seed("ConfirmBeforeExit", true); // valid, non-default
+            var themeApplier = new FakeApplicationThemeApplier();
+            var translator = new FakeTranslator();
+            var vm = CreateViewModel(manager: manager, themeApplier: themeApplier, translator: translator);
+
+            vm.OnNavigatedToAsync().GetAwaiter().GetResult();
+
+            Assert.Equal(["Set:Theme", "Set:UILanguage", "Set:ConfirmBeforeExit", "Save"], manager.CallLog);
+            Assert.Equal(Theme.System, manager.Theme);
+            Assert.Equal("pt-BR", manager.Language);
+            Assert.False(manager.ConfirmBeforeExit);
+
+            // Neither combo is "not found" (ComboBoxItemHelper.EmptyComboBoxItem's Tag is null,
+            // AC2's "no stuck/blank state") - both resolve to a real, non-null Tag.
+            Assert.Equal(Theme.System, vm.CurrentTheme.Tag);
+            Assert.Equal("pt-BR", vm.CurrentLanguage.Tag);
+
+            Assert.Equal(Theme.System, themeApplier.AppliedTheme);
+            Assert.Equal(["pt-BR"], translator.SetCultureCalls);
+        });
+    }
+
+    /// <summary>
+    /// B5: the page stays usable after recovery - a further live change still applies and
+    /// saves normally.
+    /// </summary>
+    [Fact]
+    public void AfterRecovery_FurtherLiveChanges_StillApplyAndSave() {
+        StaWindowTestHarness.Run(() => {
+            var manager = new FakeAppConfigurationManager();
+            manager.Seed("Theme", (Theme)42);
+            var vm = CreateViewModel(manager: manager);
+
+            vm.OnNavigatedToAsync().GetAwaiter().GetResult();
+            var callsAfterRecovery = manager.CallLog.Count;
+
+            var dark = vm.AvailableThemes.Single(i => Equals(i.Tag, Theme.Dark));
+            vm.CurrentTheme = dark;
+
+            Assert.Equal(Theme.Dark, manager.Theme);
+            Assert.Equal(callsAfterRecovery + 2, manager.CallLog.Count); // one Set + one Save
+            Assert.Equal("Save", manager.CallLog[^1]);
+        });
+    }
+
+    /// <summary>
+    /// B6 (AC2 "no stuck/blank state"): a persistently unreadable file - every TryGet and every
+    /// Set throws - must not crash navigation or a later live change, the VM still shows the
+    /// defaults (never Empty), and nothing is ever saved.
+    /// </summary>
+    [Fact]
+    public void OnNavigatedToAsync_WithAPersistentlyUnreadableManager_ShowsDefaults_AndNeverSaves() {
+        StaWindowTestHarness.Run(() => {
+            var manager = new FakeAppConfigurationManager {
+                ThrowOnTryGet = new IOException(),
+                ThrowOnSet = new IOException()
+            };
+            var themeApplier = new FakeApplicationThemeApplier();
+            var eventPublisher = new FakeEventPublisher();
+            var vm = CreateViewModel(manager: manager, themeApplier: themeApplier, eventPublisher: eventPublisher);
+
+            var navigationException = Record.Exception(() => vm.OnNavigatedToAsync().GetAwaiter().GetResult());
+
+            Assert.Null(navigationException);
+            Assert.Single(eventPublisher.PublishedEvents.OfType<SnackBarNotificationEvent>());
+            Assert.Equal(Theme.System, vm.CurrentTheme.Tag); // not blank (ComboBoxItemHelper.EmptyComboBoxItem's Tag is null)
+            Assert.Equal(0, manager.SaveChangesAsyncCallCount);
+
+            var dark = vm.AvailableThemes.Single(i => Equals(i.Tag, Theme.Dark));
+            var changeException = Record.Exception(() => vm.CurrentTheme = dark);
+
+            Assert.Null(changeException);
+            Assert.Equal(Theme.Dark, themeApplier.AppliedTheme);
+            Assert.Equal(0, manager.SaveChangesAsyncCallCount);
+        });
+    }
+
+    /// <summary>
+    /// B7: once a VM instance has recovered, a second navigation is a no-op - no duplicate
+    /// publish, Set or Save.
+    /// </summary>
+    [Fact]
+    public void OnNavigatedToAsync_CalledTwiceOnARecoveredInstance_DoesNotRecoverAgain() {
+        StaWindowTestHarness.Run(() => {
+            var manager = new FakeAppConfigurationManager();
+            manager.Seed("Theme", (Theme)42);
+            var eventPublisher = new FakeEventPublisher();
+            var vm = CreateViewModel(manager: manager, eventPublisher: eventPublisher);
+
+            vm.OnNavigatedToAsync().GetAwaiter().GetResult();
+            var callLogAfterFirstNavigation = manager.CallLog.ToList();
+            var publishedCountAfterFirstNavigation = eventPublisher.PublishedEvents.Count;
+
+            vm.OnNavigatedToAsync().GetAwaiter().GetResult();
+
+            Assert.Equal(callLogAfterFirstNavigation, manager.CallLog);
+            Assert.Equal(publishedCountAfterFirstNavigation, eventPublisher.PublishedEvents.Count);
+        });
+    }
+
+    /// <summary>
+    /// B8 (AC3, Theory): the happy path never recovers - an empty manager (first run), fully
+    /// valid non-default values, and an underscore-normalised culture tag that
+    /// <see cref="Nameless.Windows.Helpers.CultureResolver"/> still resolves.
+    /// </summary>
+    [Theory]
+    [InlineData(false, null, null, null)]
+    [InlineData(true, "Dark", "en-GB", true)]
+    [InlineData(true, "Dark", "pt_BR", true)]
+    public void OnNavigatedToAsync_OnTheHappyPath_NeitherRecoversNorPublishes(
+        bool seed, string? theme, string? language, bool? confirmBeforeExit) {
+        StaWindowTestHarness.Run(() => {
+            var manager = new FakeAppConfigurationManager();
+            if (seed) {
+                manager.Seed("Theme", Enum.Parse<Theme>(theme!));
+                manager.Seed("UILanguage", language!);
+                manager.Seed("ConfirmBeforeExit", confirmBeforeExit!.Value);
+            }
+            var themeApplier = new FakeApplicationThemeApplier();
+            var translator = new FakeTranslator();
+            var eventPublisher = new FakeEventPublisher();
+            var vm = CreateViewModel(manager: manager, themeApplier: themeApplier, translator: translator, eventPublisher: eventPublisher);
+
+            vm.OnNavigatedToAsync().GetAwaiter().GetResult();
+
+            Assert.Empty(manager.CallLog);
+            Assert.Empty(eventPublisher.PublishedEvents);
+            Assert.Empty(themeApplier.AppliedThemes);
+            Assert.Empty(translator.SetCultureCalls);
+        });
+    }
+
+    /// <summary>
+    /// B20: the recovery notification's text comes from the translator read AFTER
+    /// <c>T.SetCulture(Defaults.Language)</c> has run (plan 2.3 step 5), so it is in the
+    /// post-reset language, not whatever language was active before recovery.
+    /// </summary>
+    [Fact]
+    public void OnNavigatedToAsync_WhenRecovering_PublishesTheNotification_AfterSwitchingToTheDefaultLanguage() {
+        StaWindowTestHarness.Run(() => {
+            var manager = new FakeAppConfigurationManager();
+            manager.Seed("Theme", (Theme)42);
+            var translator = new RecordingCultureAtPublishTimeTranslator();
+            var eventPublisher = new FakeEventPublisher();
+            var vm = CreateViewModel(manager: manager, translator: translator, eventPublisher: eventPublisher);
+
+            vm.OnNavigatedToAsync().GetAwaiter().GetResult();
+
+            Assert.Single(eventPublisher.PublishedEvents);
+            Assert.Equal(["pt-BR"], translator.SetCultureCalls);
+            Assert.Equal("pt-BR", translator.CultureAtFirstTranslatorRead);
+        });
+    }
+
+    /// <summary>
+    /// Records which culture was active the first time the indexer was read (B20) - a
+    /// standalone <see cref="ITranslator"/> fake, since <c>FakeTranslator</c> is sealed and
+    /// does not track read order.
+    /// </summary>
+    private sealed class RecordingCultureAtPublishTimeTranslator : ITranslator {
+        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+
+        public List<string> SetCultureCalls { get; } = [];
+
+        public CultureInfo CurrentCulture { get; private set; } = CultureInfo.InvariantCulture;
+
+        public string? CultureAtFirstTranslatorRead { get; private set; }
+
+        public string this[string key] {
+            get {
+                CultureAtFirstTranslatorRead ??= CurrentCulture.Name;
+
+                return key;
+            }
+        }
+
+        public string this[string key, object[] args] => key;
+
+        public void SetCulture(CultureInfo culture) {
+            CurrentCulture = culture;
+            SetCultureCalls.Add(culture.Name);
+            PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs("Item[]"));
+        }
+
+        public void SetCulture(string isoCode) {
+            SetCulture(CultureInfo.GetCultureInfo(isoCode));
+        }
+    }
+
     private static AppConfigurationPageViewModel CreateViewModel(
         FakeAppConfigurationManager? manager = null,
         FakeApplicationContext? applicationContext = null,
         FakeApplicationThemeApplier? themeApplier = null,
-        FakeTranslator? translator = null,
-        FakeMediator? mediator = null) {
+        ITranslator? translator = null,
+        FakeMediator? mediator = null,
+        FakeEventPublisher? eventPublisher = null) {
         return new AppConfigurationPageViewModel(
             manager ?? new FakeAppConfigurationManager(),
             applicationContext ?? new FakeApplicationContext(),
             themeApplier ?? new FakeApplicationThemeApplier(),
             translator ?? new FakeTranslator(),
             mediator ?? new FakeMediator(),
+            eventPublisher ?? new FakeEventPublisher(),
             NullLogger<AppConfigurationPageViewModel>.Instance
         );
     }

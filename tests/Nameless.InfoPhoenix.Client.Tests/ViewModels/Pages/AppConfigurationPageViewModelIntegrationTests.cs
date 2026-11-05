@@ -76,6 +76,7 @@ public sealed class AppConfigurationPageViewModelIntegrationTests : IDisposable 
             new FakeApplicationThemeApplier(),
             new FakeTranslator(),
             new FakeMediator(),
+            new FakeEventPublisher(),
             NullLogger<AppConfigurationPageViewModel>.Instance
         );
     }
