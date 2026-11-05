@@ -99,6 +99,33 @@ public sealed class PerformApplicationBackupRequestHandlerTests : IDisposable {
         }
     }
 
+    /// <summary>
+    /// B1 complement: a source database left in WAL mode (as EF Core's live connection leaves
+    /// it, with its own <c>-wal</c>/<c>-shm</c> sidecar files sitting next to <c>app.db</c>)
+    /// never leaks those sidecar files into the archive - the staged copy is forced out of WAL
+    /// mode before it is zipped (review finding #1). The seeding connection is kept open for the
+    /// whole test, as a live app connection would be, so the sidecar files actually exist on
+    /// disk when the backup runs - closing it first would let SQLite checkpoint them away on its
+    /// own, defeating the point of the test.
+    /// </summary>
+    [Fact]
+    public async Task HandleAsync_WithTheSourceDatabaseInWalMode_ExcludesWalAndShmFromTheArchive() {
+        using var liveConnection = SeedDatabaseKeptOpenInWalMode();
+
+        var applicationContext = new FakeApplicationContext {
+            FileManager = new PhysicalFileManagerFactory().GetOrCreate(_appRoot)
+        };
+        var handler = CreateHandler(applicationContext);
+
+        var result = await handler.HandleAsync(new PerformApplicationBackupRequest(), CancellationToken.None);
+
+        Assert.True(result.Succeeded);
+        using var archive = ZipFile.OpenRead(result.BackupFilePath!);
+        Assert.DoesNotContain(archive.Entries, e => e.FullName == "database/app.db-wal");
+        Assert.DoesNotContain(archive.Entries, e => e.FullName == "database/app.db-shm");
+        Assert.Contains(archive.Entries, e => e.FullName == "database/app.db");
+    }
+
     /// <summary>B1 complement: a <c>write.lock</c> present in the index never reaches the archive.</summary>
     [Fact]
     public async Task HandleAsync_WithWriteLockPresentInIndex_ExcludesItFromTheArchive() {
@@ -427,6 +454,33 @@ public sealed class PerformApplicationBackupRequestHandlerTests : IDisposable {
         }
 
         command.ExecuteNonQuery();
+    }
+
+    /// <summary>
+    /// Seeds <c>app.db</c> in WAL mode and returns the still-open connection, so its
+    /// <c>-wal</c>/<c>-shm</c> sidecar files genuinely exist on disk for the caller's test -
+    /// closing this connection lets SQLite checkpoint them away.
+    /// </summary>
+    private SqliteConnection SeedDatabaseKeptOpenInWalMode() {
+        var databaseDirectory = Path.Combine(_appRoot, "databases");
+        Directory.CreateDirectory(databaseDirectory);
+        var databasePath = Path.Combine(databaseDirectory, "app.db");
+
+        var connection = new SqliteConnection($"Data Source={databasePath};Pooling=false;");
+        connection.Open();
+
+        using var pragmaCommand = connection.CreateCommand();
+        pragmaCommand.CommandText = "PRAGMA journal_mode='wal';";
+        pragmaCommand.ExecuteNonQuery();
+
+        using var command = connection.CreateCommand();
+        command.CommandText = """
+            CREATE TABLE __EFMigrationsHistory (MigrationId TEXT PRIMARY KEY, ProductVersion TEXT);
+            INSERT INTO __EFMigrationsHistory (MigrationId, ProductVersion) VALUES ('20261201093000_Initial', '10.0.0');
+            """;
+        command.ExecuteNonQuery();
+
+        return connection;
     }
 
     private void SeedIndex(params string[] fileNames) {
