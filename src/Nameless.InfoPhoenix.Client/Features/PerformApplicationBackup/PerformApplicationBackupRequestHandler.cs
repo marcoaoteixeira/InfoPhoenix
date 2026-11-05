@@ -68,10 +68,20 @@ public sealed class PerformApplicationBackupRequestHandler
         _logger = Throws.When.Null(logger);
     }
 
+    /// <summary>
+    /// Test-only hook (internal, see <c>InternalsVisibleTo</c>) invoked immediately before the
+    /// commit-point cancellation check (plan §3.2). That check sits in a window with no
+    /// externally observable event either side of it, so no publish-based test fixture can land
+    /// a cancel there deterministically; this hook lets a test do so without racing timing.
+    /// Null (no-op) in production.
+    /// </summary>
+    internal Action? OnBeforeCommitPointCheck { get; set; }
+
     public async Task<PerformApplicationBackupResult> HandleAsync(
         PerformApplicationBackupRequest request, CancellationToken cancellationToken) {
         var step = "Preparing";
         string? stagingDirectory = null;
+        string? finalPath = null;
 
         try {
             await PublishStepAsync(step);
@@ -89,25 +99,25 @@ public sealed class PerformApplicationBackupRequestHandler
 
             step = "CopyingDatabase";
             await PublishStepAsync(step);
-            var stagedDatabasePath = await Task.Run(() => CopyDatabase(content), cancellationToken);
+            var (stagedDatabasePath, databaseMigrationId) = await Task.Run(() => CopyDatabase(content), cancellationToken);
             if (stagedDatabasePath is null) {
                 await PublishWarningAsync("DatabaseMissing");
             }
 
             step = "CopyingSearchIndex";
             await PublishStepAsync(step);
-            _indexProvider.CloseAll();
-            var hasSearchIndex = await Task.Run(() => CopySearchIndex(content), cancellationToken);
+            var hasSearchIndex = await Task.Run(
+                () => {
+                    _indexProvider.CloseAll();
+                    return CopySearchIndex(content);
+                },
+                cancellationToken);
             if (!hasSearchIndex) {
                 await PublishWarningAsync("SearchIndexMissing");
             }
 
             step = "CreatingArchive";
             await PublishStepAsync(step);
-
-            var databaseMigrationId = stagedDatabasePath is null
-                ? null
-                : await Task.Run(() => ReadDatabaseMigrationId(stagedDatabasePath), cancellationToken);
 
             var manifest = new BackupManifest(
                 FormatVersion: Constants.BackupRecovery.FormatVersion,
@@ -123,14 +133,20 @@ public sealed class PerformApplicationBackupRequestHandler
             await WriteManifestAsync(content, manifest, cancellationToken);
 
             var archivePath = SysPath.Combine(stagingDirectory, "archive.zip");
-            await ZipFile.CreateFromDirectoryAsync(
-                content, archivePath, CompressionLevel.Optimal, includeBaseDirectory: false, cancellationToken: cancellationToken);
 
+            // Off the calling (UI) context (finding #2): CreateFromDirectoryAsync still runs its
+            // own synchronous enumeration/compression work inline despite the "Async" name.
+            await Task.Run(
+                () => ZipFile.CreateFromDirectoryAsync(
+                    content, archivePath, CompressionLevel.Optimal, includeBaseDirectory: false, cancellationToken: cancellationToken),
+                cancellationToken);
+
+            OnBeforeCommitPointCheck?.Invoke();
             cancellationToken.ThrowIfCancellationRequested();
 
             // Commit point (plan §3.2): the move below never observes the token, by design -
             // once we are past the check above, a cancel must not interrupt the rename.
-            var finalPath = await Task.Run(() => MoveToBackupDirectory(archivePath, timestamp));
+            finalPath = await Task.Run(() => MoveToBackupDirectory(archivePath, timestamp));
 
             await _eventPublisher.PublishSuccessAsync<BackupRecoveryProgressNotificationEvent>(
                 message: _translator[$"{Prefix}_Success", [finalPath]]);
@@ -138,6 +154,15 @@ public sealed class PerformApplicationBackupRequestHandler
             return new PerformApplicationBackupResult(finalPath);
         }
         catch (Exception ex) when (ex is not OperationCanceledException) {
+            if (finalPath is not null) {
+                // The move already committed the backup file into backups\ (finding #6) before
+                // this failure - e.g. the Success notification publish itself threw - so the
+                // operation itself succeeded and must not be downgraded to a failed result.
+                _logger.LogError(ex, "Application backup succeeded, but publishing the Success notification failed.");
+
+                return new PerformApplicationBackupResult(finalPath);
+            }
+
             _logger.LogError(ex, "Application backup failed at step '{Step}'.", step);
 
             await _eventPublisher.PublishFailureAsync<BackupRecoveryProgressNotificationEvent>(
@@ -227,41 +252,55 @@ public sealed class PerformApplicationBackupRequestHandler
     /// <summary>
     /// Copies the SQLite database through the online-backup API (plan D7), never a raw file
     /// copy, so the copy is transactionally consistent even with a live EF connection open.
-    /// Returns the staged copy's path, or <see langword="null"/> when there is no live database
-    /// (D6).
+    /// Forces the staged copy out of WAL mode and reads its migration id on the same connection
+    /// before disposing it (finding #1) - a WAL-mode copy would otherwise leak <c>-wal</c>/
+    /// <c>-shm</c> sidecar files into the archive, and a separate later connection could race a
+    /// checkpoint that has not happened yet. Returns <see langword="null"/>s when there is no
+    /// live database (D6).
     /// </summary>
-    private string? CopyDatabase(string contentDirectory) {
+    private (string? Path, string? MigrationId) CopyDatabase(string contentDirectory) {
         var databaseDirectory = _applicationContext.FileManager.GetDatabaseDirectory();
         var sourcePath = SysPath.Combine(databaseDirectory.Path, Constants.Database.FileName);
 
         if (!File.Exists(sourcePath)) {
-            return null;
+            return (null, null);
         }
 
         var destinationDirectory = SysPath.Combine(contentDirectory, "database");
         Directory.CreateDirectory(destinationDirectory);
         var destinationPath = SysPath.Combine(destinationDirectory, Constants.Database.FileName);
 
-        using var source = new SqliteConnection($"Data Source={sourcePath};Mode=ReadOnly;Pooling=false;");
-        using var destination = new SqliteConnection($"Data Source={destinationPath};Pooling=false;");
+        var sourceConnectionString = new SqliteConnectionStringBuilder {
+            DataSource = sourcePath,
+            Mode = SqliteOpenMode.ReadOnly,
+            Pooling = false
+        }.ToString();
+        var destinationConnectionString = new SqliteConnectionStringBuilder {
+            DataSource = destinationPath,
+            Pooling = false
+        }.ToString();
+
+        using var source = new SqliteConnection(sourceConnectionString);
+        using var destination = new SqliteConnection(destinationConnectionString);
 
         source.Open();
         destination.Open();
         source.BackupDatabase(destination);
 
-        return destinationPath;
+        using var pragmaCommand = destination.CreateCommand();
+        pragmaCommand.CommandText = "PRAGMA journal_mode=DELETE;";
+        pragmaCommand.ExecuteNonQuery();
+
+        return (destinationPath, ReadDatabaseMigrationId(destination));
     }
 
     /// <summary>
-    /// Reads the newest migration id from the staged database copy (plan D3/D7) - never the
-    /// live file - so the manifest always matches the bytes archived. Returns
+    /// Reads the newest migration id from the already-open staged database connection (plan
+    /// D3/D7) - never the live file - so the manifest always matches the bytes archived. Returns
     /// <see langword="null"/> when the migrations history table does not exist yet (today's
     /// reality, per plan §1).
     /// </summary>
-    private static string? ReadDatabaseMigrationId(string stagedDatabasePath) {
-        using var connection = new SqliteConnection($"Data Source={stagedDatabasePath};Mode=ReadOnly;Pooling=false;");
-        connection.Open();
-
+    private static string? ReadDatabaseMigrationId(SqliteConnection connection) {
         using var checkCommand = connection.CreateCommand();
         checkCommand.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = '__EFMigrationsHistory';";
 
