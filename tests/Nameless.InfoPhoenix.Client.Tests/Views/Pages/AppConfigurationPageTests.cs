@@ -39,6 +39,7 @@ public class AppConfigurationPageTests {
             var viewModel = new AppConfigurationPageViewModel(
                 new FakeAppConfigurationManager(),
                 new FakeApplicationContext(),
+                new FakeApplicationThemeApplier(),
                 new FakeTranslator(),
                 new FakeMediator(),
                 NullLogger<AppConfigurationPageViewModel>.Instance

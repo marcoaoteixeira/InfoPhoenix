@@ -28,6 +28,30 @@ public class AppConfigurationPageViewModelTests {
         });
     }
 
+    /// <summary>
+    /// Review round 1, finding 1: <see cref="Theme.System"/> must go through the applier's
+    /// system-theme path, not the regular one - <c>ToApplicationTheme()</c> maps it to
+    /// <see cref="Nameless.Windows.UI.Theme.System"/>'s WPF-UI equivalent "Unknown", for which
+    /// the regular WPF-UI <c>Apply</c> call is a no-op.
+    /// </summary>
+    [Fact]
+    public void OnCurrentThemeChanged_ToSystem_AppliesThroughTheThemeApplier() {
+        StaWindowTestHarness.Run(() => {
+            // Starts from a non-System theme so changing to System is an actual change (the
+            // no-op guard would otherwise swallow it, since System is the manager's default).
+            var manager = new FakeAppConfigurationManager { Theme = Theme.Dark };
+            var themeApplier = new FakeApplicationThemeApplier();
+            var vm = CreateViewModel(manager: manager, themeApplier: themeApplier);
+
+            vm.OnNavigatedToAsync();
+
+            var system = vm.AvailableThemes.Single(i => Equals(i.Tag, Theme.System));
+            vm.CurrentTheme = system;
+
+            Assert.Equal(Theme.System, themeApplier.AppliedTheme);
+        });
+    }
+
     [Fact]
     public void OnNavigatedToAsync_ReadsBackLanguageChangeImmediately_AndSetsCultureOnTranslator() {
         StaWindowTestHarness.Run(() => {
@@ -167,11 +191,13 @@ public class AppConfigurationPageViewModelTests {
     private static AppConfigurationPageViewModel CreateViewModel(
         FakeAppConfigurationManager? manager = null,
         FakeApplicationContext? applicationContext = null,
+        FakeApplicationThemeApplier? themeApplier = null,
         FakeTranslator? translator = null,
         FakeMediator? mediator = null) {
         return new AppConfigurationPageViewModel(
             manager ?? new FakeAppConfigurationManager(),
             applicationContext ?? new FakeApplicationContext(),
+            themeApplier ?? new FakeApplicationThemeApplier(),
             translator ?? new FakeTranslator(),
             mediator ?? new FakeMediator(),
             NullLogger<AppConfigurationPageViewModel>.Instance

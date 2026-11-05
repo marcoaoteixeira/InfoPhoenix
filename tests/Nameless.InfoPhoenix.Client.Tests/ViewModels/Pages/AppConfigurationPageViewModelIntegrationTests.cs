@@ -73,6 +73,7 @@ public sealed class AppConfigurationPageViewModelIntegrationTests : IDisposable 
         return new AppConfigurationPageViewModel(
             manager,
             new FakeApplicationContext(),
+            new FakeApplicationThemeApplier(),
             new FakeTranslator(),
             new FakeMediator(),
             NullLogger<AppConfigurationPageViewModel>.Instance

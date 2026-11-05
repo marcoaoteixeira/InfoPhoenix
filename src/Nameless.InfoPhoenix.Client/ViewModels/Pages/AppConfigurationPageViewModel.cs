@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Nameless.Application;
 using Nameless.Contracts;
 using Nameless.InfoPhoenix.Client.Features.OpenCurrentLogFile;
+using Nameless.InfoPhoenix.Client.Infrastructure;
 using Nameless.Mediator;
 using Nameless.Windows;
 using Nameless.Windows.AppConfiguration;
@@ -15,7 +16,6 @@ using System.Globalization;
 using System.IO;
 using System.Windows.Controls;
 using Wpf.Ui.Abstractions.Controls;
-using Wpf.Ui.Appearance;
 
 namespace Nameless.InfoPhoenix.Client.ViewModels.Pages;
 
@@ -27,6 +27,7 @@ namespace Nameless.InfoPhoenix.Client.ViewModels.Pages;
 public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware {
     private readonly IAppConfigurationManager _appConfigurationManager;
     private readonly IApplicationContext _applicationContext;
+    private readonly IApplicationThemeApplier _applicationThemeApplier;
     private readonly IMediator _mediator;
     private readonly ILogger<AppConfigurationPageViewModel> _logger;
 
@@ -67,11 +68,13 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
     public AppConfigurationPageViewModel(
         IAppConfigurationManager appConfigurationManager,
         IApplicationContext applicationContext,
+        IApplicationThemeApplier applicationThemeApplier,
         ITranslator translator,
         IMediator mediator,
         ILogger<AppConfigurationPageViewModel> logger) {
         _appConfigurationManager = Throws.When.Null(appConfigurationManager);
         _applicationContext = Throws.When.Null(applicationContext);
+        _applicationThemeApplier = Throws.When.Null(applicationThemeApplier);
         _mediator = Throws.When.Null(mediator);
         _logger = Throws.When.Null(logger);
 
@@ -126,7 +129,7 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
 
         var theme = (Theme)newValue.Tag;
 
-        ApplicationThemeManager.Apply(theme.ToApplicationTheme());
+        _applicationThemeApplier.Apply(theme);
 
         _appConfigurationManager.Theme = theme;
 

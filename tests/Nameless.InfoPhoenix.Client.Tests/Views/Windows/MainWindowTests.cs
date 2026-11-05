@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using System.Windows.Controls;
-using Nameless.InfoPhoenix.Client.Infrastructure;
 using Nameless.InfoPhoenix.Client.Tests.Fakes;
 using Nameless.InfoPhoenix.Client.ViewModels.Windows;
 using Nameless.Windows.AppConfiguration;
@@ -136,17 +135,6 @@ public class MainWindowTests {
             new NoOpNavigationViewPageProvider(),
             new NoOpSnackbarService()
         );
-    }
-
-    private sealed class FakeApplicationThemeApplier : IApplicationThemeApplier {
-        public System.Windows.Window? AppliedToWindow { get; private set; }
-
-        public Nameless.Windows.UI.Theme? AppliedTheme { get; private set; }
-
-        public void Apply(System.Windows.Window window, Nameless.Windows.UI.Theme theme) {
-            AppliedToWindow = window;
-            AppliedTheme = theme;
-        }
     }
 
     private sealed class NoOpNavigationViewItemProvider : INavigationViewItemProvider {

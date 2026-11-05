@@ -17,12 +17,31 @@ namespace Nameless.InfoPhoenix.Client.Infrastructure;
 /// </summary>
 public interface IApplicationThemeApplier {
     void Apply(Window window, Theme theme);
+
+    /// <summary>
+    /// Applies <paramref name="theme"/> without touching any window's watch registration.
+    /// <see cref="Theme.System"/> maps to <see cref="ApplicationTheme.Unknown"/> via
+    /// <see cref="ThemeExtension.ToApplicationTheme"/>, and
+    /// <see cref="ApplicationThemeManager.Apply(ApplicationTheme, Wpf.Ui.Controls.WindowBackdropType, bool)"/>
+    /// is a no-op for <see cref="ApplicationTheme.Unknown"/> - so this routes that case through
+    /// <see cref="ApplicationThemeManager.ApplySystemTheme(bool)"/> instead.
+    /// </summary>
+    void Apply(Theme theme);
 }
 
 internal sealed class ApplicationThemeApplier : IApplicationThemeApplier {
     public void Apply(Window window, Theme theme) {
         SystemThemeWatcher.Watch(window);
-        ApplicationThemeManager.Apply(theme.ToApplicationTheme());
+        Apply(theme);
+    }
+
+    public void Apply(Theme theme) {
+        if (theme == Theme.System) {
+            ApplicationThemeManager.ApplySystemTheme();
+        }
+        else {
+            ApplicationThemeManager.Apply(theme.ToApplicationTheme());
+        }
     }
 }
 
