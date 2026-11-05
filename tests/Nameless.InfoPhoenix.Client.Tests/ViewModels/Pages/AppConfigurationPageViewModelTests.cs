@@ -10,6 +10,7 @@ using Nameless.Windows.UI;
 
 namespace Nameless.InfoPhoenix.Client.Tests.ViewModels.Pages;
 
+[Collection(Nameless.InfoPhoenix.Client.Tests.Views.Windows.WpfUiThemeTestCollection.Name)]
 public class AppConfigurationPageViewModelTests {
     [Fact]
     public void OnNavigatedToAsync_ReadsBackThemeChangeImmediately_WithExactlyOneSave() {

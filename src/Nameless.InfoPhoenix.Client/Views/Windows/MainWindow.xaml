@@ -9,6 +9,7 @@
 
                  mc:Ignorable="d"
 
+                 Closing="ClosingHandler"
                  Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                  ExtendsContentIntoTitleBar="True"
                  MinHeight="420"

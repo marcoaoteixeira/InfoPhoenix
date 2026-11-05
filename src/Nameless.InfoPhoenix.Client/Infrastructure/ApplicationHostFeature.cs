@@ -17,6 +17,7 @@ internal static class ApplicationHostFeature {
         ConfigureTranslatorHostFeature(features);
         ConfigureEntityFrameworkCoreHostFeature(features);
         ConfigureLoggingFeature(features);
+        features.Add(new ApplicationThemeApplierHostFeature());
     }
 
     private static void ConfigureTranslatorHostFeature(HostFeatureCollection features) {
