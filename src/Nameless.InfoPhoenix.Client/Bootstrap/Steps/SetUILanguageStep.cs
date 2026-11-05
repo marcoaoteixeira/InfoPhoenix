@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using Nameless.Windows.AppConfiguration;
 using Nameless.Windows.Bootstrap;
 using Nameless.Windows.Bootstrap.Notification;
@@ -12,17 +13,30 @@ namespace Nameless.InfoPhoenix.Client.Bootstrap.Steps;
 /// </summary>
 public class SetUILanguageStep : StepBase {
     private readonly IAppConfigurationManager _appConfigurationManager;
+    private readonly ILogger<SetUILanguageStep> _logger;
     private readonly ITranslator _translator;
 
-    public SetUILanguageStep(IAppConfigurationManager appConfigurationManager, ITranslator translator) {
+    public SetUILanguageStep(
+        IAppConfigurationManager appConfigurationManager,
+        ILogger<SetUILanguageStep> logger,
+        ITranslator translator) {
         _appConfigurationManager = appConfigurationManager;
+        _logger = logger;
         _translator = translator;
     }
 
     public override Task ExecuteAsync(IProgress<StepProgress> progress, CancellationToken cancellationToken) {
-        var language = _appConfigurationManager.Language;
+        // Guarded (plan 2.2): an unreadable app.config must not fail the bootstrap step, which
+        // would raise a BootstrapException and keep the app from ever starting.
+        string? language = null;
+        try {
+            language = _appConfigurationManager.Language;
+        }
+        catch (Exception ex) {
+            _logger.LogWarning(ex, "Failed to read the stored UI language; keeping the current culture.");
+        }
 
-        if (CultureResolver.TryGet(language, out var culture)) {
+        if (language is not null && CultureResolver.TryGet(language, out var culture)) {
             _translator.SetCulture(culture);
         }
 
