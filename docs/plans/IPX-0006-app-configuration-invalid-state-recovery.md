@@ -221,13 +221,13 @@ The tests use xUnit with hand-rolled fakes (no mocking library), on STA through 
 | no-crash | **M2:** `MainWindow` with `ThrowOnTryGet` set constructs without throwing, and the applier receives `Theme.System`. **M3:** `ClosingHandler` with a throwing read does not cancel the close and shows no dialog. | Unit (STA) |
 | no-crash | **S1:** `SetUILanguageStep.ExecuteAsync` with a throwing manager completes and makes no `SetCulture` call. | Unit |
 | drift | **F1, F2** (section 4). | Unit |
-| (optional) | **I1:** the real `AppConfigurationManager` over a temp-dir `IFileManager` (the IPX-0004 integration-test pattern) with `app.config` = `{"Theme":"Dark"}`. The VM publishes a snackbar, and after the save the file reads back `Theme` = `0`. This proves the `TryGet<object>` probe against the real implementation. It is **in addition to** the fake-based AC tests, not a replacement. | Integration |
+| (optional) | **I1:** the real `AppConfigurationManager` over a temp-dir `IFileManager` (the IPX-0004 integration-test pattern) with `app.config` = `{"Theme":999}` - an undefined enum member, actually invalid for the real manager (unlike `"Theme":"Dark"`, which the real manager serializes/reads back as a normal, valid string). The VM publishes a snackbar, and after the save the file reads back `Theme` = `0`. This proves the `TryGet<object>` probe against the real implementation. It is **in addition to** the fake-based AC tests, not a replacement. | Integration |
 
 **Manual QA against the real manager** (edit `<app data>/app.config` with the app closed, launch, then open Configurações):
 
 | Case | Expected |
 |---|---|
-| `{"Theme":"Dark"}` | Snackbar shown and settings reset. Close and relaunch: no snackbar. |
+| `{"Theme":999}` (an undefined enum member - `{"Theme":"Dark"}` is a normal, valid stored value for the real manager, not a recovery case) | Snackbar shown and settings reset. Close and relaunch: no snackbar. |
 | `{"Theme":42}` and `{"UILanguage":"fr-FR"}` | Snackbar shown, and the combos are not blank. |
 | `{"ConfirmBeforeExit":"yes"}` | Snackbar shown. Closing the app does not ask. |
 | Malformed JSON (`{{{`) | **No snackbar** (D-1 limitation). Defaults are used and nothing crashes. |

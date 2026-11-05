@@ -248,7 +248,7 @@ public class AppConfigurationPageViewModelTests {
     /// value, or a well-formed but unsupported culture - triggers exactly one Failure snackbar.
     /// </summary>
     [Theory]
-    [InlineData("Theme", "Dark")] // wrong type (string instead of Theme)
+    [InlineData("Theme", "Dark")] // wrong type relative to the fake's own typed TryGet<T> (it stores a raw string; the real manager serializes Theme as a string, so this case is fake-only)
     [InlineData("Theme", (Theme)42)] // undefined enum value
     [InlineData("UILanguage", 5)] // wrong type (int instead of string)
     [InlineData("UILanguage", "xx-INVALID")] // unresolvable culture tag
