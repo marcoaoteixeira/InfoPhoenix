@@ -179,4 +179,10 @@
 	<data name="OpenCurrentLogFileRequestHandler_Missing_Log_File_Message" xml:space="preserve">
 		<value>No application log file was found yet.</value>
 	</data>
+	<data name="AppConfigurationPage_InvalidSettings_Title" xml:space="preserve">
+		<value>Settings reset</value>
+	</data>
+	<data name="AppConfigurationPage_InvalidSettings_Message" xml:space="preserve">
+		<value>Your saved settings could not be read and were reset to the defaults.</value>
+	</data>
 </root>

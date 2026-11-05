@@ -40,6 +40,8 @@ public class LocalizationFitnessTests {
         "MainWindow_ConfirmApplicationExit_MessageBox_Message",
         "OpenCurrentLogFileRequestHandler_Missing_Log_File_Title",
         "OpenCurrentLogFileRequestHandler_Missing_Log_File_Message",
+        "AppConfigurationPage_InvalidSettings_Title",
+        "AppConfigurationPage_InvalidSettings_Message",
     };
 
     [Theory]
