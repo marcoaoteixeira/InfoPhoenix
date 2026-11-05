@@ -337,11 +337,13 @@ public sealed class PerformApplicationBackupRequestHandlerTests : IDisposable {
     }
 
     /// <summary>
-    /// B8: a cancel requested right before the commit point propagates
-    /// <see cref="OperationCanceledException"/>, publishes no Failure entry, and leaves nothing
-    /// behind. The token is cancelled from inside the "CreatingArchive" step's own Information
-    /// publish - the latest point reachable with a synchronous hook, immediately before the
-    /// manifest write, the zip, and the move.
+    /// B8: a cancel requested right before the manifest write, the zip and the move still
+    /// propagates <see cref="OperationCanceledException"/>, publishes no Failure entry, and
+    /// leaves nothing behind. The token is cancelled from inside the "CreatingArchive" step's own
+    /// Information publish - the earliest point reachable with a publish-based hook. This is an
+    /// earlier cancellation point than the explicit commit-point check itself (see the
+    /// complementary test below, review finding #7): <c>WriteManifestAsync</c>'s own
+    /// cancellation check throws before that explicit check is ever reached.
     /// </summary>
     [Fact]
     public async Task HandleAsync_WhenCancelledRightBeforeTheCommitPoint_PropagatesCancellation_WithNothingLeftBehind() {
@@ -364,6 +366,34 @@ public sealed class PerformApplicationBackupRequestHandlerTests : IDisposable {
         Assert.DoesNotContain(
             eventPublisher.PublishedEvents.OfType<BackupRecoveryProgressNotificationEvent>(),
             e => e.Type is NotificationType.Failure or NotificationType.Success);
+
+        var temporaryDirectory = Path.Combine(_appRoot, "temporary");
+        Assert.True(
+            !Directory.Exists(temporaryDirectory) || Directory.GetDirectories(temporaryDirectory, "backup-*").Length == 0);
+
+        var backupDirectory = Path.Combine(_appRoot, "backups");
+        Assert.True(!Directory.Exists(backupDirectory) || Directory.GetFiles(backupDirectory).Length == 0);
+    }
+
+    /// <summary>
+    /// B8 complement (review finding #7): a cancel requested strictly after the manifest and the
+    /// zip are already written - right before the move - still propagates
+    /// <see cref="OperationCanceledException"/> through the explicit commit-point check (plan
+    /// §3.2), not through an earlier await's own check. No publish event exists in that narrow
+    /// window to hook a test off, so this uses the handler's internal, test-only
+    /// <c>OnBeforeCommitPointCheck</c> hook instead of racing real timing.
+    /// </summary>
+    [Fact]
+    public async Task HandleAsync_WhenCancelledAfterTheArchiveIsWritten_PropagatesCancellation_ThroughTheCommitPointCheck() {
+        using var cts = new CancellationTokenSource();
+        var applicationContext = new FakeApplicationContext {
+            FileManager = new PhysicalFileManagerFactory().GetOrCreate(_appRoot)
+        };
+        var handler = CreateHandler(applicationContext);
+        handler.OnBeforeCommitPointCheck = cts.Cancel;
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(
+            () => handler.HandleAsync(new PerformApplicationBackupRequest(), cts.Token));
 
         var temporaryDirectory = Path.Combine(_appRoot, "temporary");
         Assert.True(
