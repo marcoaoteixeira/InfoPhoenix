@@ -10,6 +10,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<InternalsVisibleTo Include="Nameless.InfoPhoenix.Client.Tests" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<None Remove="appsettings.json" />
 		<None Remove="Resources\xaml\ValidationResourceDictionary.xaml" />
 		<None Remove="Resources\imgs\application_64x64.png" />
@@ -52,6 +56,9 @@
 	  <EmbeddedResource Update="Resources\l10n\Localization.resx">
 	    <Generator>ResXFileCodeGenerator</Generator>
 	    <LastGenOutput>Localization.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Resources\l10n\Localization.pt-BR.resx">
+	    <DependentUpon>Localization.resx</DependentUpon>
 	  </EmbeddedResource>
 	</ItemGroup>
 

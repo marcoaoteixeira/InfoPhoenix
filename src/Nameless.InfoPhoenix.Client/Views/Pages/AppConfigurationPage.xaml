@@ -1,0 +1,145 @@
+<Page x:Class="Nameless.InfoPhoenix.Client.Views.Pages.AppConfigurationPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:loc="clr-namespace:Nameless.Windows.Localization;assembly=Nameless.Windows"
+
+      x:Name="AppConfigurationPageRoot"
+
+      mc:Ignorable="d"
+
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}">
+    <StackPanel Margin="24">
+        <ui:TextBlock FontTypography="Title"
+                      Margin="0 0 0 20"
+                      Text="{loc:Translator AppConfigurationPage_Title}" />
+
+        <ui:CardControl Icon="{ui:ImageIcon 'pack://application:,,,/Nameless.InfoPhoenix.Client;component/Resources/imgs/application_64x64.png'}"
+                        Margin="0 0 0 10">
+            <ui:CardControl.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <ui:TextBlock FontTypography="BodyStrong"
+                                  Grid.Row="0"
+                                  Text="{loc:Translator AppConfigurationPage_VersionCard_Title}" />
+                    <TextBlock Grid.Row="1"
+                               Name="AppVersionTextBlock"
+                               Text="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.AppVersion, Mode=OneTime}" />
+                </Grid>
+            </ui:CardControl.Header>
+        </ui:CardControl>
+
+        <ui:CardControl Icon="{ui:SymbolIcon LocalLanguage28}"
+                        Margin="0 0 0 10">
+            <ui:CardControl.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <ui:TextBlock FontTypography="BodyStrong"
+                                  Grid.Row="0"
+                                  Text="{loc:Translator AppConfigurationPage_ApplicationLanguageCard_Title}" />
+                    <ui:TextBlock Grid.Row="1" Text="{loc:Translator AppConfigurationPage_ApplicationLanguageCard_Message}" />
+                </Grid>
+            </ui:CardControl.Header>
+            <ComboBox Cursor="Hand"
+                      ItemsSource="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.AvailableLanguages, Mode=OneTime}"
+                      SelectedValue="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.CurrentLanguage, Mode=TwoWay}"
+                      IsSynchronizedWithCurrentItem="True"
+                      MinWidth="200" />
+        </ui:CardControl>
+
+        <ui:CardControl Icon="{ui:SymbolIcon Color24}"
+                        Margin="0 0 0 10">
+            <ui:CardControl.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <ui:TextBlock FontTypography="BodyStrong"
+                                  Grid.Row="0"
+                                  Text="{loc:Translator AppConfigurationPage_ThemeCard_Title}" />
+                    <ui:TextBlock Grid.Row="1"
+                                  Text="{loc:Translator AppConfigurationPage_ThemeCard_Message}" />
+                </Grid>
+            </ui:CardControl.Header>
+            <ComboBox Cursor="Hand"
+                      ItemsSource="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.AvailableThemes, Mode=OneTime}"
+                      SelectedValue="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.CurrentTheme, Mode=TwoWay}"
+                      IsSynchronizedWithCurrentItem="True"
+                      MinWidth="200" />
+        </ui:CardControl>
+
+        <ui:CardControl Icon="{ui:SymbolIcon ArrowExit20}"
+                        Margin="0 0 0 10">
+            <ui:CardControl.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <ui:TextBlock FontTypography="BodyStrong"
+                                  Grid.Row="0"
+                                  Text="{loc:Translator AppConfigurationPage_ExitBehaviorCard_Title}" />
+                    <ui:TextBlock Grid.Row="1"
+                                  Text="{loc:Translator AppConfigurationPage_ExitBehaviorCard_Message}" />
+                </Grid>
+            </ui:CardControl.Header>
+            <CheckBox Cursor="Hand"
+                      IsChecked="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.CurrentConfirmBeforeExit, Mode=TwoWay}" />
+        </ui:CardControl>
+
+        <ui:CardControl Icon="{ui:SymbolIcon FolderGlobe20}"
+                        Margin="0 0 0 10">
+            <ui:CardControl.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <ui:TextBlock FontTypography="BodyStrong"
+                                  Grid.Row="0"
+                                  Text="{loc:Translator AppConfigurationPage_AppDirectoryPathCard_Title}" />
+                    <ui:TextBlock Grid.Row="1"
+                                  Text="{loc:Translator AppConfigurationPage_AppDirectoryPathCard_Message}" />
+                </Grid>
+            </ui:CardControl.Header>
+            <ui:Button Appearance="Primary"
+                       Cursor="Hand"
+                       Command="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.OpenApplicationDataDirectoryCommand, Mode=OneTime}"
+                       Content="{loc:Translator AppConfigurationPage_AppDirectoryPathCard_Button_Caption}"
+                       Icon="{ui:SymbolIcon Open48}"
+                       Padding="30 8" />
+        </ui:CardControl>
+
+        <ui:CardControl Icon="{ui:SymbolIcon CodeTextEdit20}"
+                        Margin="0 0 0 10">
+            <ui:CardControl.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <ui:TextBlock FontTypography="BodyStrong"
+                                  Grid.Row="0"
+                                  Text="{loc:Translator AppConfigurationPage_ApplicationLogCard_Title}" />
+                    <ui:TextBlock Grid.Row="1"
+                                  Text="{loc:Translator AppConfigurationPage_ApplicationLogCard_Message}" />
+                </Grid>
+            </ui:CardControl.Header>
+            <ui:Button Appearance="Primary"
+                       Cursor="Hand"
+                       Command="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.OpenApplicationLogFileCommand, Mode=OneTime}"
+                       Content="{loc:Translator AppConfigurationPage_ApplicationLogCard_Button_Caption}"
+                       Icon="{ui:SymbolIcon Open48}"
+                       Padding="30 8" />
+        </ui:CardControl>
+    </StackPanel>
+</Page>

@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Threading;
 using Microsoft.Extensions.Configuration;
 using Nameless.Configuration;
+using Nameless.InfoPhoenix.Client.Tests.Fakes;
 using Nameless.InfoPhoenix.Client.Views.Windows;
 using Nameless.Windows.Bootstrap.Notification;
 
