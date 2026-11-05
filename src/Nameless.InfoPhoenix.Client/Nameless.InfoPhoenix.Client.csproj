@@ -10,6 +10,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<InternalsVisibleTo Include="Nameless.InfoPhoenix.Client.Tests" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<None Remove="appsettings.json" />
 		<None Remove="Resources\xaml\ValidationResourceDictionary.xaml" />
 		<None Remove="Resources\imgs\application_64x64.png" />
