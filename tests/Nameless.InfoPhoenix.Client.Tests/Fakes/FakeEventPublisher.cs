@@ -25,6 +25,13 @@ internal sealed class FakeEventPublisher : IEventPublisher {
     /// </summary>
     public Exception? ThrowOnPublish { get; set; }
 
+    /// <summary>
+    /// Runs before an event is recorded, letting a test react to a specific published event -
+    /// for instance, cancelling the token the handler is running under exactly when a given
+    /// step's Information entry is published (IPX-0009/B8), without needing real concurrency.
+    /// </summary>
+    public Action<Event>? OnPublish { get; set; }
+
     public void Register<TEvent>(object subscriber, Action<object, TEvent> handler) where TEvent : Event {
         Registrations.Add((typeof(TEvent), subscriber, handler));
     }
@@ -34,6 +41,8 @@ internal sealed class FakeEventPublisher : IEventPublisher {
     }
 
     public Task PublishAsync<TEvent>(TEvent @event) where TEvent : Event {
+        OnPublish?.Invoke(@event);
+
         if (ThrowOnPublish is not null) {
             throw ThrowOnPublish;
         }

@@ -126,4 +126,67 @@
 	<data name="AppConfigurationPage_InvalidSettings_Message" xml:space="preserve">
 		<value>Não foi possível ler as configurações salvas. Elas foram redefinidas para os valores padrão.</value>
 	</data>
+	<data name="TaskRunnerWindow_CancelButton_Caption" xml:space="preserve">
+		<value>Cancelar</value>
+	</data>
+	<data name="TaskRunnerWindow_CloseButton_Caption" xml:space="preserve">
+		<value>Fechar</value>
+	</data>
+	<data name="TaskRunnerWindow_Cancelled_Message" xml:space="preserve">
+		<value>Operação cancelada.</value>
+	</data>
+	<data name="TaskRunnerWindow_CloseBlocked_Message" xml:space="preserve">
+		<value>Aguarde a conclusão da operação antes de fechar esta janela.</value>
+	</data>
+	<data name="AppConfigurationPage_Backup_TaskRunnerWindow_Title" xml:space="preserve">
+		<value>Backup dos dados da aplicação</value>
+	</data>
+	<data name="AppConfigurationPage_Backup_Success_Message" xml:space="preserve">
+		<value>Backup criado: {0}</value>
+	</data>
+	<data name="AppConfigurationPage_Backup_Failure_Message" xml:space="preserve">
+		<value>O backup falhou inesperadamente: {0}</value>
+	</data>
+	<data name="PerformApplicationBackupRequestHandler_Preparing" xml:space="preserve">
+		<value>Preparando o backup...</value>
+	</data>
+	<data name="PerformApplicationBackupRequestHandler_CopyingConfiguration" xml:space="preserve">
+		<value>Salvando e copiando as configurações...</value>
+	</data>
+	<data name="PerformApplicationBackupRequestHandler_CopyingDatabase" xml:space="preserve">
+		<value>Copiando o banco de dados...</value>
+	</data>
+	<data name="PerformApplicationBackupRequestHandler_CopyingSearchIndex" xml:space="preserve">
+		<value>Copiando o índice de pesquisa...</value>
+	</data>
+	<data name="PerformApplicationBackupRequestHandler_CreatingArchive" xml:space="preserve">
+		<value>Criando o arquivo de backup...</value>
+	</data>
+	<data name="PerformApplicationBackupRequestHandler_Success" xml:space="preserve">
+		<value>Backup criado: {0}</value>
+	</data>
+	<data name="PerformApplicationBackupRequestHandler_ConfigurationMissing_Warning" xml:space="preserve">
+		<value>Arquivo de configurações não encontrado; o backup continua sem ele.</value>
+	</data>
+	<data name="PerformApplicationBackupRequestHandler_DatabaseMissing_Warning" xml:space="preserve">
+		<value>Banco de dados não encontrado; o backup continua sem ele.</value>
+	</data>
+	<data name="PerformApplicationBackupRequestHandler_SearchIndexMissing_Warning" xml:space="preserve">
+		<value>Índice de pesquisa não encontrado; o backup continua sem ele.</value>
+	</data>
+	<data name="PerformApplicationBackupRequestHandler_Preparing_Failure" xml:space="preserve">
+		<value>O backup falhou na preparação: {0}</value>
+	</data>
+	<data name="PerformApplicationBackupRequestHandler_CopyingConfiguration_Failure" xml:space="preserve">
+		<value>O backup falhou ao copiar as configurações: {0}</value>
+	</data>
+	<data name="PerformApplicationBackupRequestHandler_CopyingDatabase_Failure" xml:space="preserve">
+		<value>O backup falhou ao copiar o banco de dados: {0}</value>
+	</data>
+	<data name="PerformApplicationBackupRequestHandler_CopyingSearchIndex_Failure" xml:space="preserve">
+		<value>O backup falhou ao copiar o índice de pesquisa: {0}</value>
+	</data>
+	<data name="PerformApplicationBackupRequestHandler_CreatingArchive_Failure" xml:space="preserve">
+		<value>O backup falhou ao criar o arquivo de backup: {0}</value>
+	</data>
 </root>

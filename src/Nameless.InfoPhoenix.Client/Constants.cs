@@ -43,6 +43,25 @@ internal static class Constants {
         }
     }
 
+    /// <summary>
+    /// Names and formats for the "Back up now" / "Restore" feature (plan IPX-0009 §3.6).
+    /// <c>AppConfigurationFileName</c> duplicates a private constant from
+    /// <c>Nameless.Windows</c>' <c>AppConfigurationManager</c>; fitness test F4
+    /// (<c>ConstantsFitnessTests</c>) guards it against a silent drift at the next package bump.
+    /// </summary>
+    internal static class BackupRecovery {
+        internal const string FileNamePattern = "InfoPhoenix-backup-{0:yyyyMMdd'T'HHmmss'Z'}.zip";
+        internal const int MaxCollisionSuffix = 99;
+        internal const string StagingDirectoryPrefix = "backup-";
+        internal const string AppConfigurationFileName = "app.config";
+        internal const string ManifestEntryName = "backup-manifest.json";
+        internal const string ConfigurationEntryName = "app.config";
+        internal const string DatabaseEntryName = "database/app.db";
+        internal const string SearchIndexEntryDirectory = "search-index";
+        internal const string LuceneWriteLockFileName = "write.lock";
+        internal const int FormatVersion = 1;
+    }
+
     internal static class Labels {
         internal static class NavigationMenuItems {
             // The nav item title comes from a `const` in an attribute, so it

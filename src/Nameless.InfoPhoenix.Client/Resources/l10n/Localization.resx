@@ -185,4 +185,67 @@
 	<data name="AppConfigurationPage_InvalidSettings_Message" xml:space="preserve">
 		<value>Your saved settings could not be read and were reset to the defaults.</value>
 	</data>
+	<data name="TaskRunnerWindow_CancelButton_Caption" xml:space="preserve">
+		<value>Cancel</value>
+	</data>
+	<data name="TaskRunnerWindow_CloseButton_Caption" xml:space="preserve">
+		<value>Close</value>
+	</data>
+	<data name="TaskRunnerWindow_Cancelled_Message" xml:space="preserve">
+		<value>Operation cancelled.</value>
+	</data>
+	<data name="TaskRunnerWindow_CloseBlocked_Message" xml:space="preserve">
+		<value>Please wait until the operation finishes before closing this window.</value>
+	</data>
+	<data name="AppConfigurationPage_Backup_TaskRunnerWindow_Title" xml:space="preserve">
+		<value>Back up application data</value>
+	</data>
+	<data name="AppConfigurationPage_Backup_Success_Message" xml:space="preserve">
+		<value>Backup created: {0}</value>
+	</data>
+	<data name="AppConfigurationPage_Backup_Failure_Message" xml:space="preserve">
+		<value>Backup failed unexpectedly: {0}</value>
+	</data>
+	<data name="PerformApplicationBackupRequestHandler_Preparing" xml:space="preserve">
+		<value>Preparing backup...</value>
+	</data>
+	<data name="PerformApplicationBackupRequestHandler_CopyingConfiguration" xml:space="preserve">
+		<value>Saving and copying settings...</value>
+	</data>
+	<data name="PerformApplicationBackupRequestHandler_CopyingDatabase" xml:space="preserve">
+		<value>Copying database...</value>
+	</data>
+	<data name="PerformApplicationBackupRequestHandler_CopyingSearchIndex" xml:space="preserve">
+		<value>Copying search index...</value>
+	</data>
+	<data name="PerformApplicationBackupRequestHandler_CreatingArchive" xml:space="preserve">
+		<value>Creating backup file...</value>
+	</data>
+	<data name="PerformApplicationBackupRequestHandler_Success" xml:space="preserve">
+		<value>Backup created: {0}</value>
+	</data>
+	<data name="PerformApplicationBackupRequestHandler_ConfigurationMissing_Warning" xml:space="preserve">
+		<value>No settings file found; backup continues without it.</value>
+	</data>
+	<data name="PerformApplicationBackupRequestHandler_DatabaseMissing_Warning" xml:space="preserve">
+		<value>No database found; backup continues without it.</value>
+	</data>
+	<data name="PerformApplicationBackupRequestHandler_SearchIndexMissing_Warning" xml:space="preserve">
+		<value>No search index found; backup continues without it.</value>
+	</data>
+	<data name="PerformApplicationBackupRequestHandler_Preparing_Failure" xml:space="preserve">
+		<value>Backup failed while preparing: {0}</value>
+	</data>
+	<data name="PerformApplicationBackupRequestHandler_CopyingConfiguration_Failure" xml:space="preserve">
+		<value>Backup failed while copying settings: {0}</value>
+	</data>
+	<data name="PerformApplicationBackupRequestHandler_CopyingDatabase_Failure" xml:space="preserve">
+		<value>Backup failed while copying the database: {0}</value>
+	</data>
+	<data name="PerformApplicationBackupRequestHandler_CopyingSearchIndex_Failure" xml:space="preserve">
+		<value>Backup failed while copying the search index: {0}</value>
+	</data>
+	<data name="PerformApplicationBackupRequestHandler_CreatingArchive_Failure" xml:space="preserve">
+		<value>Backup failed while creating the backup file: {0}</value>
+	</data>
 </root>

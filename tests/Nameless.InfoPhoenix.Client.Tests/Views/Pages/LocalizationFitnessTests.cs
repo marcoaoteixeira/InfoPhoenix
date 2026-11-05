@@ -42,6 +42,31 @@ public class LocalizationFitnessTests {
         "OpenCurrentLogFileRequestHandler_Missing_Log_File_Message",
         "AppConfigurationPage_InvalidSettings_Title",
         "AppConfigurationPage_InvalidSettings_Message",
+
+        // IPX-0008 §3.4: TaskRunner window generic keys.
+        "TaskRunnerWindow_CancelButton_Caption",
+        "TaskRunnerWindow_CloseButton_Caption",
+        "TaskRunnerWindow_Cancelled_Message",
+        "TaskRunnerWindow_CloseBlocked_Message",
+
+        // IPX-0009 §3.5: backup feature keys.
+        "AppConfigurationPage_Backup_TaskRunnerWindow_Title",
+        "AppConfigurationPage_Backup_Success_Message",
+        "AppConfigurationPage_Backup_Failure_Message",
+        "PerformApplicationBackupRequestHandler_Preparing",
+        "PerformApplicationBackupRequestHandler_CopyingConfiguration",
+        "PerformApplicationBackupRequestHandler_CopyingDatabase",
+        "PerformApplicationBackupRequestHandler_CopyingSearchIndex",
+        "PerformApplicationBackupRequestHandler_CreatingArchive",
+        "PerformApplicationBackupRequestHandler_Success",
+        "PerformApplicationBackupRequestHandler_ConfigurationMissing_Warning",
+        "PerformApplicationBackupRequestHandler_DatabaseMissing_Warning",
+        "PerformApplicationBackupRequestHandler_SearchIndexMissing_Warning",
+        "PerformApplicationBackupRequestHandler_Preparing_Failure",
+        "PerformApplicationBackupRequestHandler_CopyingConfiguration_Failure",
+        "PerformApplicationBackupRequestHandler_CopyingDatabase_Failure",
+        "PerformApplicationBackupRequestHandler_CopyingSearchIndex_Failure",
+        "PerformApplicationBackupRequestHandler_CreatingArchive_Failure",
     };
 
     [Theory]
