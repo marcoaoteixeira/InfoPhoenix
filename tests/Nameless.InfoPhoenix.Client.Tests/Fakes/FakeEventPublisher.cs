@@ -18,6 +18,13 @@ internal sealed class FakeEventPublisher : IEventPublisher {
     /// </summary>
     public List<(Type EventType, object Subscriber, Delegate Handler)> Registrations { get; } = [];
 
+    /// <summary>
+    /// When set, every <see cref="PublishAsync{TEvent}"/> throws this instead of recording the
+    /// event - simulates a failing notification (plan 2.3 step 5/B14), which must not break the
+    /// caller that already applied/saved its change.
+    /// </summary>
+    public Exception? ThrowOnPublish { get; set; }
+
     public void Register<TEvent>(object subscriber, Action<object, TEvent> handler) where TEvent : Event {
         Registrations.Add((typeof(TEvent), subscriber, handler));
     }
@@ -27,6 +34,10 @@ internal sealed class FakeEventPublisher : IEventPublisher {
     }
 
     public Task PublishAsync<TEvent>(TEvent @event) where TEvent : Event {
+        if (ThrowOnPublish is not null) {
+            throw ThrowOnPublish;
+        }
+
         PublishedEvents.Add(@event);
 
         return Task.CompletedTask;

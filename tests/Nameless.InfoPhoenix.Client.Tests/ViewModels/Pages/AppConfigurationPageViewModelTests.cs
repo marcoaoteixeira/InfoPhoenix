@@ -375,6 +375,29 @@ public class AppConfigurationPageViewModelTests {
     }
 
     /// <summary>
+    /// B14 (plan 2.3 step 5): a failing notification must not break navigation - by the time
+    /// the publish is attempted, the Set/Save/applier/translator work has already happened.
+    /// </summary>
+    [Fact]
+    public void OnNavigatedToAsync_WhenPublishingFails_StillCompletes_AfterApplyingAndSavingTheReset() {
+        StaWindowTestHarness.Run(() => {
+            var manager = new FakeAppConfigurationManager();
+            manager.Seed("Theme", (Theme)42);
+            var themeApplier = new FakeApplicationThemeApplier();
+            var translator = new FakeTranslator();
+            var eventPublisher = new FakeEventPublisher { ThrowOnPublish = new InvalidOperationException("boom") };
+            var vm = CreateViewModel(manager: manager, themeApplier: themeApplier, translator: translator, eventPublisher: eventPublisher);
+
+            var exception = Record.Exception(() => vm.OnNavigatedToAsync().GetAwaiter().GetResult());
+
+            Assert.Null(exception);
+            Assert.Equal(["Set:Theme", "Set:UILanguage", "Set:ConfirmBeforeExit", "Save"], manager.CallLog);
+            Assert.Equal(Theme.System, themeApplier.AppliedTheme);
+            Assert.Equal(["pt-BR"], translator.SetCultureCalls);
+        });
+    }
+
+    /// <summary>
     /// B7: once a VM instance has recovered, a second navigation is a no-op - no duplicate
     /// publish, Set or Save.
     /// </summary>
