@@ -23,3 +23,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   application configuration page, each shown disabled with a
   "coming soon" badge and tooltip, as placeholders for upcoming features.
   ([IPX-0005](https://github.com/marcoaoteixeira/InfoPhoenix/issues/14))
+- Recovery from invalid or unreadable app configuration: opening the
+  application configuration page now detects an invalid or unreadable
+  Theme, Language or Confirm-before-exit setting, resets every setting
+  back to its default, applies the defaults immediately and shows a
+  failure snackbar notification, instead of leaving the page stuck or
+  blank. ([IPX-0006](https://github.com/marcoaoteixeira/InfoPhoenix/issues/15))
+
+### Fixed
+
+- The main window now actually subscribes to snackbar notifications
+  published through the event publisher, so notifications (including
+  IPX-0004's "missing log file" warning) are shown instead of silently
+  never appearing.
+  ([IPX-0006](https://github.com/marcoaoteixeira/InfoPhoenix/issues/15))
+- The main window's startup theme read, its closing handler's
+  confirm-before-exit read, and the bootstrap step that applies the UI
+  language no longer crash the application when the stored app
+  configuration cannot be read; each falls back to its default value and
+  logs a warning instead.
+  ([IPX-0006](https://github.com/marcoaoteixeira/InfoPhoenix/issues/15))
