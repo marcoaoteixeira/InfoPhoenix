@@ -53,6 +53,9 @@
 	    <Generator>ResXFileCodeGenerator</Generator>
 	    <LastGenOutput>Localization.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
+	  <EmbeddedResource Update="Resources\l10n\Localization.pt-BR.resx">
+	    <DependentUpon>Localization.resx</DependentUpon>
+	  </EmbeddedResource>
 	</ItemGroup>
 
 </Project>
