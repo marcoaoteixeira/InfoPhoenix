@@ -19,3 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   Stored theme (including System), language and confirm-before-exit now
   take effect on the next launch and on window close.
   ([IPX-0004](https://github.com/marcoaoteixeira/InfoPhoenix/issues/13))
+- Backup and Restore cards and a Check-for-update button on the
+  application configuration page, each shown disabled with a
+  "coming soon" badge and tooltip, as placeholders for upcoming features.
+  ([IPX-0005](https://github.com/marcoaoteixeira/InfoPhoenix/issues/14))
