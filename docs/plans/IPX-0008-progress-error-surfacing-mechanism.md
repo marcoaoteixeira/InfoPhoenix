@@ -67,7 +67,7 @@ Why the backup result differs from the sample: the sample's backup handler **thr
 
 1. **Report progress only through `BackupRecoveryProgressNotificationEvent`.** Use `_eventPublisher.Publish{Information|Warning|Failure|Success}Async<BackupRecoveryProgressNotificationEvent>(message: T[...])`. Do not create a new event type. Use one Information entry per step (for example: saving settings, copying database, copying search index, creating archive / extracting, validating, swapping).
 2. **Anticipated failure** (IO, disk full, access denied, invalid or mismatched archive, and so on):
-   - catch it;
+   - catch it, using **specific exception types** (`IOException`, `UnauthorizedAccessException`, `InvalidDataException`, ...) or `catch (Exception ex) when (ex is not OperationCanceledException)`. **Never use a bare `catch (Exception)`.** It would also catch the `TaskCanceledException` that `Task.Run(..., ct)` throws after Cancel is pressed, so a cancel would be reported as a failure. That breaks rule 4 and test F2;
    - **clean up first** (IPX-0009: partial zip and temp/staging folder; IPX-0011: staging folder, and roll back any swap that already happened);
    - publish **exactly one** localized Failure entry that names the step and includes the reason;
    - return the failure result (`BackupFilePath = null` / `Blocked` / `RolledBack`).
@@ -75,7 +75,7 @@ Why the backup result differs from the sample: the sample's backup handler **thr
 3. **Success**: publish one Success entry. For backup, that entry names the created file (IPX-0009 AC1, inside the window). Then return the success result.
 4. **Cancellation** (Cancel button): clean up, then let the `OperationCanceledException` from the run's token **propagate**. TaskRunner reports it as `Cancelled` and logs its own warning. Do not also publish a Failure entry.
    - **IPX-0011 exception:** once the swap starts (the commit point), the handler must **stop observing the token**. Do not pass it into the swap or anything after it. A cancel must never interrupt a half-done swap.
-5. **Offload synchronous work** (directory copies, `SqliteConnection.BackupDatabase`, file moves) with `await Task.Run(..., ct)`. **Publish events between steps from the awaiting flow, not from inside `Task.Run` bodies.** The window then stays responsive and the log updates in order.
+5. **Offload synchronous work** (directory copies, `SqliteConnection.BackupDatabase`, file moves) with `await Task.Run(..., ct)`. **Publish events between steps from the awaiting flow, not from inside `Task.Run` bodies.** The window then stays responsive and the log updates in order. The main reason, though, is that **events must be published on the UI thread**. `InProcessEventPublisher` delivers synchronously, and `TaskRunnerWindowViewModel.Update` mutates a UI-bound `ObservableCollection` without dispatching, so publishing from a background thread crashes at runtime. For the same reason, **never use `ConfigureAwait(false)` or `SkipContextSync()` in these handlers.** Every `await` must resume on the UI context.
 6. **Do not publish snackbars from handlers.** Snackbars belong to the ViewModel. This differs from the sample's restore handler, which publishes a snackbar itself.
 
 ### 3.3 ViewModel shape (`AppConfigurationPageViewModel`)
@@ -108,6 +108,8 @@ private async Task PerformApplicationBackupAsync() {
 }
 ```
 
+On the unexpected-exception path, the same message appears twice: once in the TaskRunner log (the window's own `Error(ex.Message)` entry) and again in the ViewModel's Failure snackbar after the window closes. **This is intended, not a duplicate-display bug.** The log entry explains the failure while the window is open, and the snackbar confirms the failure on the main window after the user closes it. The path is reserved for bugs, so it should be rare.
+
 Restore (IPX-0011) has the same shape. After `RunAsync`, **only** `outcome is Completed && restoreOutcome is RestoreOutcome.Completed` leads to the relaunch prompt (`_messageDialog.ShowQuestion(...)`, epic D14: prompt, never automatic). The file pick and overwrite confirmation (IPX-0010) happen **before** the builder is created.
 
 Rules:
@@ -132,7 +134,7 @@ Each ticket adds its own window title, step, failure and success keys. They foll
 
 | Attribute | How the design serves it | Fitness function (suggested, cheap) |
 |---|---|---|
-| Operability / user feedback | Every step and the failure reason appear in a modal log that cannot be closed mid-run, and errors stay visible until the user dismisses them. | F1: a unit test that loads `Localization.resx` and `Localization.pt-BR.resx` with `ResourceManager` and asserts that the four `TaskRunnerWindow_*` keys from 3.4 resolve to non-empty values. It follows the pattern in `ConstantsFitnessTests.cs`. Lands with IPX-0009. |
+| Operability / user feedback | Every step and the failure reason appear in a modal log that cannot be closed mid-run, and errors stay visible until the user dismisses them. | F1: extend the existing `tests/Nameless.InfoPhoenix.Client.Tests/Views/Pages/LocalizationFitnessTests.cs` so it also asserts that the four `TaskRunnerWindow_*` keys from 3.4 resolve to non-empty values in both `Localization.resx` and `Localization.pt-BR.resx`. Do not create a new test file. Lands with IPX-0009. |
 | Consistency / safety (no partial state) | Cleanup happens inside the handler before it returns, and restore ignores Cancel after the commit point. | Covered by IPX-0012's byte-for-byte tests, run against the handlers directly. |
 | Testability | All logic sits in the Mediator handlers, which are testable with the existing `FakeEventPublisher` and `FakeTranslator`. Tests assert the **published Failure/Success entries** and the **returned result**. | F2 (IPX-0012): every failure test asserts exactly one `NotificationType.Failure` `BackupRecoveryProgressNotificationEvent` was published, which enforces rule 3.2.2. |
 | Responsiveness | Synchronous IO is offloaded (rule 3.2.5). | Manual check only. No cheap automated check exists for UI-thread blocking. |
@@ -178,7 +180,7 @@ The ADR categories are structural framework change, external API integration and
 **BACKEND-ONLY.** This spike produces no code. The tasks below belong to the downstream tickets and are listed here so their plans can reference them:
 
 - IPX-0009:
-  1. Add the four `TaskRunnerWindow_*` keys (en and pt-BR) and fitness test F1.
+  1. Add the four `TaskRunnerWindow_*` keys (en and pt-BR), and extend `LocalizationFitnessTests.cs` with them (F1).
   2. Add the backup slice and result per 3.1/3.2.
   3. Add the backup command per 3.3 and enable the card.
 - IPX-0011:
