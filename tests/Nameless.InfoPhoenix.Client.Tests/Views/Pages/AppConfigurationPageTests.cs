@@ -68,7 +68,6 @@ public class AppConfigurationPageTests {
     /// anything (plan D2/D3, F1).
     /// </summary>
     [Theory]
-    [InlineData("ApplicationBackupCard")]
     [InlineData("ApplicationRestoreCard")]
     [InlineData("CheckForUpdateButton")]
     public void StubElement_IsDisabledAndHasNoCommand(string elementName) {
@@ -96,7 +95,6 @@ public class AppConfigurationPageTests {
     /// disabled element, which would silently defeat the "coming soon" indicator (plan D4).
     /// </summary>
     [Theory]
-    [InlineData("ApplicationBackupCard")]
     [InlineData("ApplicationRestoreCard")]
     [InlineData("CheckForUpdateButton")]
     public void StubElement_HasTooltipThatShowsWhileDisabled(string elementName) {
@@ -115,7 +113,6 @@ public class AppConfigurationPageTests {
     /// disabled through the disabled parent card (plan 2.3, T2).
     /// </summary>
     [Theory]
-    [InlineData("ApplicationBackupButton")]
     [InlineData("ApplicationRestoreButton")]
     public void StubCardInnerButton_HasNoCommandAndIsDisabled(string elementName) {
         StaWindowTestHarness.Run(() => {
@@ -125,6 +122,23 @@ public class AppConfigurationPageTests {
 
             Assert.Null(button.Command);
             Assert.False(button.IsEnabled);
+        });
+    }
+
+    /// <summary>
+    /// B13 (IPX-0009 §3.4): the backup card is no longer a stub - it is enabled, and its button
+    /// is bound to a real command.
+    /// </summary>
+    [Fact]
+    public void ApplicationBackupCard_IsEnabled_WithButtonBoundToARealCommand() {
+        StaWindowTestHarness.Run(() => {
+            var page = CreatePage();
+
+            var card = Assert.IsType<Wpf.Ui.Controls.CardControl>(page.FindName("ApplicationBackupCard"));
+            var button = Assert.IsType<Wpf.Ui.Controls.Button>(page.FindName("ApplicationBackupButton"));
+
+            Assert.True(card.IsEnabled);
+            Assert.NotNull(button.Command);
         });
     }
 
@@ -152,7 +166,6 @@ public class AppConfigurationPageTests {
     /// </summary>
     [Theory]
     [InlineData("CheckForUpdateBadge")]
-    [InlineData("ApplicationBackupBadge")]
     [InlineData("ApplicationRestoreBadge")]
     public void StubBadge_ContentResolvesThroughTranslator(string badgeName) {
         StaWindowTestHarness.Run(() => {
