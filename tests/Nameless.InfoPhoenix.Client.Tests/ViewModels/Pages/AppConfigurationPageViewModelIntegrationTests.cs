@@ -165,6 +165,7 @@ public sealed class AppConfigurationPageViewModelIntegrationTests : IDisposable 
             new FakeTranslator(),
             new FakeMediator(),
             eventPublisher ?? new FakeEventPublisher(),
+            new FakeTaskRunner(),
             NullLogger<AppConfigurationPageViewModel>.Instance
         );
     }

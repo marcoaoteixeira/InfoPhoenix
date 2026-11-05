@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Nameless.Application;
 using Nameless.Contracts;
 using Nameless.InfoPhoenix.Client.Features.OpenCurrentLogFile;
+using Nameless.InfoPhoenix.Client.Features.PerformApplicationBackup;
 using Nameless.InfoPhoenix.Client.Infrastructure;
 using Nameless.Mediator;
 using Nameless.Windows;
@@ -16,7 +17,9 @@ using Nameless.Windows.Helpers;
 using Nameless.Windows.Localization;
 using Nameless.Windows.Mvvm;
 using Nameless.Windows.Notification;
+using Nameless.Windows.Notification.BackupRecovery;
 using Nameless.Windows.Notification.SnackBar;
+using Nameless.Windows.TaskRunner;
 using Nameless.Windows.UI;
 using Wpf.Ui.Abstractions.Controls;
 
@@ -33,6 +36,7 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
     private readonly IApplicationThemeApplier _applicationThemeApplier;
     private readonly IEventPublisher _eventPublisher;
     private readonly IMediator _mediator;
+    private readonly ITaskRunner _taskRunner;
     private readonly ILogger<AppConfigurationPageViewModel> _logger;
 
     private bool _initialized;
@@ -76,12 +80,14 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
         ITranslator translator,
         IMediator mediator,
         IEventPublisher eventPublisher,
+        ITaskRunner taskRunner,
         ILogger<AppConfigurationPageViewModel> logger) {
         _appConfigurationManager = Throws.When.Null(appConfigurationManager);
         _applicationContext = Throws.When.Null(applicationContext);
         _applicationThemeApplier = Throws.When.Null(applicationThemeApplier);
         _eventPublisher = Throws.When.Null(eventPublisher);
         _mediator = Throws.When.Null(mediator);
+        _taskRunner = Throws.When.Null(taskRunner);
         _logger = Throws.When.Null(logger);
 
         T = Throws.When.Null(translator);
@@ -117,6 +123,42 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
     [RelayCommand]
     private async Task OpenApplicationLogFileAsync(CancellationToken cancellationToken) {
         await _mediator.ExecuteAsync(new OpenCurrentLogFileRequest(), cancellationToken);
+    }
+
+    /// <summary>
+    /// Runs the backup through the TaskRunner window (IPX-0008 §3.3/IPX-0009 §3.3). This command
+    /// cannot be unit-tested beyond construction: <see cref="ITaskRunner.CreateBuilder"/> returns
+    /// a concrete <see cref="TaskRunnerBuilder"/> that needs a real WPF dispatcher, so all backup
+    /// logic lives in <see cref="PerformApplicationBackupRequestHandler"/> instead.
+    /// </summary>
+    [RelayCommand]
+    private async Task PerformApplicationBackupAsync() {
+        // D9: drain the IPX-0004 save chain first - the chain swallows its own faults, so this
+        // never throws.
+        await _pendingSave;
+
+        PerformApplicationBackupResult? result = null;
+
+        try {
+            var outcome = await _taskRunner.CreateBuilder()
+                .SetName(T["AppConfigurationPage_Backup_TaskRunnerWindow_Title"])
+                .SubscribeFor<BackupRecoveryProgressNotificationEvent>()
+                .SetDelegate(async ct => result = await _mediator.ExecuteAsync(new PerformApplicationBackupRequest(), ct))
+                .RunAsync();
+
+            if (outcome is TaskRunnerOutcome.Completed && result is { Succeeded: true }) {
+                await _eventPublisher.PublishSuccessAsync<SnackBarNotificationEvent>(
+                    message: T["AppConfigurationPage_Backup_Success_Message", [result.BackupFilePath!]]);
+            }
+            // Failed or Cancelled: already shown in the TaskRunner window, nothing more to do.
+        }
+        catch (Exception ex) {
+            // Unexpected bug path only - anticipated failures do not throw (IPX-0008 §3.2 rule 2).
+            _logger.LogError(ex, "Backup failed unexpectedly.");
+
+            await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
+                message: T["AppConfigurationPage_Backup_Failure_Message", [ex.Message]]);
+        }
     }
 
     /// <summary>

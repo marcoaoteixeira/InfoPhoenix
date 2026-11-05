@@ -523,6 +523,7 @@ public class AppConfigurationPageViewModelTests {
             translator ?? new FakeTranslator(),
             mediator ?? new FakeMediator(),
             eventPublisher ?? new FakeEventPublisher(),
+            new FakeTaskRunner(),
             NullLogger<AppConfigurationPageViewModel>.Instance
         );
     }
