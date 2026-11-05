@@ -60,6 +60,13 @@ internal static class Constants {
         internal const string SearchIndexEntryDirectory = "search-index";
         internal const string LuceneWriteLockFileName = "write.lock";
         internal const int FormatVersion = 1;
+
+        /// <summary>
+        /// Pattern passed to <c>IFileSystemDialog.OpenFile</c>'s <c>Filter</c> when restoring
+        /// (plan IPX-0010 §3.3). Kept separate from the localized filter description so a
+        /// translator can never break the dialog's <c>name|pattern</c> syntax (plan D1).
+        /// </summary>
+        internal const string ArchiveFileFilterPattern = "*.zip";
     }
 
     internal static class Labels {

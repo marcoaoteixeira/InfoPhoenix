@@ -98,32 +98,24 @@
 
         <ui:CardControl Name="ApplicationRestoreCard"
                         Icon="{ui:SymbolIcon DatabaseLightning20}"
-                        Margin="0 0 0 10"
-                        IsEnabled="False"
-                        ToolTip="{loc:Translator AppConfigurationPage_ComingSoon_Tooltip}"
-                        ToolTipService.ShowOnDisabled="True">
+                        Margin="0 0 0 10">
             <ui:CardControl.Header>
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <StackPanel Grid.Row="0"
-                                Orientation="Horizontal">
-                        <ui:TextBlock FontTypography="BodyStrong"
-                                      Text="{loc:Translator AppConfigurationPage_ApplicationRestoreCard_Title}" />
-                        <ui:Badge Name="ApplicationRestoreBadge"
-                                  Appearance="Info"
-                                  Content="{loc:Translator AppConfigurationPage_ComingSoon_Badge}"
-                                  Margin="8 0 0 0"
-                                  VerticalAlignment="Center" />
-                    </StackPanel>
+                    <ui:TextBlock FontTypography="BodyStrong"
+                                  Grid.Row="0"
+                                  Text="{loc:Translator AppConfigurationPage_ApplicationRestoreCard_Title}" />
                     <ui:TextBlock Grid.Row="1"
                                   Text="{loc:Translator AppConfigurationPage_ApplicationRestoreCard_Message}" />
                 </Grid>
             </ui:CardControl.Header>
             <ui:Button Name="ApplicationRestoreButton"
                        Appearance="Success"
+                       Cursor="Hand"
+                       Command="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.PerformApplicationRestoreCommand, Mode=OneTime}"
                        Icon="{ui:SymbolIcon DatabaseArrowUp20}"
                        Content="{loc:Translator AppConfigurationPage_ApplicationRestoreCard_Button_Caption}"
                        Padding="30 8" />

@@ -14,11 +14,30 @@ internal sealed class FakeTranslator : ITranslator {
 
     public List<string> SetCultureCalls { get; } = [];
 
+    /// <summary>
+    /// Every indexer read, in call order (plan IPX-0010 §6) - lets a test assert that a given
+    /// key was actually requested with the expected interpolation arguments (for example the
+    /// restore overwrite warning's file name), additive to the bare key-echoing behavior below.
+    /// </summary>
+    public List<(string Key, object[] Args)> Requests { get; } = [];
+
     public CultureInfo CurrentCulture { get; private set; } = CultureInfo.InvariantCulture;
 
-    public string this[string key] => key;
+    public string this[string key] {
+        get {
+            Requests.Add((key, []));
 
-    public string this[string key, object[] args] => key;
+            return key;
+        }
+    }
+
+    public string this[string key, object[] args] {
+        get {
+            Requests.Add((key, args));
+
+            return key;
+        }
+    }
 
     public void SetCulture(CultureInfo culture) {
         CurrentCulture = culture;

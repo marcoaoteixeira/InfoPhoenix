@@ -206,6 +206,28 @@
 	<data name="AppConfigurationPage_Backup_Failure_Message" xml:space="preserve">
 		<value>Backup failed unexpectedly: {0}</value>
 	</data>
+	<data name="AppConfigurationPage_Restore_SelectFile_Title" xml:space="preserve">
+		<value>Select a backup to restore</value>
+	</data>
+	<data name="AppConfigurationPage_Restore_SelectFile_FilterName" xml:space="preserve">
+		<value>InfoPhoenix backups</value>
+	</data>
+	<data name="AppConfigurationPage_Restore_ConfirmOverwrite_Title" xml:space="preserve">
+		<value>Restore backup</value>
+	</data>
+	<data name="AppConfigurationPage_Restore_ConfirmOverwrite_Message" xml:space="preserve">
+		<value>Restoring "{0}" will replace all current application data (database, search index and settings) with the contents of this backup.
+
+Your current data will be overwritten and cannot be recovered unless you have backed it up.
+
+Do you want to continue?</value>
+	</data>
+	<data name="AppConfigurationPage_Restore_NotYetAvailable_Message" xml:space="preserve">
+		<value>Restore confirmed, but restoring data is not available yet. Nothing was changed.</value>
+	</data>
+	<data name="AppConfigurationPage_Restore_Failure_Message" xml:space="preserve">
+		<value>Could not start the restore: {0}</value>
+	</data>
 	<data name="PerformApplicationBackupRequestHandler_Preparing" xml:space="preserve">
 		<value>Preparing backup...</value>
 	</data>
