@@ -9,6 +9,7 @@ using Nameless.Windows.Dialogs.Message;
 using Nameless.Windows.Events;
 using Nameless.Windows.Localization;
 using Nameless.Windows.Navigation;
+using Nameless.Windows.Notification;
 using Nameless.Windows.Notification.SnackBar;
 using Nameless.Windows.UI;
 using Wpf.Ui;
@@ -196,16 +197,38 @@ public class MainWindowTests {
 
     /// <summary>
     /// B10 (plan 2.5): the latent IPX-0004 bug fix - without this subscription, no snackbar
-    /// published through <see cref="IEventPublisher"/> is ever shown by the running app.
+    /// published through <see cref="IEventPublisher"/> is ever shown by the running app. Beyond
+    /// just checking the registration exists, this invokes the recorded handler with a sample
+    /// event and proves it actually reaches <see cref="ISnackbarService.Show"/> with the
+    /// event's content - a wrong/no-op handler would still pass a "registration exists" check.
     /// </summary>
     [Fact]
     public void Construction_SubscribesExactlyOnceToSnackBarNotificationEvent() {
         StaWindowTestHarness.Run(() => {
             var eventPublisher = new FakeEventPublisher();
+            var snackbarService = new NoOpSnackbarService();
 
-            var window = CreateWindow(eventPublisher: eventPublisher);
+            var window = CreateWindow(eventPublisher: eventPublisher, snackbarService: snackbarService);
 
-            Assert.Single(eventPublisher.Registrations, r => r.EventType == typeof(SnackBarNotificationEvent));
+            var registration = Assert.Single(eventPublisher.Registrations, r => r.EventType == typeof(SnackBarNotificationEvent));
+
+            var evt = new SnackBarNotificationEvent {
+                Title = "Sample title",
+                Message = "Sample message",
+                Type = NotificationType.Failure
+            };
+            ((Action<object, SnackBarNotificationEvent>)registration.Handler)(window, evt);
+
+            // The handler dispatches via Dispatcher.InvokeAsync; pump the queue until it runs.
+            var deadline = DateTime.UtcNow + TimeSpan.FromSeconds(5);
+            while (snackbarService.ShowCalls.Count == 0 && DateTime.UtcNow < deadline) {
+                System.Windows.Threading.Dispatcher.CurrentDispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Background);
+            }
+
+            var call = Assert.Single(snackbarService.ShowCalls);
+            Assert.Equal(evt.Title, call.Title);
+            Assert.Equal(evt.Message, call.Message);
+            Assert.Equal(ControlAppearance.Danger, call.Appearance);
 
             window.Close();
         });
@@ -267,7 +290,8 @@ public class MainWindowTests {
         FakeAppConfigurationManager? manager = null,
         FakeMessageDialog? messageDialog = null,
         FakeApplicationThemeApplier? themeApplier = null,
-        FakeEventPublisher? eventPublisher = null) {
+        FakeEventPublisher? eventPublisher = null,
+        ISnackbarService? snackbarService = null) {
         var viewModel = new MainWindowViewModel(new FakeApplicationContext(), new NoOpNavigationViewItemProvider());
 
         return new Nameless.InfoPhoenix.Client.Views.Windows.MainWindow(
@@ -281,7 +305,7 @@ public class MainWindowTests {
             messageDialog ?? new FakeMessageDialog(),
             new NoOpNavigationService(),
             new NoOpNavigationViewPageProvider(),
-            new NoOpSnackbarService()
+            snackbarService ?? new NoOpSnackbarService()
         );
     }
 
@@ -357,8 +381,16 @@ public class MainWindowTests {
         }
     }
 
+    /// <summary>
+    /// Named "NoOp" for the tests that only need construction to succeed, but records every
+    /// <see cref="Show"/> call so <c>Construction_SubscribesExactlyOnceToSnackBarNotificationEvent</c>
+    /// can prove the registered handler actually surfaces a snackbar, not just that it was
+    /// registered.
+    /// </summary>
     private sealed class NoOpSnackbarService : ISnackbarService {
         public TimeSpan DefaultTimeOut { get; set; }
+
+        public List<(string Title, string Message, ControlAppearance Appearance, IconElement? Icon, TimeSpan Timeout)> ShowCalls { get; } = [];
 
         public void SetSnackbarPresenter(SnackbarPresenter contentPresenter) { }
 
@@ -366,7 +398,9 @@ public class MainWindowTests {
             throw new NotSupportedException();
         }
 
-        public void Show(string title, string message, ControlAppearance appearance, IconElement? icon, TimeSpan timeout) { }
+        public void Show(string title, string message, ControlAppearance appearance, IconElement? icon, TimeSpan timeout) {
+            ShowCalls.Add((title, message, appearance, icon, timeout));
+        }
     }
 
     private sealed class FakeMessageDialog : IMessageDialog {
