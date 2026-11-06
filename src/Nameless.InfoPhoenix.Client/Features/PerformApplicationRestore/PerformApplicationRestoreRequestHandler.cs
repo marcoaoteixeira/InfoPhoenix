@@ -120,6 +120,14 @@ public sealed class PerformApplicationRestoreRequestHandler
     internal Action? OnBeforeCrossVolumeCopy { get; set; }
 
     /// <summary>
+    /// Test-only hook invoked immediately after each file is copied into the cross-volume
+    /// sibling folder (plan D5), letting a test fail a copy strictly *after* the sibling folder
+    /// already exists with at least one file in it - proving the leak-cleanup path actually
+    /// sweeps a partially populated sibling, not just one that was never created.
+    /// </summary>
+    internal Action? OnAfterCrossVolumeFileCopied { get; set; }
+
+    /// <summary>
     /// Test-only hook invoked right after each archive entry finishes extracting, letting a test
     /// request cancellation strictly between entries to prove extraction actually observes
     /// cancellation mid-loop (plan review finding), rather than only before the whole step starts.
@@ -864,11 +872,12 @@ public sealed class PerformApplicationRestoreRequestHandler
         }
     }
 
-    private static void CopyDirectoryRecursive(string sourceDirectory, string destinationDirectory) {
+    private void CopyDirectoryRecursive(string sourceDirectory, string destinationDirectory) {
         Directory.CreateDirectory(destinationDirectory);
 
         foreach (var filePath in Directory.EnumerateFiles(sourceDirectory)) {
             File.Copy(filePath, SysPath.Combine(destinationDirectory, SysPath.GetFileName(filePath)), overwrite: false);
+            OnAfterCrossVolumeFileCopied?.Invoke();
         }
 
         foreach (var directoryPath in Directory.EnumerateDirectories(sourceDirectory)) {

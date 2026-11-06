@@ -580,19 +580,24 @@ public sealed class PerformApplicationRestoreRequestHandlerTests : IDisposable {
     /// meant the sibling folder's path was never recorded, leaking it under the live index's
     /// parent folder until the next run's sweep.
     /// <see cref="PerformApplicationRestoreRequestHandler.ForceCrossVolumeIndexNeeded"/> and
-    /// <see cref="PerformApplicationRestoreRequestHandler.OnBeforeCrossVolumeCopy"/> make this
-    /// deterministic without a real second drive.
+    /// <see cref="PerformApplicationRestoreRequestHandler.OnAfterCrossVolumeFileCopied"/> make this
+    /// deterministic without a real second drive. The hook fires only *after* the sibling folder
+    /// has been created on disk with at least one file copied into it (unlike
+    /// <see cref="PerformApplicationRestoreRequestHandler.OnBeforeCrossVolumeCopy"/>, which fires
+    /// before the copy starts and so never exercises the leak-cleanup path for real), so this
+    /// proves the cleanup actually sweeps a partially populated sibling.
     /// </summary>
     [Fact]
     public async Task HandleAsync_WhenTheCrossVolumeIndexCopyFailsPartway_LeavesNoLeakedSiblingFolder() {
         var zipPath = BuildZip(z => {
             AddManifest(z, searchIndex: true);
             WriteRawEntry(z, "search-index/segment1.bin", "data");
+            WriteRawEntry(z, "search-index/segment2.bin", "data");
         });
         var eventPublisher = new FakeEventPublisher();
         var handler = CreateHandler(eventPublisher: eventPublisher);
         handler.ForceCrossVolumeIndexNeeded = true;
-        handler.OnBeforeCrossVolumeCopy = () => throw new IOException("simulated disk full on the install volume");
+        handler.OnAfterCrossVolumeFileCopied = () => throw new IOException("simulated disk full on the install volume");
 
         var result = await handler.HandleAsync(new PerformApplicationRestoreRequest(zipPath), CancellationToken.None);
 
