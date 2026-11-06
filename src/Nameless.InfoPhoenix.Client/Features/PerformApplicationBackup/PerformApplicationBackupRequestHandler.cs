@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Nameless.Application;
 using Nameless.Contracts;
+using Nameless.InfoPhoenix.Client.Data;
 using Nameless.IO;
 using Nameless.Lucene;
 using Nameless.Mediator.Requests;
@@ -291,27 +292,7 @@ public sealed class PerformApplicationBackupRequestHandler
         pragmaCommand.CommandText = "PRAGMA journal_mode=DELETE;";
         pragmaCommand.ExecuteNonQuery();
 
-        return (destinationPath, ReadDatabaseMigrationId(destination));
-    }
-
-    /// <summary>
-    /// Reads the newest migration id from the already-open staged database connection (plan
-    /// D3/D7) - never the live file - so the manifest always matches the bytes archived. Returns
-    /// <see langword="null"/> when the migrations history table does not exist yet (today's
-    /// reality, per plan §1).
-    /// </summary>
-    private static string? ReadDatabaseMigrationId(SqliteConnection connection) {
-        using var checkCommand = connection.CreateCommand();
-        checkCommand.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = '__EFMigrationsHistory';";
-
-        if (checkCommand.ExecuteScalar() is null) {
-            return null;
-        }
-
-        using var selectCommand = connection.CreateCommand();
-        selectCommand.CommandText = "SELECT MigrationId FROM __EFMigrationsHistory ORDER BY MigrationId DESC LIMIT 1;";
-
-        return selectCommand.ExecuteScalar() as string;
+        return (destinationPath, MigrationHistoryReader.ReadLatestMigrationId(destination));
     }
 
     /// <summary>
