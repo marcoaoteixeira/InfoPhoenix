@@ -67,6 +67,14 @@ public class LocalizationFitnessTests {
         "PerformApplicationBackupRequestHandler_CopyingDatabase_Failure",
         "PerformApplicationBackupRequestHandler_CopyingSearchIndex_Failure",
         "PerformApplicationBackupRequestHandler_CreatingArchive_Failure",
+
+        // IPX-0010 §3.4: restore selection/confirmation keys.
+        "AppConfigurationPage_Restore_SelectFile_Title",
+        "AppConfigurationPage_Restore_SelectFile_FilterName",
+        "AppConfigurationPage_Restore_ConfirmOverwrite_Title",
+        "AppConfigurationPage_Restore_ConfirmOverwrite_Message",
+        "AppConfigurationPage_Restore_NotYetAvailable_Message",
+        "AppConfigurationPage_Restore_Failure_Message",
     };
 
     [Theory]

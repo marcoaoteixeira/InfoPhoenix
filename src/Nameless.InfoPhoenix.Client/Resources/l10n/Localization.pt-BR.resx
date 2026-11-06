@@ -147,6 +147,28 @@
 	<data name="AppConfigurationPage_Backup_Failure_Message" xml:space="preserve">
 		<value>O backup falhou inesperadamente: {0}</value>
 	</data>
+	<data name="AppConfigurationPage_Restore_SelectFile_Title" xml:space="preserve">
+		<value>Selecione um backup para restaurar</value>
+	</data>
+	<data name="AppConfigurationPage_Restore_SelectFile_FilterName" xml:space="preserve">
+		<value>Backups do InfoPhoenix</value>
+	</data>
+	<data name="AppConfigurationPage_Restore_ConfirmOverwrite_Title" xml:space="preserve">
+		<value>Restaurar backup</value>
+	</data>
+	<data name="AppConfigurationPage_Restore_ConfirmOverwrite_Message" xml:space="preserve">
+		<value>Restaurar "{0}" substituirá todos os dados atuais da aplicação (banco de dados, índice de pesquisa e configurações) pelo conteúdo deste backup.
+
+Os dados atuais serão sobrescritos e não poderão ser recuperados, a menos que você tenha feito um backup deles.
+
+Deseja continuar?</value>
+	</data>
+	<data name="AppConfigurationPage_Restore_NotYetAvailable_Message" xml:space="preserve">
+		<value>Restauração confirmada, mas a restauração de dados ainda não está disponível. Nada foi alterado.</value>
+	</data>
+	<data name="AppConfigurationPage_Restore_Failure_Message" xml:space="preserve">
+		<value>Não foi possível iniciar a restauração: {0}</value>
+	</data>
 	<data name="PerformApplicationBackupRequestHandler_Preparing" xml:space="preserve">
 		<value>Preparando o backup...</value>
 	</data>

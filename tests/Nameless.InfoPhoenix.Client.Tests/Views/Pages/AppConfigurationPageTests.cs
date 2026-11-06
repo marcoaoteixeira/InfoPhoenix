@@ -41,6 +41,8 @@ public class AppConfigurationPageTests {
                 new FakeAppConfigurationManager(),
                 new FakeApplicationContext(),
                 new FakeApplicationThemeApplier(),
+                new FakeFileSystemDialog(),
+                new FakeMessageDialog(),
                 new FakeTranslator(),
                 new FakeMediator(),
                 new FakeEventPublisher(),
@@ -63,12 +65,11 @@ public class AppConfigurationPageTests {
     }
 
     /// <summary>
-    /// AC1/AC2: the Backup and Restore cards and the Check-for-update button are present but
-    /// stubbed - disabled and bound to no command - so interacting with them cannot execute
-    /// anything (plan D2/D3, F1).
+    /// AC1/AC2: the Check-for-update button is present but stubbed - disabled and bound to no
+    /// command - so interacting with it cannot execute anything (plan D2/D3, F1). The Backup
+    /// and Restore cards are no longer stubs (IPX-0009/IPX-0010).
     /// </summary>
     [Theory]
-    [InlineData("ApplicationRestoreCard")]
     [InlineData("CheckForUpdateButton")]
     public void StubElement_IsDisabledAndHasNoCommand(string elementName) {
         StaWindowTestHarness.Run(() => {
@@ -95,7 +96,6 @@ public class AppConfigurationPageTests {
     /// disabled element, which would silently defeat the "coming soon" indicator (plan D4).
     /// </summary>
     [Theory]
-    [InlineData("ApplicationRestoreCard")]
     [InlineData("CheckForUpdateButton")]
     public void StubElement_HasTooltipThatShowsWhileDisabled(string elementName) {
         StaWindowTestHarness.Run(() => {
@@ -105,23 +105,6 @@ public class AppConfigurationPageTests {
 
             Assert.NotNull(element.ToolTip);
             Assert.True(ToolTipService.GetShowOnDisabled(element));
-        });
-    }
-
-    /// <summary>
-    /// AC2: the inner action button of each stub card has no command either, and is effectively
-    /// disabled through the disabled parent card (plan 2.3, T2).
-    /// </summary>
-    [Theory]
-    [InlineData("ApplicationRestoreButton")]
-    public void StubCardInnerButton_HasNoCommandAndIsDisabled(string elementName) {
-        StaWindowTestHarness.Run(() => {
-            var page = CreatePage();
-
-            var button = Assert.IsType<Wpf.Ui.Controls.Button>(page.FindName(elementName));
-
-            Assert.Null(button.Command);
-            Assert.False(button.IsEnabled);
         });
     }
 
@@ -139,6 +122,25 @@ public class AppConfigurationPageTests {
 
             Assert.True(card.IsEnabled);
             Assert.NotNull(button.Command);
+        });
+    }
+
+    /// <summary>
+    /// B9 (plan IPX-0010 §6): the restore card is no longer a stub - it is enabled, has no
+    /// tooltip, its button is bound to a real command, and the "coming soon" badge is gone.
+    /// </summary>
+    [Fact]
+    public void ApplicationRestoreCard_IsEnabled_WithButtonBoundToARealCommand() {
+        StaWindowTestHarness.Run(() => {
+            var page = CreatePage();
+
+            var card = Assert.IsType<Wpf.Ui.Controls.CardControl>(page.FindName("ApplicationRestoreCard"));
+            var button = Assert.IsType<Wpf.Ui.Controls.Button>(page.FindName("ApplicationRestoreButton"));
+
+            Assert.True(card.IsEnabled);
+            Assert.Null(card.ToolTip);
+            Assert.NotNull(button.Command);
+            Assert.Null(page.FindName("ApplicationRestoreBadge"));
         });
     }
 
@@ -166,7 +168,6 @@ public class AppConfigurationPageTests {
     /// </summary>
     [Theory]
     [InlineData("CheckForUpdateBadge")]
-    [InlineData("ApplicationRestoreBadge")]
     public void StubBadge_ContentResolvesThroughTranslator(string badgeName) {
         StaWindowTestHarness.Run(() => {
             var page = CreatePage();
@@ -186,6 +187,8 @@ public class AppConfigurationPageTests {
             new FakeAppConfigurationManager(),
             new FakeApplicationContext(),
             new FakeApplicationThemeApplier(),
+            new FakeFileSystemDialog(),
+            new FakeMessageDialog(),
             new FakeTranslator(),
             new FakeMediator(),
             new FakeEventPublisher(),

@@ -513,6 +513,8 @@ public class AppConfigurationPageViewModelTests {
         FakeAppConfigurationManager? manager = null,
         FakeApplicationContext? applicationContext = null,
         FakeApplicationThemeApplier? themeApplier = null,
+        FakeFileSystemDialog? fileSystemDialog = null,
+        FakeMessageDialog? messageDialog = null,
         ITranslator? translator = null,
         FakeMediator? mediator = null,
         FakeEventPublisher? eventPublisher = null) {
@@ -520,6 +522,8 @@ public class AppConfigurationPageViewModelTests {
             manager ?? new FakeAppConfigurationManager(),
             applicationContext ?? new FakeApplicationContext(),
             themeApplier ?? new FakeApplicationThemeApplier(),
+            fileSystemDialog ?? new FakeFileSystemDialog(),
+            messageDialog ?? new FakeMessageDialog(),
             translator ?? new FakeTranslator(),
             mediator ?? new FakeMediator(),
             eventPublisher ?? new FakeEventPublisher(),

@@ -35,6 +35,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   snackbar notifications, with the application configuration page's Backup
   card enabled accordingly.
   ([IPX-0009](https://github.com/marcoaoteixeira/InfoPhoenix/issues/25))
+- A working Restore button on the application configuration page: opens an
+  Open-file dialog scoped to the backup folder, then a warning dialog
+  requiring explicit confirmation before overwriting current data.
+  Cancelling the dialog or declining the warning leaves everything
+  untouched; actually restoring the selected backup is a later ticket.
+  ([IPX-0010](https://github.com/marcoaoteixeira/InfoPhoenix/issues/26))
 
 ### Fixed
 

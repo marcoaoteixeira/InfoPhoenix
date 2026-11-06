@@ -12,6 +12,8 @@ using Nameless.InfoPhoenix.Client.Infrastructure;
 using Nameless.Mediator;
 using Nameless.Windows;
 using Nameless.Windows.AppConfiguration;
+using Nameless.Windows.Dialogs.FileSystem;
+using Nameless.Windows.Dialogs.Message;
 using Nameless.Windows.Events;
 using Nameless.Windows.Helpers;
 using Nameless.Windows.Localization;
@@ -34,6 +36,8 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
     private readonly IAppConfigurationManager _appConfigurationManager;
     private readonly IApplicationContext _applicationContext;
     private readonly IApplicationThemeApplier _applicationThemeApplier;
+    private readonly IFileSystemDialog _fileSystemDialog;
+    private readonly IMessageDialog _messageDialog;
     private readonly IEventPublisher _eventPublisher;
     private readonly IMediator _mediator;
     private readonly ITaskRunner _taskRunner;
@@ -77,6 +81,8 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
         IAppConfigurationManager appConfigurationManager,
         IApplicationContext applicationContext,
         IApplicationThemeApplier applicationThemeApplier,
+        IFileSystemDialog fileSystemDialog,
+        IMessageDialog messageDialog,
         ITranslator translator,
         IMediator mediator,
         IEventPublisher eventPublisher,
@@ -85,6 +91,8 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
         _appConfigurationManager = Throws.When.Null(appConfigurationManager);
         _applicationContext = Throws.When.Null(applicationContext);
         _applicationThemeApplier = Throws.When.Null(applicationThemeApplier);
+        _fileSystemDialog = Throws.When.Null(fileSystemDialog);
+        _messageDialog = Throws.When.Null(messageDialog);
         _eventPublisher = Throws.When.Null(eventPublisher);
         _mediator = Throws.When.Null(mediator);
         _taskRunner = Throws.When.Null(taskRunner);
@@ -159,6 +167,85 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
             await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
                 message: T["AppConfigurationPage_Backup_Failure_Message", [ex.Message]]);
         }
+    }
+
+    /// <summary>
+    /// Restore entry point (IPX-0010): pick a backup, confirm the overwrite. IPX-0011 plugs the
+    /// actual restore in after the confirmation (plan D5).
+    /// </summary>
+    [RelayCommand]
+    private async Task PerformApplicationRestoreAsync() {
+        try {
+            var backupFilePath = SelectBackupFile(); // D1, D2
+
+            if (backupFilePath is null) {
+                _logger.LogDebug("Restore selection cancelled: the file dialog was dismissed without picking a backup.");
+
+                return; // AC3: dialog cancelled
+            }
+
+            if (!ConfirmOverwrite(backupFilePath)) {
+                _logger.LogDebug("Restore for {BackupFilePath} declined at the overwrite warning.", backupFilePath);
+
+                return; // AC2/AC3: D4
+            }
+
+            // IPX-0010 stops here (D5). IPX-0011 replaces the next two statements.
+            _logger.LogInformation(
+                "Restore confirmed for {BackupFilePath}; restore itself is not implemented yet (IPX-0011).",
+                backupFilePath);
+
+            await _eventPublisher.PublishInformationAsync<SnackBarNotificationEvent>(
+                message: T["AppConfigurationPage_Restore_NotYetAvailable_Message"]);
+        }
+        catch (Exception ex) {
+            // Bug path only (for example a COM failure in the dialog). Never let it escape the
+            // AsyncRelayCommand, where it would surface as an unhandled exception.
+            _logger.LogError(ex, "Restore selection failed unexpectedly.");
+
+            await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
+                message: T["AppConfigurationPage_Restore_Failure_Message", [ex.Message]]);
+        }
+    }
+
+    /// <summary>
+    /// Opens the file picker rooted at the backup folder, filtered to <c>*.zip</c> (plan D1).
+    /// Creates the backup folder first (D2) - if that fails, logs a warning and still opens the
+    /// dialog with the same root, so the user can still browse to a zip.
+    /// </summary>
+    private string? SelectBackupFile() {
+        var backupDirectory = _applicationContext.FileManager.GetBackupDirectory();
+
+        try {
+            backupDirectory.Create();
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            _logger.LogWarning(ex, "Failed to create the backup directory; the restore dialog will still open.");
+        }
+
+        var filterPattern = Constants.BackupRecovery.ArchiveFileFilterPattern;
+
+        var backupFilePath = _fileSystemDialog.OpenFile(options => {
+            options.Title = T["AppConfigurationPage_Restore_SelectFile_Title"];
+            options.Root = backupDirectory.Path;
+            options.Filter = $"{T["AppConfigurationPage_Restore_SelectFile_FilterName"]} ({filterPattern})|{filterPattern}";
+            options.Multiselect = false;
+        }).FirstOrDefault();
+
+        return string.IsNullOrWhiteSpace(backupFilePath) ? null : backupFilePath;
+    }
+
+    /// <summary>
+    /// Shows the destructive-action warning (plan D4). Only exactly <see cref="MessageDialogResult.Yes"/>
+    /// proceeds; every other result (No, Cancel, or Ok for an unmapped system result) stops.
+    /// </summary>
+    private bool ConfirmOverwrite(string backupFilePath) {
+        var result = _messageDialog.ShowWarning(
+            message: T["AppConfigurationPage_Restore_ConfirmOverwrite_Message", [Path.GetFileName(backupFilePath)]],
+            title: T["AppConfigurationPage_Restore_ConfirmOverwrite_Title"],
+            buttons: MessageDialogButtons.YesNo);
+
+        return result is MessageDialogResult.Yes;
     }
 
     /// <summary>
