@@ -77,9 +77,7 @@ public sealed class PerformApplicationRestoreRequestHandlerTests : IDisposable {
 
     [Fact]
     public async Task HandleAsync_WithAManifestMissingContents_IsBlocked() {
-        var zipPath = BuildZip(z => z.CreateEntry("backup-manifest.json").Open().Dispose()); // malformed on purpose: no body at all is fine (empty), but let's write bad JSON
-        File.Delete(zipPath);
-        zipPath = BuildZip(z => {
+        var zipPath = BuildZip(z => {
             var entry = z.CreateEntry("backup-manifest.json");
             using var stream = entry.Open();
             using var writer = new StreamWriter(stream);
@@ -91,6 +89,60 @@ public sealed class PerformApplicationRestoreRequestHandlerTests : IDisposable {
 
         Assert.Equal(RestoreOutcome.Blocked, result);
         AssertSingleFailureStartsWith(eventPublisher, "Rejected_ManifestInvalid");
+    }
+
+    // ----- AC1/D1.4: version-differs warning theory (B23) ---------------------------------------
+
+    [Fact]
+    public async Task HandleAsync_WithADifferentAppVersion_AndMatchingSchema_StillCompletes_WithExactlyOneWarning() {
+        SeedLiveConfig("{}");
+        var zipPath = BuildZip(z => {
+            AddManifest(z, appVersion: "v0.9.0", configuration: true);
+            WriteRawEntry(z, "app.config", "{}");
+        });
+        var eventPublisher = new FakeEventPublisher();
+
+        var result = await RunAsync(zipPath, eventPublisher: eventPublisher); // running version is v1.0.0 (CreateHandler)
+
+        Assert.Equal(RestoreOutcome.Completed, result);
+        var warnings = eventPublisher.PublishedEvents.OfType<BackupRecoveryProgressNotificationEvent>()
+            .Where(e => e.Type == NotificationType.Warning).ToList();
+        var warning = Assert.Single(warnings);
+        Assert.StartsWith("PerformApplicationRestoreRequestHandler_VersionDiffers_Warning", warning.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task HandleAsync_WithAnUnparseableAppVersion_StillCompletes_WithExactlyOneWarning() {
+        SeedLiveConfig("{}");
+        var zipPath = BuildZip(z => {
+            AddManifest(z, appVersion: "not-a-semver", configuration: true);
+            WriteRawEntry(z, "app.config", "{}");
+        });
+        var eventPublisher = new FakeEventPublisher();
+
+        var result = await RunAsync(zipPath, eventPublisher: eventPublisher);
+
+        Assert.Equal(RestoreOutcome.Completed, result);
+        var warnings = eventPublisher.PublishedEvents.OfType<BackupRecoveryProgressNotificationEvent>()
+            .Where(e => e.Type == NotificationType.Warning).ToList();
+        Assert.Single(warnings);
+    }
+
+    [Fact]
+    public async Task HandleAsync_WithTheSameVersionDifferingOnlyInBuildMetadata_Completes_WithNoWarning() {
+        SeedLiveConfig("{}");
+        var zipPath = BuildZip(z => {
+            AddManifest(z, appVersion: "v1.0.0+differentbuild", configuration: true); // running version is v1.0.0 (CreateHandler)
+            WriteRawEntry(z, "app.config", "{}");
+        });
+        var eventPublisher = new FakeEventPublisher();
+
+        var result = await RunAsync(zipPath, eventPublisher: eventPublisher);
+
+        Assert.Equal(RestoreOutcome.Completed, result);
+        Assert.DoesNotContain(
+            eventPublisher.PublishedEvents.OfType<BackupRecoveryProgressNotificationEvent>(),
+            e => e.Type == NotificationType.Warning);
     }
 
     // ----- AC1: untrusted-zip entry theory (B2) -------------------------------------------------
