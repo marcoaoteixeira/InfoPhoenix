@@ -545,6 +545,57 @@ public sealed class PerformApplicationRestoreRequestHandlerTests : IDisposable {
         AssertNoStagingLeftover();
     }
 
+    [Fact]
+    public async Task HandleAsync_WhenTheInstallVolumeFreeSpacePreflightFails_IsBlocked() {
+        var zipPath = BuildZip(z => {
+            AddManifest(z, searchIndex: true);
+            WriteRawEntry(z, "search-index/segment1.bin", "data");
+        });
+        var eventPublisher = new FakeEventPublisher();
+        var before = CaptureSnapshot();
+        var handler = CreateHandler(eventPublisher: eventPublisher);
+        handler.ForceCrossVolumeIndexNeeded = true;
+        // The staging-volume check (keyed by the staging path) is left generous; only the
+        // install-volume check (keyed by the live index's root) must be the one that fails.
+        handler.AvailableFreeSpaceOverride = path =>
+            string.Equals(path, Path.GetPathRoot(LiveIndexDirectory), StringComparison.OrdinalIgnoreCase) ? 1 : long.MaxValue;
+
+        var result = await handler.HandleAsync(new PerformApplicationRestoreRequest(zipPath), CancellationToken.None);
+
+        Assert.Equal(RestoreOutcome.Blocked, result);
+        AssertSingleFailureStartsWith(eventPublisher, "Rejected_InsufficientSpace");
+        AssertSnapshotUnchanged(before);
+        AssertNoStagingLeftover();
+    }
+
+    /// <summary>
+    /// Review finding: before the fix, the cross-volume sibling path was only captured for
+    /// cleanup *after* <c>PrepareSwap</c> returned - a copy failure partway through PrepareSwap
+    /// meant the sibling folder's path was never recorded, leaking it under the live index's
+    /// parent folder until the next run's sweep.
+    /// <see cref="PerformApplicationRestoreRequestHandler.ForceCrossVolumeIndexNeeded"/> and
+    /// <see cref="PerformApplicationRestoreRequestHandler.OnBeforeCrossVolumeCopy"/> make this
+    /// deterministic without a real second drive.
+    /// </summary>
+    [Fact]
+    public async Task HandleAsync_WhenTheCrossVolumeIndexCopyFailsPartway_LeavesNoLeakedSiblingFolder() {
+        var zipPath = BuildZip(z => {
+            AddManifest(z, searchIndex: true);
+            WriteRawEntry(z, "search-index/segment1.bin", "data");
+        });
+        var eventPublisher = new FakeEventPublisher();
+        var handler = CreateHandler(eventPublisher: eventPublisher);
+        handler.ForceCrossVolumeIndexNeeded = true;
+        handler.OnBeforeCrossVolumeCopy = () => throw new IOException("simulated disk full on the install volume");
+
+        var result = await handler.HandleAsync(new PerformApplicationRestoreRequest(zipPath), CancellationToken.None);
+
+        Assert.Equal(RestoreOutcome.RolledBack, result);
+        AssertSingleFailureStartsWith(eventPublisher, "PreparingSwap_Failure");
+        Assert.Empty(Directory.GetDirectories(
+            _luceneRoot, $"*{Constants.BackupRecovery.RestoreNewSuffix}*", SearchOption.AllDirectories));
+    }
+
     // ----- AC3: in-commit failure, rollback and cancellation ------------------------------------------
 
     /// <summary>

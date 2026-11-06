@@ -102,6 +102,20 @@ public sealed class PerformApplicationRestoreRequestHandler
     /// </summary>
     internal Func<string, long>? AvailableFreeSpaceOverride { get; set; }
 
+    /// <summary>
+    /// Test-only override (null in production: the real staging/install volume roots decide) for
+    /// whether the search index needs a cross-volume copy (plan D5) - lets a test exercise that
+    /// path deterministically without a real second drive.
+    /// </summary>
+    internal bool? ForceCrossVolumeIndexNeeded { get; set; }
+
+    /// <summary>
+    /// Test-only hook invoked immediately before the cross-volume index copy (plan D5), letting a
+    /// test simulate a partial-copy failure (for example, disk full on the install volume)
+    /// without faking the OS.
+    /// </summary>
+    internal Action? OnBeforeCrossVolumeCopy { get; set; }
+
     /// <summary>One completed rename, recorded so rollback can undo it in reverse (plan D7).</summary>
     internal sealed record PlannedMove(string From, string To, string Description);
 
@@ -149,9 +163,18 @@ public sealed class PerformApplicationRestoreRequestHandler
             await PublishStepAsync(step);
 
             var runSuffix = Guid.NewGuid().ToString("N");
-            var (plan, crossVolumeSibling, warnings) = await Task.Run(
-                () => PrepareSwap(contentDirectory, manifest, runSuffix), cancellationToken);
-            crossVolumeIndexSibling = crossVolumeSibling;
+
+            // Computed and captured to the cleanup variable *before* PrepareSwap runs (same
+            // reasoning as stagingDirectory above, plan AC1/review finding): a partial
+            // cross-volume copy failure inside PrepareSwap must still leave the outer `finally`
+            // able to find and sweep this path, instead of leaking it until the next run.
+            if (crossVolumeNeeded) {
+                crossVolumeIndexSibling = _fileManager.GetDirectory(_luceneOptions.DirectoryRelativePath).Path +
+                    Constants.BackupRecovery.RestoreNewSuffix + runSuffix;
+            }
+
+            var (plan, warnings) = await Task.Run(
+                () => PrepareSwap(contentDirectory, manifest, runSuffix, crossVolumeIndexSibling), cancellationToken);
 
             foreach (var warningKey in warnings) {
                 await PublishWarningAsync(warningKey);
@@ -459,6 +482,10 @@ public sealed class PerformApplicationRestoreRequestHandler
             return false;
         }
 
+        if (ForceCrossVolumeIndexNeeded.HasValue) {
+            return ForceCrossVolumeIndexNeeded.Value;
+        }
+
         var temporaryRoot = SysPath.GetPathRoot(_applicationContext.FileManager.GetTemporaryDirectory().Path);
         var liveIndexRoot = SysPath.GetPathRoot(_fileManager.GetDirectory(_luceneOptions.DirectoryRelativePath).Path);
 
@@ -478,17 +505,24 @@ public sealed class PerformApplicationRestoreRequestHandler
             .Where(e => e.Kind is EntryKind.Database or EntryKind.Configuration or EntryKind.SearchIndexFile)
             .Sum(e => e.Length);
 
-        if (crossVolumeIndexNeeded) {
-            // The index is copied once to its cross-volume sibling, pre-commit (plan D5), on top
-            // of the space its staged copy already needs.
-            declaredBytes += entries.Where(e => e.Kind == EntryKind.SearchIndexFile).Sum(e => e.Length);
-        }
-
         // Checked before the content folder is created (plan AC1/D3).
         var availableFreeSpace = AvailableFreeSpaceOverride?.Invoke(stagingDirectory)
             ?? new DriveInfo(SysPath.GetPathRoot(stagingDirectory)!).AvailableFreeSpace;
         if (declaredBytes + Constants.BackupRecovery.FreeSpaceSafetyMarginBytes > availableFreeSpace) {
             throw new BackupRejectedException(new BackupRejection("InsufficientSpace", [FormatBytes(declaredBytes)]));
+        }
+
+        if (crossVolumeIndexNeeded) {
+            // Review finding: the cross-volume sibling copy (plan D5) lands on the install
+            // volume, next to the live index - not on the staging volume checked above - so it
+            // needs its own preflight, checked with the same seam/margin, before any extraction.
+            var indexBytes = entries.Where(e => e.Kind == EntryKind.SearchIndexFile).Sum(e => e.Length);
+            var installVolumeRoot = SysPath.GetPathRoot(_fileManager.GetDirectory(_luceneOptions.DirectoryRelativePath).Path)!;
+            var installVolumeFreeSpace = AvailableFreeSpaceOverride?.Invoke(installVolumeRoot)
+                ?? new DriveInfo(installVolumeRoot).AvailableFreeSpace;
+            if (indexBytes + Constants.BackupRecovery.FreeSpaceSafetyMarginBytes > installVolumeFreeSpace) {
+                throw new BackupRejectedException(new BackupRejection("InsufficientSpace", [FormatBytes(indexBytes)]));
+            }
         }
 
         Directory.CreateDirectory(contentDirectory);
@@ -692,8 +726,8 @@ public sealed class PerformApplicationRestoreRequestHandler
 
     // ----- Step 4: PreparingSwap (plan D5/D6/D8/D11) --------------------------------------------
 
-    private (List<PlannedMove> Plan, string? CrossVolumeIndexSibling, List<string> Warnings) PrepareSwap(
-        string contentDirectory, BackupManifest manifest, string runSuffix) {
+    private (List<PlannedMove> Plan, List<string> Warnings) PrepareSwap(
+        string contentDirectory, BackupManifest manifest, string runSuffix, string? crossVolumeIndexSibling) {
         // D8: release every live handle before anything is renamed. A fresh connection or index
         // reopens lazily against the restored files once the swap commits.
         _indexProvider.CloseAll();
@@ -703,7 +737,7 @@ public sealed class PerformApplicationRestoreRequestHandler
         var plan = new List<PlannedMove>();
 
         BuildDatabaseMoves(contentDirectory, manifest, runSuffix, plan, warnings);
-        var crossVolumeIndexSibling = BuildSearchIndexMoves(contentDirectory, manifest, runSuffix, plan, warnings);
+        BuildSearchIndexMoves(contentDirectory, manifest, runSuffix, crossVolumeIndexSibling, plan, warnings);
         BuildConfigurationMoves(contentDirectory, manifest, runSuffix, plan, warnings);
 
         // D5: every operation after the commit point must be a same-volume rename.
@@ -713,7 +747,7 @@ public sealed class PerformApplicationRestoreRequestHandler
             }
         }
 
-        return (plan, crossVolumeIndexSibling, warnings);
+        return (plan, warnings);
     }
 
     private void BuildDatabaseMoves(
@@ -748,8 +782,9 @@ public sealed class PerformApplicationRestoreRequestHandler
         }
     }
 
-    private string? BuildSearchIndexMoves(
-        string contentDirectory, BackupManifest manifest, string runSuffix, List<PlannedMove> plan, List<string> warnings) {
+    private void BuildSearchIndexMoves(
+        string contentDirectory, BackupManifest manifest, string runSuffix, string? crossVolumeIndexSibling,
+        List<PlannedMove> plan, List<string> warnings) {
         var liveIndexDirectory = _fileManager.GetDirectory(_luceneOptions.DirectoryRelativePath);
         var liveIndexExists = liveIndexDirectory.Exists;
 
@@ -767,19 +802,17 @@ public sealed class PerformApplicationRestoreRequestHandler
                 liveIndexDirectory.Path, liveIndexDirectory.Path + Constants.BackupRecovery.RestoreOldSuffix + runSuffix, "index aside"));
         }
 
-        string? crossVolumeIndexSibling = null;
-
         if (manifest.Contents.SearchIndex) {
             var stagedIndexDirectory = SysPath.Combine(contentDirectory, Constants.BackupRecovery.SearchIndexEntryDirectory);
-            var stagedRoot = SysPath.GetPathRoot(stagedIndexDirectory);
-            var liveRoot = SysPath.GetPathRoot(liveIndexDirectory.Path);
             string indexSource;
 
-            if (!string.Equals(stagedRoot, liveRoot, StringComparison.OrdinalIgnoreCase)) {
+            if (crossVolumeIndexSibling is not null) {
                 // D5: the index is the one artifact that may land on a different volume. Copy it
                 // next to its live target first (still pre-commit, cancellable), then rename from
-                // there, so the commit-phase move is a same-volume rename like every other.
-                crossVolumeIndexSibling = liveIndexDirectory.Path + Constants.BackupRecovery.RestoreNewSuffix + runSuffix;
+                // there, so the commit-phase move is a same-volume rename like every other. The
+                // sibling path itself was already computed by the caller (plan AC1/review
+                // finding), so a copy failure here still leaves it reachable for cleanup.
+                OnBeforeCrossVolumeCopy?.Invoke();
                 CopyDirectoryRecursive(stagedIndexDirectory, crossVolumeIndexSibling);
                 indexSource = crossVolumeIndexSibling;
             }
@@ -789,8 +822,6 @@ public sealed class PerformApplicationRestoreRequestHandler
 
             plan.Add(new PlannedMove(indexSource, liveIndexDirectory.Path, "index restore"));
         }
-
-        return crossVolumeIndexSibling;
     }
 
     private void BuildConfigurationMoves(
