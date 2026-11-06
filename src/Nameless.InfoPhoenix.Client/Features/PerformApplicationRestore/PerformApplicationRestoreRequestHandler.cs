@@ -94,6 +94,13 @@ public sealed class PerformApplicationRestoreRequestHandler
     /// </summary>
     internal Action<PlannedMove>? OnBeforeRollbackMove { get; set; }
 
+    /// <summary>
+    /// Test-only seam (null in production: real <see cref="DriveInfo.AvailableFreeSpace"/> is
+    /// used) for the free-space preflight (plan D3/B5) - lets a test fail that check
+    /// deterministically without depending on how much real disk space the test machine has.
+    /// </summary>
+    internal Func<string, long>? AvailableFreeSpaceOverride { get; set; }
+
     /// <summary>One completed rename, recorded so rollback can undo it in reverse (plan D7).</summary>
     internal sealed record PlannedMove(string From, string To, string Description);
 
@@ -122,10 +129,16 @@ public sealed class PerformApplicationRestoreRequestHandler
             step = "ExtractingBackup";
             await PublishStepAsync(step);
 
+            // Computed and captured to the cleanup variable *before* any IO (plan AC1): if
+            // extraction fails after creating the folder, the outer `finally` must still know
+            // its path, regardless of where inside ExtractBackup the failure happened.
+            stagingDirectory = SysPath.Combine(
+                _applicationContext.FileManager.GetTemporaryDirectory().Path,
+                Constants.BackupRecovery.RestoreStagingDirectoryPrefix + Guid.NewGuid().ToString("N"));
+
             var crossVolumeNeeded = IsCrossVolumeIndexNeeded(manifest);
-            var (contentDirectory, staging) = await Task.Run(
-                () => ExtractBackup(request.SourceZipFilePath, entries, crossVolumeNeeded), cancellationToken);
-            stagingDirectory = staging;
+            var contentDirectory = await Task.Run(
+                () => ExtractBackup(request.SourceZipFilePath, entries, crossVolumeNeeded, stagingDirectory), cancellationToken);
 
             step = "VerifyingBackup";
             await PublishStepAsync(step);
@@ -442,15 +455,13 @@ public sealed class PerformApplicationRestoreRequestHandler
         return !string.Equals(temporaryRoot, liveIndexRoot, StringComparison.OrdinalIgnoreCase);
     }
 
-    private (string ContentDirectory, string StagingDirectory) ExtractBackup(
-        string sourceZipFilePath, List<ArchiveEntryInfo> entries, bool crossVolumeIndexNeeded) {
+    private string ExtractBackup(
+        string sourceZipFilePath, List<ArchiveEntryInfo> entries, bool crossVolumeIndexNeeded, string stagingDirectory) {
         var temporaryDirectory = _applicationContext.FileManager.GetTemporaryDirectory();
         temporaryDirectory.Create();
 
         SweepOrphanStagingFolders(temporaryDirectory.Path);
 
-        var stagingDirectory = SysPath.Combine(
-            temporaryDirectory.Path, Constants.BackupRecovery.RestoreStagingDirectoryPrefix + Guid.NewGuid().ToString("N"));
         var contentDirectory = SysPath.Combine(stagingDirectory, "content");
 
         var declaredBytes = entries
@@ -463,12 +474,14 @@ public sealed class PerformApplicationRestoreRequestHandler
             declaredBytes += entries.Where(e => e.Kind == EntryKind.SearchIndexFile).Sum(e => e.Length);
         }
 
-        Directory.CreateDirectory(contentDirectory);
-
-        var availableFreeSpace = new DriveInfo(SysPath.GetPathRoot(stagingDirectory)!).AvailableFreeSpace;
+        // Checked before the content folder is created (plan AC1/D3).
+        var availableFreeSpace = AvailableFreeSpaceOverride?.Invoke(stagingDirectory)
+            ?? new DriveInfo(SysPath.GetPathRoot(stagingDirectory)!).AvailableFreeSpace;
         if (declaredBytes + Constants.BackupRecovery.FreeSpaceSafetyMarginBytes > availableFreeSpace) {
             throw new BackupRejectedException(new BackupRejection("InsufficientSpace", [FormatBytes(declaredBytes)]));
         }
+
+        Directory.CreateDirectory(contentDirectory);
 
         using var archive = ZipFile.OpenRead(sourceZipFilePath);
         var normalizedContentRoot = SysPath.GetFullPath(contentDirectory).TrimEnd(SysPath.DirectorySeparatorChar) +
@@ -499,7 +512,7 @@ public sealed class PerformApplicationRestoreRequestHandler
             ExtractEntryBounded(entry, destinationPath);
         }
 
-        return (contentDirectory, stagingDirectory);
+        return contentDirectory;
     }
 
     /// <summary>
