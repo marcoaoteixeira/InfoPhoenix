@@ -178,9 +178,17 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
         try {
             var backupFilePath = SelectBackupFile(); // D1, D2
 
-            if (backupFilePath is null) { return; } // AC3: dialog cancelled
+            if (backupFilePath is null) {
+                _logger.LogDebug("Restore selection cancelled: the file dialog was dismissed without picking a backup.");
 
-            if (!ConfirmOverwrite(backupFilePath)) { return; } // AC2/AC3: D4
+                return; // AC3: dialog cancelled
+            }
+
+            if (!ConfirmOverwrite(backupFilePath)) {
+                _logger.LogDebug("Restore for {BackupFilePath} declined at the overwrite warning.", backupFilePath);
+
+                return; // AC2/AC3: D4
+            }
 
             // IPX-0010 stops here (D5). IPX-0011 replaces the next two statements.
             _logger.LogInformation(
