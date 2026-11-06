@@ -824,6 +824,69 @@ public sealed class PerformApplicationRestoreRequestHandlerTests : IDisposable {
         AssertNoStagingLeftover();
     }
 
+    // ----- Step 6: post-commit notifications (review finding) -----------------------------------------
+
+    /// <summary>
+    /// Review finding: one try/catch used to wrap every post-commit notification publish (the two
+    /// cleanup warnings plus the success notification), so a failure publishing the first warning
+    /// suppressed the second warning AND the success notification - the restore itself had already
+    /// committed, but the user never learned it had succeeded. Locks both "aside" copies for real
+    /// (FileShare.Read, no delete share) right before the last planned move, by which point both
+    /// aside renames have already completed, so <c>DeleteAsideItems</c> genuinely fails to delete
+    /// either of them and two warnings are genuinely queued to publish.
+    /// </summary>
+    [Fact]
+    public async Task HandleAsync_WhenAnEarlyPostCommitWarningPublishFails_StillAttemptsTheRemainingWarningAndSuccessNotifications() {
+        SeedLiveDatabase(withMigrationHistory: false);
+        SeedLiveConfig("""{"Theme":"Light"}""");
+        var zipPath = BuildZip(z => {
+            AddManifest(z, database: true, configuration: true, databaseMigrationId: null);
+            AddDatabaseEntry(z, withMigrationHistory: false, migrationId: null);
+            WriteRawEntry(z, "app.config", """{"Theme":"Dark"}""");
+        });
+        var eventPublisher = new FakeEventPublisher();
+        var handler = CreateHandler(eventPublisher: eventPublisher);
+        var lockedAsideFiles = new List<FileStream>();
+
+        handler.OnBeforeMove = move => {
+            if (move.Description != "configuration restore") {
+                return;
+            }
+
+            foreach (var path in Directory.GetFiles(Path.Combine(_appRoot, "databases"), "*.restore-old-*")
+                .Concat(Directory.GetFiles(_appRoot, "*.restore-old-*"))) {
+                lockedAsideFiles.Add(new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read));
+            }
+        };
+
+        var warningPublishCount = 0;
+        eventPublisher.OnPublish = @event => {
+            if (@event is BackupRecoveryProgressNotificationEvent { Type: NotificationType.Warning } &&
+                ++warningPublishCount == 1) {
+                throw new IOException("simulated transient failure publishing the first cleanup warning");
+            }
+        };
+
+        try {
+            var result = await handler.HandleAsync(new PerformApplicationRestoreRequest(zipPath), CancellationToken.None);
+
+            Assert.Equal(RestoreOutcome.Completed, result);
+            Assert.Equal(2, warningPublishCount); // both locked aside copies were genuinely attempted
+            var progressEvents = eventPublisher.PublishedEvents.OfType<BackupRecoveryProgressNotificationEvent>().ToList();
+
+            // The first warning's publish threw and is therefore never recorded, but the second
+            // warning and the success notification are still attempted and recorded - before the
+            // fix, both would have been silently skipped by the one shared try/catch.
+            Assert.Single(progressEvents, e => e.Type == NotificationType.Warning);
+            Assert.Single(progressEvents, e => e.Type == NotificationType.Success);
+        }
+        finally {
+            foreach (var stream in lockedAsideFiles) {
+                await stream.DisposeAsync();
+            }
+        }
+    }
+
     // ----- AC2/F3: round-trip with the real backup handler (B20) --------------------------------------
 
     [Fact]
