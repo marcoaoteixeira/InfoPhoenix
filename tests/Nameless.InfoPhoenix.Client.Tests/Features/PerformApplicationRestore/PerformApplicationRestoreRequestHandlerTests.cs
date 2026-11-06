@@ -756,7 +756,12 @@ public sealed class PerformApplicationRestoreRequestHandlerTests : IDisposable {
         });
         var eventPublisher = new FakeEventPublisher();
         var handler = CreateHandler(eventPublisher: eventPublisher);
-        handler.OnAfterEntryExtracted = () => throw new IOException("simulated staging failure partway through extraction");
+        var entriesExtracted = 0;
+        handler.OnAfterEntryExtracted = () => {
+            if (++entriesExtracted == 3) {
+                throw new IOException("simulated staging failure partway through extraction");
+            }
+        };
         var before = CaptureSnapshot();
 
         var result = await handler.HandleAsync(new PerformApplicationRestoreRequest(zipPath), CancellationToken.None);
