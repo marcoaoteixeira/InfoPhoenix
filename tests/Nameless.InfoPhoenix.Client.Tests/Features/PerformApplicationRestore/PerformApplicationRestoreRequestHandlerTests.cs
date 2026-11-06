@@ -228,12 +228,12 @@ public sealed class PerformApplicationRestoreRequestHandlerTests : IDisposable {
 
     /// <summary>
     /// B4: a central-directory "uncompressed size" declaring far less than the entry's real
-    /// content. <c>System.IO.Compression</c>'s own read stream already truncates reads to the
-    /// declared length (verified directly against the BCL), so the bounded-copy guard in
-    /// <c>ExtractEntryBounded</c> never actually trips on this - but the truncated, now-corrupt
-    /// database still correctly fails verification and blocks instead of silently restoring
-    /// garbage. This is the achievable, real consequence of a lying size through the public zip
-    /// API; it is documented in the handoff report as a finding for the reviewer.
+    /// content, on a Stored (uncompressed) entry. <c>System.IO.Compression</c>'s own read
+    /// stream does not truncate a Stored entry's reads to the declared length (verified
+    /// directly against the BCL), so the patched header's bytes flow straight through to
+    /// <c>ExtractEntryBounded</c> - which now catches it via the short-read/length check added
+    /// for this ticket (the loop finishes having written more than the lying declared length,
+    /// well before the CRC-32 check would even run).
     /// </summary>
     [Fact]
     public async Task HandleAsync_WithALyingSizeEntry_IsBlocked() {
@@ -244,7 +244,27 @@ public sealed class PerformApplicationRestoreRequestHandlerTests : IDisposable {
         var result = await RunAsync(zipPath, eventPublisher: eventPublisher);
 
         Assert.Equal(RestoreOutcome.Blocked, result);
-        AssertSingleFailureStartsWith(eventPublisher, "Rejected_DatabaseInvalid");
+        AssertSingleFailureStartsWith(eventPublisher, "Rejected_Corrupted");
+        AssertSnapshotUnchanged(before);
+        AssertNoStagingLeftover();
+    }
+
+    /// <summary>
+    /// A Stored entry whose declared size and local-file-header CRC-32 both still match its
+    /// original content, but whose actual bytes were tampered with after the fact - the one
+    /// scenario the length checks alone cannot catch, and the reason the CRC-32 check was added
+    /// for this ticket (plan D3's "CRC-failing entries throw").
+    /// </summary>
+    [Fact]
+    public async Task HandleAsync_WithATamperedButCorrectlySizedEntry_IsBlocked() {
+        var zipPath = BuildZipWithTamperedEntry();
+        var eventPublisher = new FakeEventPublisher();
+        var before = CaptureSnapshot();
+
+        var result = await RunAsync(zipPath, eventPublisher: eventPublisher);
+
+        Assert.Equal(RestoreOutcome.Blocked, result);
+        AssertSingleFailureStartsWith(eventPublisher, "Rejected_Corrupted");
         AssertSnapshotUnchanged(before);
         AssertNoStagingLeftover();
     }
@@ -933,27 +953,29 @@ public sealed class PerformApplicationRestoreRequestHandlerTests : IDisposable {
         archive.CreateEntryFromFile(databasePath, "database/app.db");
     }
 
-    private static void WriteRawEntry(ZipArchive archive, string name, string content) {
-        var entry = archive.CreateEntry(name);
+    private static void WriteRawEntry(
+        ZipArchive archive, string name, string content, CompressionLevel compressionLevel = CompressionLevel.Optimal) {
+        var entry = archive.CreateEntry(name, compressionLevel);
         using var stream = entry.Open();
         var bytes = Encoding.UTF8.GetBytes(content);
         stream.Write(bytes, 0, bytes.Length);
     }
 
     /// <summary>
-    /// Builds a real, valid zip and then binary-patches the central-directory record's
-    /// "uncompressed size" field for <c>database/app.db</c> down to a tiny value - the entry
-    /// still decompresses to its real (larger) size, so extraction's bounded copy must stop
-    /// before trusting the declared length for anything destructive (plan D3's "do not trust
-    /// declared sizes").
+    /// Builds a real, valid zip with a Stored (uncompressed) search-index entry, then
+    /// binary-patches the central-directory record's "uncompressed size" field for that entry
+    /// down to a tiny value. Unlike a compressed entry - whose read stream the BCL truncates to
+    /// the declared length regardless (verified directly against the BCL) - a Stored entry's
+    /// bytes flow straight through, so this is the one way to make a lying declared size
+    /// actually reach <c>ExtractEntryBounded</c>'s bounded-copy guard.
     /// </summary>
     private static string BuildZipWithLyingSizeEntry() {
         var zipPath = BuildZip(z => {
-            AddManifest(z, database: true, databaseMigrationId: null);
-            WriteRawEntry(z, "database/app.db", new string('x', 4096));
+            AddManifest(z, searchIndex: true);
+            WriteRawEntry(z, "search-index/segment1.bin", new string('x', 4096), CompressionLevel.NoCompression);
         });
 
-        PatchDeclaredUncompressedSize(zipPath, "database/app.db", newDeclaredSize: 10);
+        PatchDeclaredUncompressedSize(zipPath, "search-index/segment1.bin", newDeclaredSize: 10);
 
         return zipPath;
     }
@@ -984,6 +1006,54 @@ public sealed class PerformApplicationRestoreRequestHandlerTests : IDisposable {
 
         if (!patched) {
             throw new InvalidOperationException($"Could not find the central directory header for entry '{entryName}'.");
+        }
+
+        File.WriteAllBytes(zipPath, bytes);
+    }
+
+    /// <summary>Builds a Stored-entry zip, then flips one data byte without touching any header.</summary>
+    private static string BuildZipWithTamperedEntry() {
+        var zipPath = BuildZip(z => {
+            AddManifest(z, searchIndex: true);
+            WriteRawEntry(z, "search-index/segment1.bin", new string('x', 64), CompressionLevel.NoCompression);
+        });
+
+        TamperStoredEntryFirstByte(zipPath, "search-index/segment1.bin");
+
+        return zipPath;
+    }
+
+    /// <summary>
+    /// Flips the first data byte of a Stored local-file-header entry, leaving every header field
+    /// (including the local CRC-32, which <see cref="ZipArchiveEntry.Crc32"/> reads from the
+    /// central directory, not re-derived from the tampered bytes) exactly as it was.
+    /// </summary>
+    private static void TamperStoredEntryFirstByte(string zipPath, string entryName) {
+        var bytes = File.ReadAllBytes(zipPath);
+        var nameBytes = Encoding.UTF8.GetBytes(entryName);
+
+        const uint localFileHeaderSignature = 0x04034b50;
+        var tampered = false;
+
+        for (var i = 0; i <= bytes.Length - 30 - nameBytes.Length; i++) {
+            if (BitConverter.ToUInt32(bytes, i) != localFileHeaderSignature) {
+                continue;
+            }
+
+            var nameStart = i + 30;
+            if (!bytes.AsSpan(nameStart, nameBytes.Length).SequenceEqual(nameBytes)) {
+                continue;
+            }
+
+            var extraFieldLength = BitConverter.ToUInt16(bytes, i + 28);
+            var dataStart = nameStart + nameBytes.Length + extraFieldLength;
+            bytes[dataStart] ^= 0xFF;
+            tampered = true;
+            break;
+        }
+
+        if (!tampered) {
+            throw new InvalidOperationException($"Could not find the local file header for entry '{entryName}'.");
         }
 
         File.WriteAllBytes(zipPath, bytes);

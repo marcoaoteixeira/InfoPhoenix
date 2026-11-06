@@ -1,5 +1,6 @@
 using System.IO;
 using System.IO.Compression;
+using System.IO.Hashing;
 using System.Text.Json;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -528,7 +529,11 @@ public sealed class PerformApplicationRestoreRequestHandler
     /// Copies at most the entry's own declared <see cref="ZipArchiveEntry.Length"/> (plan D3's
     /// "do not trust declared sizes"): the loop aborts with <see cref="InvalidDataException"/>
     /// the instant more bytes arrive than the header promised, so a lying header cannot fill the
-    /// disk. The file is flushed to disk before returning (plan D3's power-loss guarantee).
+    /// disk. After the copy, both the total byte count and a CRC-32 computed over the copied
+    /// bytes must match the entry's declared values (plan D3's "CRC-failing entries throw"),
+    /// catching a short read or tampered/corrupt content that a Stored-compression entry would
+    /// otherwise let straight through uncomplained. The file is flushed to disk before returning
+    /// (plan D3's power-loss guarantee).
     /// </summary>
     private static void ExtractEntryBounded(ZipArchiveEntry entry, string destinationPath) {
         Directory.CreateDirectory(SysPath.GetDirectoryName(destinationPath)!);
@@ -536,6 +541,7 @@ public sealed class PerformApplicationRestoreRequestHandler
         using var source = entry.Open();
         using var destination = new FileStream(destinationPath, FileMode.CreateNew, FileAccess.Write, FileShare.None);
 
+        var crc = new Crc32();
         var buffer = new byte[81920];
         long totalWritten = 0;
         int read;
@@ -548,7 +554,17 @@ public sealed class PerformApplicationRestoreRequestHandler
                     $"Entry '{entry.FullName}' contains more data than its declared length of {entry.Length} bytes.");
             }
 
+            crc.Append(buffer.AsSpan(0, read));
             destination.Write(buffer, 0, read);
+        }
+
+        if (totalWritten != entry.Length) {
+            throw new InvalidDataException(
+                $"Entry '{entry.FullName}' extracted {totalWritten} bytes, short of its declared length of {entry.Length} bytes.");
+        }
+
+        if (crc.GetCurrentHashAsUInt32() != entry.Crc32) {
+            throw new InvalidDataException($"Entry '{entry.FullName}' failed its CRC-32 check.");
         }
 
         destination.Flush(flushToDisk: true);
