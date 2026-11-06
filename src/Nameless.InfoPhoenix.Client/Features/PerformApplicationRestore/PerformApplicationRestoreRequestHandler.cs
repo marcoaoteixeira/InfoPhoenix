@@ -193,13 +193,22 @@ public sealed class PerformApplicationRestoreRequestHandler
                 return RestoreOutcome.RolledBack;
             }
 
-            var cleanupFailures = DeleteAsideItems(journal);
-            foreach (var leftoverPath in cleanupFailures) {
-                await PublishWarningAsync("CleanupIncomplete_Warning", [leftoverPath]);
-            }
+            // Guarded (review finding): the swap already committed, so a failure publishing
+            // these best-effort notifications must never be reported back as a failed restore -
+            // every outer catch below is filtered `when (!committed)` and would otherwise never
+            // run, letting the exception escape the handler entirely.
+            try {
+                var cleanupFailures = DeleteAsideItems(journal);
+                foreach (var leftoverPath in cleanupFailures) {
+                    await PublishWarningAsync("CleanupIncomplete_Warning", [leftoverPath]);
+                }
 
-            await _eventPublisher.PublishSuccessAsync<BackupRecoveryProgressNotificationEvent>(
-                message: _translator[$"{Prefix}_Success"]);
+                await _eventPublisher.PublishSuccessAsync<BackupRecoveryProgressNotificationEvent>(
+                    message: _translator[$"{Prefix}_Success"]);
+            }
+            catch (Exception ex) {
+                _logger.LogError(ex, "Restore committed successfully, but a post-commit notification failed.");
+            }
 
             return RestoreOutcome.Completed;
         }

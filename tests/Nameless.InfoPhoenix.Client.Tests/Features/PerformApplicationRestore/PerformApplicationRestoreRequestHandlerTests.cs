@@ -741,6 +741,26 @@ public sealed class PerformApplicationRestoreRequestHandlerTests : IDisposable {
         Assert.Equal("fixture-row", command.ExecuteScalar());
     }
 
+    [Fact]
+    public async Task HandleAsync_WhenPublishingTheSuccessNotificationThrows_StillCompletes() {
+        SeedLiveConfig("""{"Theme":"Light"}""");
+        var zipPath = BuildZip(z => {
+            AddManifest(z, configuration: true);
+            WriteRawEntry(z, "app.config", "{}");
+        });
+        var eventPublisher = new FakeEventPublisher();
+        eventPublisher.OnPublish = @event => {
+            if (@event is BackupRecoveryProgressNotificationEvent { Type: NotificationType.Success }) {
+                throw new IOException("boom");
+            }
+        };
+
+        var result = await RunAsync(zipPath, eventPublisher: eventPublisher);
+
+        Assert.Equal(RestoreOutcome.Completed, result);
+        Assert.Equal("{}", File.ReadAllText(LiveConfigPath));
+    }
+
     // ----- helpers --------------------------------------------------------------------------------
 
     private async Task<RestoreOutcome> RunAsync(
