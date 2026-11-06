@@ -116,6 +116,13 @@ public sealed class PerformApplicationRestoreRequestHandler
     /// </summary>
     internal Action? OnBeforeCrossVolumeCopy { get; set; }
 
+    /// <summary>
+    /// Test-only hook invoked right after each archive entry finishes extracting, letting a test
+    /// request cancellation strictly between entries to prove extraction actually observes
+    /// cancellation mid-loop (plan review finding), rather than only before the whole step starts.
+    /// </summary>
+    internal Action? OnAfterEntryExtracted { get; set; }
+
     /// <summary>One completed rename, recorded so rollback can undo it in reverse (plan D7).</summary>
     internal sealed record PlannedMove(string From, string To, string Description);
 
@@ -153,7 +160,8 @@ public sealed class PerformApplicationRestoreRequestHandler
 
             var crossVolumeNeeded = IsCrossVolumeIndexNeeded(manifest);
             var contentDirectory = await Task.Run(
-                () => ExtractBackup(request.SourceZipFilePath, entries, crossVolumeNeeded, stagingDirectory), cancellationToken);
+                () => ExtractBackup(request.SourceZipFilePath, entries, crossVolumeNeeded, stagingDirectory, cancellationToken),
+                cancellationToken);
 
             step = "VerifyingBackup";
             await PublishStepAsync(step);
@@ -493,7 +501,8 @@ public sealed class PerformApplicationRestoreRequestHandler
     }
 
     private string ExtractBackup(
-        string sourceZipFilePath, List<ArchiveEntryInfo> entries, bool crossVolumeIndexNeeded, string stagingDirectory) {
+        string sourceZipFilePath, List<ArchiveEntryInfo> entries, bool crossVolumeIndexNeeded, string stagingDirectory,
+        CancellationToken cancellationToken) {
         var temporaryDirectory = _applicationContext.FileManager.GetTemporaryDirectory();
         temporaryDirectory.Create();
 
@@ -532,6 +541,11 @@ public sealed class PerformApplicationRestoreRequestHandler
             SysPath.DirectorySeparatorChar;
 
         foreach (var entryInfo in entries) {
+            // Checked once per entry (plan review finding): extraction previously never observed
+            // the token mid-loop, so a large backup could not actually be cancelled until it had
+            // already fully extracted.
+            cancellationToken.ThrowIfCancellationRequested();
+
             if (entryInfo.RelativePath is null) {
                 continue; // The manifest (read-only) and ignored directory entries are never extracted.
             }
@@ -553,7 +567,8 @@ public sealed class PerformApplicationRestoreRequestHandler
                     $"Entry '{entryInfo.Name}' declares {entry.Length} bytes, over the configuration size limit.");
             }
 
-            ExtractEntryBounded(entry, destinationPath);
+            ExtractEntryBounded(entry, destinationPath, cancellationToken);
+            OnAfterEntryExtracted?.Invoke();
         }
 
         return contentDirectory;
@@ -566,10 +581,11 @@ public sealed class PerformApplicationRestoreRequestHandler
     /// disk. After the copy, both the total byte count and a CRC-32 computed over the copied
     /// bytes must match the entry's declared values (plan D3's "CRC-failing entries throw"),
     /// catching a short read or tampered/corrupt content that a Stored-compression entry would
-    /// otherwise let straight through uncomplained. The file is flushed to disk before returning
-    /// (plan D3's power-loss guarantee).
+    /// otherwise let straight through uncomplained. Checked once per buffer read, so a large
+    /// entry's extraction can actually be cancelled mid-copy, not only before it starts. The
+    /// file is flushed to disk before returning (plan D3's power-loss guarantee).
     /// </summary>
-    private static void ExtractEntryBounded(ZipArchiveEntry entry, string destinationPath) {
+    private static void ExtractEntryBounded(ZipArchiveEntry entry, string destinationPath, CancellationToken cancellationToken) {
         Directory.CreateDirectory(SysPath.GetDirectoryName(destinationPath)!);
 
         using var source = entry.Open();
@@ -581,6 +597,8 @@ public sealed class PerformApplicationRestoreRequestHandler
         int read;
 
         while ((read = source.Read(buffer, 0, buffer.Length)) > 0) {
+            cancellationToken.ThrowIfCancellationRequested();
+
             totalWritten += read;
 
             if (totalWritten > entry.Length) {

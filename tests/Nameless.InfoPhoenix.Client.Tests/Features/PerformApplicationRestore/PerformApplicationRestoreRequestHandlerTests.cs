@@ -738,20 +738,33 @@ public sealed class PerformApplicationRestoreRequestHandlerTests : IDisposable {
         AssertNoStagingLeftover();
     }
 
+    /// <summary>
+    /// Review finding: cancelling before <c>HandleAsync</c> even starts only proves <c>Task.Run</c>
+    /// never starts the work - it says nothing about extraction itself observing the token.
+    /// <see cref="PerformApplicationRestoreRequestHandler.OnAfterEntryExtracted"/> cancels only
+    /// once the first of two entries has actually been extracted, so the second entry's
+    /// <c>ThrowIfCancellationRequested</c> inside the extraction loop is what has to fire.
+    /// </summary>
     [Fact]
-    public async Task HandleAsync_WhenCancelledDuringExtraction_PropagatesCancellation() {
+    public async Task HandleAsync_WhenCancelledMidExtraction_PropagatesCancellation_AfterExtractingTheFirstEntry() {
         var zipPath = BuildZip(z => {
-            AddManifest(z, configuration: true);
-            WriteRawEntry(z, "app.config", "{}");
+            AddManifest(z, searchIndex: true);
+            WriteRawEntry(z, "search-index/segment1.bin", "data-1");
+            WriteRawEntry(z, "search-index/segment2.bin", "data-2");
         });
         using var cts = new CancellationTokenSource();
-        cts.Cancel();
         var eventPublisher = new FakeEventPublisher();
         var handler = CreateHandler(eventPublisher: eventPublisher);
+        var entriesExtracted = 0;
+        handler.OnAfterEntryExtracted = () => {
+            entriesExtracted++;
+            cts.Cancel();
+        };
 
         await Assert.ThrowsAnyAsync<OperationCanceledException>(
             () => handler.HandleAsync(new PerformApplicationRestoreRequest(zipPath), cts.Token));
 
+        Assert.Equal(1, entriesExtracted); // proves the second entry's loop iteration never started
         Assert.DoesNotContain(
             eventPublisher.PublishedEvents.OfType<BackupRecoveryProgressNotificationEvent>(),
             e => e.Type is NotificationType.Failure or NotificationType.Success);
