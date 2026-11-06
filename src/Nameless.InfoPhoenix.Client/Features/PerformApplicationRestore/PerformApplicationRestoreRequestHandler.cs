@@ -307,8 +307,7 @@ public sealed class PerformApplicationRestoreRequestHandler
 
             if (rawEntries.Count > Constants.BackupRecovery.MaxArchiveEntryCount) {
                 throw new BackupRejectedException(new BackupRejection(
-                    "UnexpectedEntry",
-                    [$"{rawEntries.Count} entries (maximum {Constants.BackupRecovery.MaxArchiveEntryCount})"]));
+                    "TooManyEntries", [rawEntries.Count, Constants.BackupRecovery.MaxArchiveEntryCount]));
             }
 
             var entries = new List<ArchiveEntryInfo>();

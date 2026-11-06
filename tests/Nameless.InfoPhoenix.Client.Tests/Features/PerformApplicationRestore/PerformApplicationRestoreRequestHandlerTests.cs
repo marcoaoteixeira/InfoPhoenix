@@ -221,7 +221,7 @@ public sealed class PerformApplicationRestoreRequestHandlerTests : IDisposable {
         var result = await RunAsync(zipPath, eventPublisher: eventPublisher);
 
         Assert.Equal(RestoreOutcome.Blocked, result);
-        var failure = AssertSingleFailureStartsWith(eventPublisher, "Rejected_UnexpectedEntry");
+        var failure = AssertSingleFailureStartsWith(eventPublisher, "Rejected_TooManyEntries");
         Assert.Contains(Constants.BackupRecovery.MaxArchiveEntryCount.ToString(), failure);
         AssertSnapshotUnchanged(before);
     }

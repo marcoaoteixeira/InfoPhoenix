@@ -293,6 +293,9 @@ Close and reopen InfoPhoenix to start using the restored data. Until you do, som
 	<data name="PerformApplicationRestoreRequestHandler_Rejected_UnexpectedEntry" xml:space="preserve">
 		<value>The backup contains an unexpected or unsafe item: {0}. Nothing was changed.</value>
 	</data>
+	<data name="PerformApplicationRestoreRequestHandler_Rejected_TooManyEntries" xml:space="preserve">
+		<value>The backup contains too many items ({0}, maximum {1}). Nothing was changed.</value>
+	</data>
 	<data name="PerformApplicationRestoreRequestHandler_Rejected_ContentsMismatch" xml:space="preserve">
 		<value>The backup's contents do not match its description; the file may be damaged. Nothing was changed.</value>
 	</data>

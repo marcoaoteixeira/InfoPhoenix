@@ -234,6 +234,9 @@ Feche e abra novamente o InfoPhoenix para começar a usar os dados restaurados. 
 	<data name="PerformApplicationRestoreRequestHandler_Rejected_UnexpectedEntry" xml:space="preserve">
 		<value>O backup contém um item inesperado ou inseguro: {0}. Nada foi alterado.</value>
 	</data>
+	<data name="PerformApplicationRestoreRequestHandler_Rejected_TooManyEntries" xml:space="preserve">
+		<value>O backup contém muitos itens ({0}, máximo {1}). Nada foi alterado.</value>
+	</data>
 	<data name="PerformApplicationRestoreRequestHandler_Rejected_ContentsMismatch" xml:space="preserve">
 		<value>O conteúdo do backup não corresponde à sua descrição; o arquivo pode estar danificado. Nada foi alterado.</value>
 	</data>
