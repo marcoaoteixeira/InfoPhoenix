@@ -20,7 +20,7 @@ namespace Nameless.InfoPhoenix.Client.Tests.ViewModels.Pages;
 /// root (same reasoning as <see cref="AppConfigurationPageViewModelIntegrationTests"/>) because
 /// the command's own D2 step (<c>backupDirectory.Create()</c>) is real filesystem behavior.
 /// </summary>
-[Collection(Nameless.InfoPhoenix.Client.Tests.Views.Windows.WpfUiThemeTestCollection.Name)]
+[Collection(WpfUiThemeTestCollection.Name)]
 public sealed class AppConfigurationPageViewModelRestoreTests : IDisposable {
     private readonly string _tempRoot = Directory.CreateTempSubdirectory("ipx-0010-").FullName;
 
@@ -161,6 +161,7 @@ public sealed class AppConfigurationPageViewModelRestoreTests : IDisposable {
 
             var notification = Assert.Single(eventPublisher.PublishedEvents.OfType<SnackBarNotificationEvent>());
             Assert.Equal(NotificationType.Information, notification.Type);
+            Assert.Equal("AppConfigurationPage_Restore_NotYetAvailable_Message", notification.Message);
             Assert.Empty(mediator.ExecutedRequests);
             Assert.Empty(manager.CallLog);
             Assert.Equal(bytesBefore, File.ReadAllBytes(zipPath));
@@ -199,7 +200,8 @@ public sealed class AppConfigurationPageViewModelRestoreTests : IDisposable {
         StaWindowTestHarness.Run(() => {
             var fileSystemDialog = new FakeFileSystemDialog { ThrowOnOpenFile = new InvalidOperationException("boom") };
             var eventPublisher = new FakeEventPublisher();
-            var vm = CreateViewModel(fileSystemDialog: fileSystemDialog, eventPublisher: eventPublisher);
+            var translator = new FakeTranslator();
+            var vm = CreateViewModel(fileSystemDialog: fileSystemDialog, eventPublisher: eventPublisher, translator: translator);
 
             var exception = Record.Exception(
                 () => vm.PerformApplicationRestoreCommand.ExecuteAsync(null).GetAwaiter().GetResult());
@@ -207,6 +209,9 @@ public sealed class AppConfigurationPageViewModelRestoreTests : IDisposable {
             Assert.Null(exception);
             var notification = Assert.Single(eventPublisher.PublishedEvents.OfType<SnackBarNotificationEvent>());
             Assert.Equal(NotificationType.Failure, notification.Type);
+            Assert.Equal("AppConfigurationPage_Restore_Failure_Message", notification.Message);
+            var request = Assert.Single(translator.Requests, r => r.Key == "AppConfigurationPage_Restore_Failure_Message");
+            Assert.Equal(["boom"], request.Args);
         });
     }
 
@@ -218,7 +223,10 @@ public sealed class AppConfigurationPageViewModelRestoreTests : IDisposable {
             var fileSystemDialog = new FakeFileSystemDialog { FilesToReturn = [zipPath] };
             var messageDialog = new FakeMessageDialog { ThrowOnShow = new InvalidOperationException("boom") };
             var eventPublisher = new FakeEventPublisher();
-            var vm = CreateViewModel(fileSystemDialog: fileSystemDialog, messageDialog: messageDialog, eventPublisher: eventPublisher);
+            var translator = new FakeTranslator();
+            var vm = CreateViewModel(
+                fileSystemDialog: fileSystemDialog, messageDialog: messageDialog,
+                eventPublisher: eventPublisher, translator: translator);
 
             var exception = Record.Exception(
                 () => vm.PerformApplicationRestoreCommand.ExecuteAsync(null).GetAwaiter().GetResult());
@@ -226,6 +234,9 @@ public sealed class AppConfigurationPageViewModelRestoreTests : IDisposable {
             Assert.Null(exception);
             var notification = Assert.Single(eventPublisher.PublishedEvents.OfType<SnackBarNotificationEvent>());
             Assert.Equal(NotificationType.Failure, notification.Type);
+            Assert.Equal("AppConfigurationPage_Restore_Failure_Message", notification.Message);
+            var request = Assert.Single(translator.Requests, r => r.Key == "AppConfigurationPage_Restore_Failure_Message");
+            Assert.Equal(["boom"], request.Args);
         });
     }
 
