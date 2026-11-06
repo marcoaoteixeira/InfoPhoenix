@@ -84,7 +84,7 @@ A user can pick **any** `.zip` (IPX-0010 D3/D6). This ticket therefore does **no
 Name rules, all checked **before** any extraction. A violation gives `Rejected_UnexpectedEntry`:
 
 - The name is not empty, is at most 260 characters, and contains no `\`, `:` (NTFS alternate data streams, for example `app.config:x`, and drive letters) or `\0`. It does not start with `/`.
-- Split on `/`. Only a directory entry may have an empty last segment. No segment is empty, `.` or `..`. No segment ends with `.` or a space, because Windows trims those and `app.config.` would alias `app.config`. No segment contains `Path.GetInvalidFileNameChars()`, and no segment is a reserved device name (`CON`, `PRN`, `AUX`, `NUL`, `COM1`-`COM9`, `LPT1`-`LPT9`, with or without an extension).
+- Split on `/`. Only a directory entry may have an empty last segment. No segment is empty, `.` or `..`. No segment ends with `.` or a space, because Windows trims those and `app.config.` would alias `app.config`. No segment contains `Path.GetInvalidFileNameChars()`, and no segment is a reserved device name (`CON`, `PRN`, `AUX`, `NUL`, `CONIN$`, `CONOUT$`, `COM0`-`COM9`, `LPT0`-`LPT9`, the superscript-digit `COM`/`LPT` variants, with or without an extension).
 - No duplicate names, compared **case-insensitively** (the NTFS semantics). This removes "which copy wins" ambiguity.
 - At most `MaxArchiveEntryCount` (10,000) entries.
 - **Belt and braces (zip-slip):** when extracting, `Path.GetFullPath(Path.Combine(contentRoot, mappedRelativePath))` must start with `contentRoot + Path.DirectorySeparatorChar` (`OrdinalIgnoreCase`). Otherwise throw, which gives `Rejected_UnexpectedEntry`. With the rules above this cannot fail, which is the point of a second check.
