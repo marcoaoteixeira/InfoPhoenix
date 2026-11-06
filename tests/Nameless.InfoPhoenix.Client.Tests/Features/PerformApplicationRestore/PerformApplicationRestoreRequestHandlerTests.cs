@@ -680,6 +680,48 @@ public sealed class PerformApplicationRestoreRequestHandlerTests : IDisposable {
         Assert.True(File.Exists(leftover));
     }
 
+    /// <summary>
+    /// B15-style, but targeting the specific sidecar-reversal interaction (review finding): when
+    /// the database's own main-file reversal fails, its -wal/-shm sidecars must stay exactly
+    /// where they were moved aside to, not be moved back next to whatever is now at the live
+    /// path (which, in this test, is nothing - the restored database's own reversal already ran
+    /// and succeeded before "database aside" is reached in reverse order).
+    /// </summary>
+    [Fact]
+    public async Task HandleAsync_WhenTheDatabaseAsideReversalFails_LeavesItsSidecarsWhereTheyWere() {
+        SeedLiveConfig("""{"Theme":"Light"}""");
+        SeedLiveDatabase(withMigrationHistory: false);
+        File.WriteAllText(LiveDatabasePath + "-wal", "live-wal-bytes");
+        File.WriteAllText(LiveDatabasePath + "-shm", "live-shm-bytes");
+        var zipPath = BuildZip(z => {
+            AddManifest(z, database: true, configuration: true, databaseMigrationId: null);
+            AddDatabaseEntry(z, withMigrationHistory: false, migrationId: null);
+            WriteRawEntry(z, "app.config", "{}");
+        });
+        var appConfigurationManager = new FakeAppConfigurationManager { ThrowOnReload = new IOException("boom") };
+        var eventPublisher = new FakeEventPublisher();
+        var handler = CreateHandler(appConfigurationManager: appConfigurationManager, eventPublisher: eventPublisher);
+        handler.OnBeforeRollbackMove = move => {
+            if (move.Description == "database aside") {
+                throw new IOException("simulated database-aside rollback failure");
+            }
+        };
+
+        var result = await handler.HandleAsync(new PerformApplicationRestoreRequest(zipPath), CancellationToken.None);
+
+        Assert.Equal(RestoreOutcome.RollbackIncomplete, result);
+        var failure = AssertSingleFailureStartsWith(eventPublisher, "RollbackIncomplete_Failure");
+
+        var databaseDirectory = Path.Combine(_appRoot, "databases");
+        var walAside = Directory.GetFiles(databaseDirectory, "*-wal.restore-old-*").Single();
+        var shmAside = Directory.GetFiles(databaseDirectory, "*-shm.restore-old-*").Single();
+        Assert.Contains(walAside, failure);
+        Assert.Contains(shmAside, failure);
+        // Never attempted: the sidecars stay exactly where the forward pass parked them.
+        Assert.False(File.Exists(LiveDatabasePath + "-wal"));
+        Assert.False(File.Exists(LiveDatabasePath + "-shm"));
+    }
+
     [Fact]
     public async Task HandleAsync_WhenCloseAllThrowsAnAggregateException_RollsBack_WithNothingRenamedYet() {
         SeedLiveConfig("""{"Theme":"Light"}""");

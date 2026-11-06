@@ -896,11 +896,25 @@ public sealed class PerformApplicationRestoreRequestHandler
     /// that itself fails is logged and skipped, and every remaining step still runs; the paths
     /// that could not be put back are returned.
     /// </summary>
+    /// <remarks>
+    /// Review finding: a "database aside" reversal failure must suppress the sidecar
+    /// (-wal/-shm/-journal) reversals that come right after it in this reverse order - they
+    /// moved aside, pre-commit, before the main file did (plan D6), so reversing them back onto
+    /// whichever database file now ends up at the live path (the new one, if its own reversal
+    /// also failed) risks SQLite replaying a stale WAL into the wrong database. The sidecars stay
+    /// exactly where they are; the original data is safe there either way.
+    /// </remarks>
     private List<string> RollbackMoves(List<PlannedMove> journal) {
         var leftovers = new List<string>();
+        var skipDatabaseSidecars = false;
 
         for (var i = journal.Count - 1; i >= 0; i--) {
             var move = journal[i];
+
+            if (skipDatabaseSidecars && move.Description.StartsWith("database sidecar", StringComparison.Ordinal)) {
+                leftovers.Add(move.To);
+                continue;
+            }
 
             try {
                 OnBeforeRollbackMove?.Invoke(move);
@@ -917,6 +931,10 @@ public sealed class PerformApplicationRestoreRequestHandler
             catch (Exception ex) {
                 _logger.LogError(ex, "Failed to reverse the move '{Description}' from '{To}' back to '{From}'.", move.Description, move.To, move.From);
                 leftovers.Add(move.To);
+
+                if (move.Description == "database aside") {
+                    skipDatabaseSidecars = true;
+                }
             }
         }
 
