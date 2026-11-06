@@ -138,11 +138,15 @@ public sealed class AppConfigurationPageViewModelRestoreTests : IDisposable {
     }
 
     /// <summary>
-    /// B6 (AC2 stop point/D5): a confirmed (Yes) restore publishes exactly one Information
-    /// snackbar, touches no config/mediator, and leaves the picked zip untouched.
+    /// B6 (AC2 stop point/D5, updated by IPX-0011 B26): a confirmed (Yes) restore now reaches
+    /// <c>ITaskRunner.CreateBuilder</c> exactly once. The fake throws <see cref="NotSupportedException"/>
+    /// (a real <see cref="Nameless.Windows.TaskRunner.TaskRunnerBuilder"/> needs a live WPF
+    /// dispatcher, so the run itself is not unit-testable - plan §3.3/IPX-0008), which the
+    /// command's own bug-path catch turns into exactly one Failure snackbar. The mediator is
+    /// never reached, and the picked zip is left untouched.
     /// </summary>
     [Fact]
-    public void PerformApplicationRestore_WhenWarningIsConfirmed_PublishesOneInformationSnackbar_AndTouchesNothing() {
+    public void PerformApplicationRestore_WhenWarningIsConfirmed_ReachesTheTaskRunnerExactlyOnce_AndPublishesOneFailureSnackbar() {
         StaWindowTestHarness.Run(() => {
             var zipPath = CreateZipUnderBackups("InfoPhoenix-backup-20261105T143012Z.zip");
             var bytesBefore = File.ReadAllBytes(zipPath);
@@ -153,15 +157,17 @@ public sealed class AppConfigurationPageViewModelRestoreTests : IDisposable {
             var eventPublisher = new FakeEventPublisher();
             var mediator = new FakeMediator();
             var manager = new FakeAppConfigurationManager();
+            var taskRunner = new FakeTaskRunner();
             var vm = CreateViewModel(
                 fileSystemDialog: fileSystemDialog, messageDialog: messageDialog,
-                eventPublisher: eventPublisher, mediator: mediator, manager: manager);
+                eventPublisher: eventPublisher, mediator: mediator, manager: manager, taskRunner: taskRunner);
 
             vm.PerformApplicationRestoreCommand.ExecuteAsync(null).GetAwaiter().GetResult();
 
+            Assert.Equal(1, taskRunner.CreateBuilderCount);
             var notification = Assert.Single(eventPublisher.PublishedEvents.OfType<SnackBarNotificationEvent>());
-            Assert.Equal(NotificationType.Information, notification.Type);
-            Assert.Equal("AppConfigurationPage_Restore_NotYetAvailable_Message", notification.Message);
+            Assert.Equal(NotificationType.Failure, notification.Type);
+            Assert.Equal("AppConfigurationPage_Restore_Failure_Message", notification.Message);
             Assert.Empty(mediator.ExecutedRequests);
             Assert.Empty(manager.CallLog);
             Assert.Equal(bytesBefore, File.ReadAllBytes(zipPath));
@@ -181,11 +187,15 @@ public sealed class AppConfigurationPageViewModelRestoreTests : IDisposable {
                 var fileSystemDialog = new FakeFileSystemDialog { FilesToReturn = [zipPath] };
                 var messageDialog = new FakeMessageDialog { ResultToReturn = MessageDialogResult.Yes };
                 var eventPublisher = new FakeEventPublisher();
-                var vm = CreateViewModel(fileSystemDialog: fileSystemDialog, messageDialog: messageDialog, eventPublisher: eventPublisher);
+                var taskRunner = new FakeTaskRunner();
+                var vm = CreateViewModel(
+                    fileSystemDialog: fileSystemDialog, messageDialog: messageDialog,
+                    eventPublisher: eventPublisher, taskRunner: taskRunner);
 
                 vm.PerformApplicationRestoreCommand.ExecuteAsync(null).GetAwaiter().GetResult();
 
                 Assert.Single(messageDialog.Calls);
+                Assert.Equal(1, taskRunner.CreateBuilderCount);
                 Assert.Single(eventPublisher.PublishedEvents.OfType<SnackBarNotificationEvent>());
             }
             finally {
@@ -251,13 +261,17 @@ public sealed class AppConfigurationPageViewModelRestoreTests : IDisposable {
             var fileSystemDialog = new FakeFileSystemDialog(); // first call: FilesToReturn defaults to [] (cancelled)
             var messageDialog = new FakeMessageDialog { ResultToReturn = MessageDialogResult.Yes };
             var eventPublisher = new FakeEventPublisher();
-            var vm = CreateViewModel(fileSystemDialog: fileSystemDialog, messageDialog: messageDialog, eventPublisher: eventPublisher);
+            var taskRunner = new FakeTaskRunner();
+            var vm = CreateViewModel(
+                fileSystemDialog: fileSystemDialog, messageDialog: messageDialog,
+                eventPublisher: eventPublisher, taskRunner: taskRunner);
 
             vm.PerformApplicationRestoreCommand.ExecuteAsync(null).GetAwaiter().GetResult();
 
             Assert.Equal(1, fileSystemDialog.OpenFileCount);
             Assert.Empty(messageDialog.Calls);
             Assert.Empty(eventPublisher.PublishedEvents);
+            Assert.Equal(0, taskRunner.CreateBuilderCount);
 
             fileSystemDialog.FilesToReturn = [zipPath];
 
@@ -265,6 +279,7 @@ public sealed class AppConfigurationPageViewModelRestoreTests : IDisposable {
 
             Assert.Equal(2, fileSystemDialog.OpenFileCount);
             Assert.Single(messageDialog.Calls);
+            Assert.Equal(1, taskRunner.CreateBuilderCount);
             Assert.Single(eventPublisher.PublishedEvents.OfType<SnackBarNotificationEvent>());
         });
     }
@@ -283,7 +298,8 @@ public sealed class AppConfigurationPageViewModelRestoreTests : IDisposable {
         FakeMessageDialog? messageDialog = null,
         FakeTranslator? translator = null,
         FakeMediator? mediator = null,
-        FakeEventPublisher? eventPublisher = null) {
+        FakeEventPublisher? eventPublisher = null,
+        FakeTaskRunner? taskRunner = null) {
         var applicationContext = new FakeApplicationContext {
             FileManager = new PhysicalFileManagerFactory().GetOrCreate(_tempRoot)
         };
@@ -297,7 +313,7 @@ public sealed class AppConfigurationPageViewModelRestoreTests : IDisposable {
             translator ?? new FakeTranslator(),
             mediator ?? new FakeMediator(),
             eventPublisher ?? new FakeEventPublisher(),
-            new FakeTaskRunner(),
+            taskRunner ?? new FakeTaskRunner(),
             NullLogger<AppConfigurationPageViewModel>.Instance
         );
     }

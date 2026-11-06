@@ -8,6 +8,7 @@ using Nameless.Application;
 using Nameless.Contracts;
 using Nameless.InfoPhoenix.Client.Features.OpenCurrentLogFile;
 using Nameless.InfoPhoenix.Client.Features.PerformApplicationBackup;
+using Nameless.InfoPhoenix.Client.Features.PerformApplicationRestore;
 using Nameless.InfoPhoenix.Client.Infrastructure;
 using Nameless.Mediator;
 using Nameless.Windows;
@@ -170,8 +171,10 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
     }
 
     /// <summary>
-    /// Restore entry point (IPX-0010): pick a backup, confirm the overwrite. IPX-0011 plugs the
-    /// actual restore in after the confirmation (plan D5).
+    /// Restore entry point (IPX-0010/IPX-0011): pick a backup, confirm the overwrite, then run
+    /// the actual validate-and-swap restore through the TaskRunner window (plan §3.4). Like
+    /// <see cref="PerformApplicationBackupAsync"/>, the run itself is not unit-testable past
+    /// construction - all restore logic lives in <c>PerformApplicationRestoreRequestHandler</c>.
     /// </summary>
     [RelayCommand]
     private async Task PerformApplicationRestoreAsync() {
@@ -190,18 +193,31 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
                 return; // AC2/AC3: D4
             }
 
-            // IPX-0010 stops here (D5). IPX-0011 replaces the next two statements.
-            _logger.LogInformation(
-                "Restore confirmed for {BackupFilePath}; restore itself is not implemented yet (IPX-0011).",
-                backupFilePath);
+            // IPX-0010 hand-off (b): drain the save chain before app.config is replaced.
+            await _pendingSave;
 
-            await _eventPublisher.PublishInformationAsync<SnackBarNotificationEvent>(
-                message: T["AppConfigurationPage_Restore_NotYetAvailable_Message"]);
+            RestoreOutcome? restoreOutcome = null;
+
+            await _taskRunner.CreateBuilder()
+                .SetName(T["AppConfigurationPage_Restore_TaskRunnerWindow_Title"])
+                .SubscribeFor<BackupRecoveryProgressNotificationEvent>()
+                .SetDelegate(async ct => restoreOutcome = await _mediator.ExecuteAsync(
+                    new PerformApplicationRestoreRequest(backupFilePath), ct))
+                .RunAsync();
+
+            // The handler's own result is the truth about disk (plan D10): Completed means the
+            // swap committed, so the user must always be told to relaunch. Every other outcome
+            // is already shown in the TaskRunner window.
+            if (restoreOutcome is RestoreOutcome.Completed) {
+                _messageDialog.ShowInformation(
+                    message: T["AppConfigurationPage_Restore_Relaunch_Message"],
+                    title: T["AppConfigurationPage_Restore_Relaunch_Title"]);
+            }
         }
         catch (Exception ex) {
             // Bug path only (for example a COM failure in the dialog). Never let it escape the
             // AsyncRelayCommand, where it would surface as an unhandled exception.
-            _logger.LogError(ex, "Restore selection failed unexpectedly.");
+            _logger.LogError(ex, "Restore failed unexpectedly.");
 
             await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
                 message: T["AppConfigurationPage_Restore_Failure_Message", [ex.Message]]);

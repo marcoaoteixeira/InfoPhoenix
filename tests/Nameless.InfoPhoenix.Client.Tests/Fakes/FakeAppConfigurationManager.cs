@@ -72,7 +72,17 @@ internal sealed class FakeAppConfigurationManager : IAppConfigurationManager {
         await OnSaveChangesAsync(cancellationToken);
     }
 
+    /// <summary>
+    /// When set, <see cref="Reload"/> throws this instead of recording the call - simulates an
+    /// IO error reading the just-restored file (plan IPX-0011 D7/B16).
+    /// </summary>
+    public Exception? ThrowOnReload { get; set; }
+
     public void Reload() {
-        throw new NotSupportedException();
+        if (ThrowOnReload is not null) {
+            throw ThrowOnReload;
+        }
+
+        CallLog.Add("Reload");
     }
 }

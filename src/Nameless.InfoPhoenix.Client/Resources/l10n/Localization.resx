@@ -222,11 +222,112 @@ Your current data will be overwritten and cannot be recovered unless you have ba
 
 Do you want to continue?</value>
 	</data>
-	<data name="AppConfigurationPage_Restore_NotYetAvailable_Message" xml:space="preserve">
-		<value>Restore confirmed, but restoring data is not available yet. Nothing was changed.</value>
-	</data>
 	<data name="AppConfigurationPage_Restore_Failure_Message" xml:space="preserve">
-		<value>Could not start the restore: {0}</value>
+		<value>The restore failed unexpectedly: {0}</value>
+	</data>
+	<data name="AppConfigurationPage_Restore_TaskRunnerWindow_Title" xml:space="preserve">
+		<value>Restore application data</value>
+	</data>
+	<data name="AppConfigurationPage_Restore_Relaunch_Title" xml:space="preserve">
+		<value>Restore complete</value>
+	</data>
+	<data name="AppConfigurationPage_Restore_Relaunch_Message" xml:space="preserve">
+		<value>Your backup was restored.
+
+Close and reopen InfoPhoenix to start using the restored data. Until you do, some settings and information on screen may be out of date.</value>
+	</data>
+	<data name="PerformApplicationRestoreRequestHandler_ReadingBackup" xml:space="preserve">
+		<value>Checking the backup file...</value>
+	</data>
+	<data name="PerformApplicationRestoreRequestHandler_ExtractingBackup" xml:space="preserve">
+		<value>Extracting the backup to a temporary folder...</value>
+	</data>
+	<data name="PerformApplicationRestoreRequestHandler_VerifyingBackup" xml:space="preserve">
+		<value>Verifying the extracted data...</value>
+	</data>
+	<data name="PerformApplicationRestoreRequestHandler_PreparingSwap" xml:space="preserve">
+		<value>Preparing to replace the current data...</value>
+	</data>
+	<data name="PerformApplicationRestoreRequestHandler_Swapping" xml:space="preserve">
+		<value>Replacing the current data...</value>
+	</data>
+	<data name="PerformApplicationRestoreRequestHandler_Success" xml:space="preserve">
+		<value>Restore complete. Restart InfoPhoenix to use the restored data.</value>
+	</data>
+	<data name="PerformApplicationRestoreRequestHandler_VersionDiffers_Warning" xml:space="preserve">
+		<value>This backup was created by InfoPhoenix {0}; you are running {1}. The data format is compatible, so the restore continues.</value>
+	</data>
+	<data name="PerformApplicationRestoreRequestHandler_DatabaseAbsent_Warning" xml:space="preserve">
+		<value>This backup has no database; the current database will be removed.</value>
+	</data>
+	<data name="PerformApplicationRestoreRequestHandler_SearchIndexAbsent_Warning" xml:space="preserve">
+		<value>This backup has no search index; the current search index will be removed.</value>
+	</data>
+	<data name="PerformApplicationRestoreRequestHandler_ConfigurationAbsent_Warning" xml:space="preserve">
+		<value>This backup has no settings; your settings will return to their defaults.</value>
+	</data>
+	<data name="PerformApplicationRestoreRequestHandler_CleanupIncomplete_Warning" xml:space="preserve">
+		<value>The previous data at {0} could not be deleted. You can delete it manually.</value>
+	</data>
+	<data name="PerformApplicationRestoreRequestHandler_Rejected_SelectedFileInDataFolder" xml:space="preserve">
+		<value>The selected file is inside InfoPhoenix's own data folders. Move it elsewhere (for example, to the backups folder) and try again. Nothing was changed.</value>
+	</data>
+	<data name="PerformApplicationRestoreRequestHandler_Rejected_NotAnArchive" xml:space="preserve">
+		<value>The selected file is not a valid backup file. Nothing was changed.</value>
+	</data>
+	<data name="PerformApplicationRestoreRequestHandler_Rejected_ManifestMissing" xml:space="preserve">
+		<value>The selected file is not an InfoPhoenix backup. Nothing was changed.</value>
+	</data>
+	<data name="PerformApplicationRestoreRequestHandler_Rejected_ManifestInvalid" xml:space="preserve">
+		<value>The backup information in the selected file is unreadable or incomplete. Nothing was changed.</value>
+	</data>
+	<data name="PerformApplicationRestoreRequestHandler_Rejected_WrongApplication" xml:space="preserve">
+		<value>The selected file is a backup of another application ({0}). Nothing was changed.</value>
+	</data>
+	<data name="PerformApplicationRestoreRequestHandler_Rejected_UnsupportedFormat" xml:space="preserve">
+		<value>This backup uses format version {0}, which this version of InfoPhoenix cannot read. Nothing was changed.</value>
+	</data>
+	<data name="PerformApplicationRestoreRequestHandler_Rejected_SchemaMismatch" xml:space="preserve">
+		<value>This backup's database version ({0}) does not match this version of InfoPhoenix ({1}). Restoring it is not supported. Nothing was changed.</value>
+	</data>
+	<data name="PerformApplicationRestoreRequestHandler_Rejected_UnexpectedEntry" xml:space="preserve">
+		<value>The backup contains an unexpected or unsafe item: {0}. Nothing was changed.</value>
+	</data>
+	<data name="PerformApplicationRestoreRequestHandler_Rejected_TooManyEntries" xml:space="preserve">
+		<value>The backup contains too many items ({0}, maximum {1}). Nothing was changed.</value>
+	</data>
+	<data name="PerformApplicationRestoreRequestHandler_Rejected_ContentsMismatch" xml:space="preserve">
+		<value>The backup's contents do not match its description; the file may be damaged. Nothing was changed.</value>
+	</data>
+	<data name="PerformApplicationRestoreRequestHandler_Rejected_InsufficientSpace" xml:space="preserve">
+		<value>There is not enough free disk space to restore this backup ({0} needed). Nothing was changed.</value>
+	</data>
+	<data name="PerformApplicationRestoreRequestHandler_Rejected_Corrupted" xml:space="preserve">
+		<value>The backup file is damaged: {0}. Nothing was changed.</value>
+	</data>
+	<data name="PerformApplicationRestoreRequestHandler_Rejected_ConfigurationInvalid" xml:space="preserve">
+		<value>The settings in the backup are not valid. Nothing was changed.</value>
+	</data>
+	<data name="PerformApplicationRestoreRequestHandler_Rejected_DatabaseInvalid" xml:space="preserve">
+		<value>The database in the backup failed its integrity check: {0}. Nothing was changed.</value>
+	</data>
+	<data name="PerformApplicationRestoreRequestHandler_ReadingBackup_Failure" xml:space="preserve">
+		<value>Could not read the backup file: {0}. Nothing was changed.</value>
+	</data>
+	<data name="PerformApplicationRestoreRequestHandler_ExtractingBackup_Failure" xml:space="preserve">
+		<value>Could not extract the backup: {0}. Nothing was changed.</value>
+	</data>
+	<data name="PerformApplicationRestoreRequestHandler_VerifyingBackup_Failure" xml:space="preserve">
+		<value>Could not verify the backup: {0}. Nothing was changed.</value>
+	</data>
+	<data name="PerformApplicationRestoreRequestHandler_PreparingSwap_Failure" xml:space="preserve">
+		<value>Could not prepare the restore: {0}. Nothing was changed.</value>
+	</data>
+	<data name="PerformApplicationRestoreRequestHandler_Swapping_Failure" xml:space="preserve">
+		<value>Could not replace the current data: {0}. Your previous data was put back unchanged.</value>
+	</data>
+	<data name="PerformApplicationRestoreRequestHandler_RollbackIncomplete_Failure" xml:space="preserve">
+		<value>The restore failed ({0}) and some of your previous data could not be put back automatically. It is kept at: {1}. Close InfoPhoenix and move these items back before using it again; the log has the details.</value>
 	</data>
 	<data name="PerformApplicationBackupRequestHandler_Preparing" xml:space="preserve">
 		<value>Preparing backup...</value>

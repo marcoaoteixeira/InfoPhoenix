@@ -10,7 +10,16 @@ namespace Nameless.InfoPhoenix.Client.Tests.Fakes;
 /// ViewModel's run path cannot be unit-tested" rule).
 /// </summary>
 internal sealed class FakeTaskRunner : ITaskRunner {
+    /// <summary>
+    /// Counts every <see cref="CreateBuilder"/> call, even though it always throws - lets a test
+    /// prove a ViewModel actually reached the TaskRunner seam (plan IPX-0011 B26) without being
+    /// able to run a real window.
+    /// </summary>
+    public int CreateBuilderCount { get; private set; }
+
     public TaskRunnerBuilder CreateBuilder() {
+        CreateBuilderCount++;
+
         throw new NotSupportedException();
     }
 }

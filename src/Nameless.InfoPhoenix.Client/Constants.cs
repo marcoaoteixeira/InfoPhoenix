@@ -67,6 +67,17 @@ internal static class Constants {
         /// translator can never break the dialog's <c>name|pattern</c> syntax (plan D1).
         /// </summary>
         internal const string ArchiveFileFilterPattern = "*.zip";
+
+        // IPX-0011 additive constants (plan §3.3).
+        internal const string RestoreStagingDirectoryPrefix = "restore-";
+        internal const string RestoreOldSuffix = ".restore-old-";
+        internal const string RestoreNewSuffix = ".restore-new-";
+        internal const int MaxArchiveEntryCount = 10_000;
+        internal const int MaxManifestBytes = 64 * 1024;
+        internal const int MaxConfigurationBytes = 1024 * 1024;
+        internal const long FreeSpaceSafetyMarginBytes = 64L * 1024 * 1024;
+
+        internal static readonly string[] DatabaseSidecarSuffixes = ["-wal", "-shm", "-journal"];
     }
 
     internal static class Labels {

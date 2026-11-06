@@ -41,6 +41,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   Cancelling the dialog or declining the warning leaves everything
   untouched; actually restoring the selected backup is a later ticket.
   ([IPX-0010](https://github.com/marcoaoteixeira/InfoPhoenix/issues/26))
+- Restore now validates the selected backup (archive integrity, manifest,
+  app/database compatibility) and extracts it to a temporary folder
+  before touching anything live. Only once everything checks out does it
+  atomically swap the settings, database and search index into place
+  through same-volume renames that are fully reversed if any step of the
+  swap fails, leaving the previous data untouched either way.
+  ([IPX-0011](https://github.com/marcoaoteixeira/InfoPhoenix/issues/27))
 
 ### Fixed
 
