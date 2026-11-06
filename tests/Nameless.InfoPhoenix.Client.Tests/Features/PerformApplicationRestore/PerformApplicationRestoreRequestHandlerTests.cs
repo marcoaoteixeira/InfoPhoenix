@@ -733,6 +733,45 @@ public sealed class PerformApplicationRestoreRequestHandlerTests : IDisposable {
         Assert.False(File.Exists(LiveDatabasePath + "-shm"));
     }
 
+    /// <summary>
+    /// Scenario 5 (plan IPX-0012): a genuine staging-phase failure - strictly during
+    /// <c>ExtractingBackup</c>, before <c>VerifyingBackup</c>/<c>PreparingSwap</c>/<c>Swapping</c>
+    /// even start - so no live artifact has been touched yet. Unlike the swap/commit-phase
+    /// rollback tests above (which prove a *reversal* of already-applied renames), this proves
+    /// the simpler, equally important case: when the failure happens before anything live is
+    /// moved, nothing live changes at all. Seeds all three artifact kinds together (DB, Lucene
+    /// index and config) and uses the full two-root <see cref="DataRootSnapshot"/> fingerprint
+    /// (SHA-256 + size + timestamp) to prove it, not just a couple of hand-picked files.
+    /// </summary>
+    [Fact]
+    public async Task HandleAsync_WhenAFailureHappensDuringStagingExtraction_RollsBack_AndLeavesDatabaseIndexAndConfigByteForByteUnchanged() {
+        SeedLiveDatabase(withMigrationHistory: false, markerValue: "old-db");
+        SeedLiveConfig("""{"Theme":"Light"}""");
+        SeedLiveIndex(("segment1.bin", "old-index-data"));
+        var zipPath = BuildZip(z => {
+            AddManifest(z, database: true, searchIndex: true, configuration: true, databaseMigrationId: null);
+            AddDatabaseEntry(z, withMigrationHistory: false, migrationId: null, markerValue: "new-db");
+            WriteRawEntry(z, "search-index/segment1.bin", "new-index-data");
+            WriteRawEntry(z, "app.config", """{"Theme":"Dark"}""");
+        });
+        var eventPublisher = new FakeEventPublisher();
+        var handler = CreateHandler(eventPublisher: eventPublisher);
+        var entriesExtracted = 0;
+        handler.OnAfterEntryExtracted = () => {
+            if (++entriesExtracted == 3) {
+                throw new IOException("simulated staging failure partway through extraction");
+            }
+        };
+        var before = CaptureSnapshot();
+
+        var result = await handler.HandleAsync(new PerformApplicationRestoreRequest(zipPath), CancellationToken.None);
+
+        Assert.Equal(RestoreOutcome.RolledBack, result);
+        AssertSingleFailureStartsWith(eventPublisher, "ExtractingBackup_Failure");
+        AssertSnapshotUnchanged(before);
+        AssertNoStagingLeftover();
+    }
+
     [Fact]
     public async Task HandleAsync_WhenCloseAllThrowsAnAggregateException_RollsBack_WithNothingRenamedYet() {
         SeedLiveConfig("""{"Theme":"Light"}""");
