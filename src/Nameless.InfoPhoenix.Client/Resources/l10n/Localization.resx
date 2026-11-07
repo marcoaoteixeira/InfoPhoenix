@@ -1,374 +1,402 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-	<!--
-		Microsoft ResX Schema
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
 
-		Version 1.3
-
-		The primary goals of this format is to allow a simple XML format
-		that is mostly human readable. The generation and parsing of the
-		various data types are done through the TypeConverter classes
-		associated with the data types.
-
-		Example:
-
-		... ado.net/XML headers & schema ...
-		<resheader name="resmimetype">text/microsoft-resx</resheader>
-		<resheader name="version">1.3</resheader>
-		<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-		<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-		<data name="Name1">this is my long string</data>
-		<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-		<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-			[base64 mime encoded serialized .NET Framework object]
-		</data>
-		<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-			[base64 mime encoded string representing a byte array form of the .NET Framework object]
-		</data>
-
-		There are any number of "resheader" rows that contain simple
-		name/value pairs.
-
-		Each data row contains a name, and value. The row also contains a
-		type or mimetype. Type corresponds to a .NET class that support
-		text/value conversion through the TypeConverter architecture.
-		Classes that don't support this are serialized and stored with the
-		mimetype set.
-
-		The mimetype is used for serialized objects, and tells the
-		ResXResourceReader how to depersist the object. This is currently not
-		extensible. For a given mimetype the value must be set accordingly:
-
-		Note - application/x-microsoft.net.object.binary.base64 is the format
-		that the ResXResourceWriter will generate, however the reader can
-		read any of the formats listed below.
-
-		mimetype: application/x-microsoft.net.object.binary.base64
-		value   : The object must be serialized with
-			: System.Serialization.Formatters.Binary.BinaryFormatter
-			: and then encoded with base64 encoding.
-
-		mimetype: application/x-microsoft.net.object.soap.base64
-		value   : The object must be serialized with
-			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-			: and then encoded with base64 encoding.
-
-		mimetype: application/x-microsoft.net.object.bytearray.base64
-		value   : The object must be serialized into a byte array
-			: using a System.ComponentModel.TypeConverter
-			: and then encoded with base64 encoding.
-	-->
-
-	<xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-		<xsd:element name="root" msdata:IsDataSet="true">
-			<xsd:complexType>
-				<xsd:choice maxOccurs="unbounded">
-					<xsd:element name="data">
-						<xsd:complexType>
-							<xsd:sequence>
-								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-								<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
-							</xsd:sequence>
-							<xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
-							<xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-							<xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-						</xsd:complexType>
-					</xsd:element>
-					<xsd:element name="resheader">
-						<xsd:complexType>
-							<xsd:sequence>
-								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-							</xsd:sequence>
-							<xsd:attribute name="name" type="xsd:string" use="required" />
-						</xsd:complexType>
-					</xsd:element>
-				</xsd:choice>
-			</xsd:complexType>
-		</xsd:element>
-	</xsd:schema>
-	<resheader name="resmimetype">
-		<value>text/microsoft-resx</value>
-	</resheader>
-	<resheader name="version">
-		<value>1.3</value>
-	</resheader>
-	<resheader name="reader">
-		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-	</resheader>
-	<resheader name="writer">
-		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-	</resheader>
-	<data name="AppConfigurationPage_Title" xml:space="preserve">
-		<value>Settings</value>
-	</data>
-	<data name="AppConfigurationPage_VersionCard_Title" xml:space="preserve">
-		<value>Version</value>
-	</data>
-	<data name="AppConfigurationPage_ApplicationLanguageCard_Title" xml:space="preserve">
-		<value>Language</value>
-	</data>
-	<data name="AppConfigurationPage_ApplicationLanguageCard_Message" xml:space="preserve">
-		<value>Choose the language used across the application.</value>
-	</data>
-	<data name="AppConfigurationPage_VersionCard_Button_Caption" xml:space="preserve">
-		<value>Check for update</value>
-	</data>
-	<data name="AppConfigurationPage_ApplicationBackupCard_Title" xml:space="preserve">
-		<value>Backup</value>
-	</data>
-	<data name="AppConfigurationPage_ApplicationBackupCard_Message" xml:space="preserve">
-		<value>Create a backup of the application data.</value>
-	</data>
-	<data name="AppConfigurationPage_ApplicationBackupCard_Button_Caption" xml:space="preserve">
-		<value>Create backup</value>
-	</data>
-	<data name="AppConfigurationPage_ApplicationRestoreCard_Title" xml:space="preserve">
-		<value>Restore</value>
-	</data>
-	<data name="AppConfigurationPage_ApplicationRestoreCard_Message" xml:space="preserve">
-		<value>Restore the application data from a backup.</value>
-	</data>
-	<data name="AppConfigurationPage_ApplicationRestoreCard_Button_Caption" xml:space="preserve">
-		<value>Restore backup</value>
-	</data>
-	<data name="AppConfigurationPage_ComingSoon_Badge" xml:space="preserve">
-		<value>Coming soon</value>
-	</data>
-	<data name="AppConfigurationPage_ComingSoon_Tooltip" xml:space="preserve">
-		<value>Not available yet. This feature is coming in a future version.</value>
-	</data>
-	<data name="AppConfigurationPage_ThemeCard_Title" xml:space="preserve">
-		<value>Theme</value>
-	</data>
-	<data name="AppConfigurationPage_ThemeCard_Message" xml:space="preserve">
-		<value>Choose the color theme used across the application.</value>
-	</data>
-	<data name="AppConfigurationPage_ExitBehaviorCard_Title" xml:space="preserve">
-		<value>Confirm before exit</value>
-	</data>
-	<data name="AppConfigurationPage_ExitBehaviorCard_Message" xml:space="preserve">
-		<value>Ask for confirmation before closing the application.</value>
-	</data>
-	<data name="AppConfigurationPage_AppDirectoryPathCard_Title" xml:space="preserve">
-		<value>Application data directory</value>
-	</data>
-	<data name="AppConfigurationPage_AppDirectoryPathCard_Message" xml:space="preserve">
-		<value>Open the folder where the application stores its data.</value>
-	</data>
-	<data name="AppConfigurationPage_AppDirectoryPathCard_Button_Caption" xml:space="preserve">
-		<value>Open directory</value>
-	</data>
-	<data name="AppConfigurationPage_ApplicationLogCard_Title" xml:space="preserve">
-		<value>Application log</value>
-	</data>
-	<data name="AppConfigurationPage_ApplicationLogCard_Message" xml:space="preserve">
-		<value>Open the current application log file.</value>
-	</data>
-	<data name="AppConfigurationPage_ApplicationLogCard_Button_Caption" xml:space="preserve">
-		<value>Open log file</value>
-	</data>
-	<data name="MainWindow_ConfirmApplicationExit_MessageBox_Title" xml:space="preserve">
-		<value>Exit application</value>
-	</data>
-	<data name="MainWindow_ConfirmApplicationExit_MessageBox_Message" xml:space="preserve">
-		<value>Are you sure you want to exit? Choose "No" to stop asking.</value>
-	</data>
-	<data name="OpenCurrentLogFileRequestHandler_Missing_Log_File_Title" xml:space="preserve">
-		<value>Log file not found</value>
-	</data>
-	<data name="OpenCurrentLogFileRequestHandler_Missing_Log_File_Message" xml:space="preserve">
-		<value>No application log file was found yet.</value>
-	</data>
-	<data name="AppConfigurationPage_InvalidSettings_Title" xml:space="preserve">
-		<value>Settings reset</value>
-	</data>
-	<data name="AppConfigurationPage_InvalidSettings_Message" xml:space="preserve">
-		<value>Your saved settings could not be read and were reset to the defaults.</value>
-	</data>
-	<data name="TaskRunnerWindow_CancelButton_Caption" xml:space="preserve">
-		<value>Cancel</value>
-	</data>
-	<data name="TaskRunnerWindow_CloseButton_Caption" xml:space="preserve">
-		<value>Close</value>
-	</data>
-	<data name="TaskRunnerWindow_Cancelled_Message" xml:space="preserve">
-		<value>Operation cancelled.</value>
-	</data>
-	<data name="TaskRunnerWindow_CloseBlocked_Message" xml:space="preserve">
-		<value>Please wait until the operation finishes before closing this window.</value>
-	</data>
-	<data name="AppConfigurationPage_Backup_TaskRunnerWindow_Title" xml:space="preserve">
-		<value>Back up application data</value>
-	</data>
-	<data name="AppConfigurationPage_Backup_Success_Message" xml:space="preserve">
-		<value>Backup created: {0}</value>
-	</data>
-	<data name="AppConfigurationPage_Backup_Failure_Message" xml:space="preserve">
-		<value>Backup failed unexpectedly: {0}</value>
-	</data>
-	<data name="AppConfigurationPage_Restore_SelectFile_Title" xml:space="preserve">
-		<value>Select a backup to restore</value>
-	</data>
-	<data name="AppConfigurationPage_Restore_SelectFile_FilterName" xml:space="preserve">
-		<value>InfoPhoenix backups</value>
-	</data>
-	<data name="AppConfigurationPage_Restore_ConfirmOverwrite_Title" xml:space="preserve">
-		<value>Restore backup</value>
-	</data>
-	<data name="AppConfigurationPage_Restore_ConfirmOverwrite_Message" xml:space="preserve">
-		<value>Restoring "{0}" will replace all current application data (database, search index and settings) with the contents of this backup.
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppConfigurationPage_Title" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="AppConfigurationPage_VersionCard_Title" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="AppConfigurationPage_ApplicationLanguageCard_Title" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="AppConfigurationPage_ApplicationLanguageCard_Message" xml:space="preserve">
+    <value>Choose the language used across the application.</value>
+  </data>
+  <data name="AppConfigurationPage_VersionCard_Button_Caption" xml:space="preserve">
+    <value>Check for update</value>
+  </data>
+  <data name="AppConfigurationPage_ApplicationBackupCard_Title" xml:space="preserve">
+    <value>Backup</value>
+  </data>
+  <data name="AppConfigurationPage_ApplicationBackupCard_Message" xml:space="preserve">
+    <value>Create a backup of the application data.</value>
+  </data>
+  <data name="AppConfigurationPage_ApplicationBackupCard_Button_Caption" xml:space="preserve">
+    <value>Create backup</value>
+  </data>
+  <data name="AppConfigurationPage_ApplicationRestoreCard_Title" xml:space="preserve">
+    <value>Restore</value>
+  </data>
+  <data name="AppConfigurationPage_ApplicationRestoreCard_Message" xml:space="preserve">
+    <value>Restore the application data from a backup.</value>
+  </data>
+  <data name="AppConfigurationPage_ApplicationRestoreCard_Button_Caption" xml:space="preserve">
+    <value>Restore backup</value>
+  </data>
+  <data name="AppConfigurationPage_ComingSoon_Badge" xml:space="preserve">
+    <value>Coming soon</value>
+  </data>
+  <data name="AppConfigurationPage_ComingSoon_Tooltip" xml:space="preserve">
+    <value>Not available yet. This feature is coming in a future version.</value>
+  </data>
+  <data name="AppConfigurationPage_ThemeCard_Title" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="AppConfigurationPage_ThemeCard_Message" xml:space="preserve">
+    <value>Choose the color theme used across the application.</value>
+  </data>
+  <data name="AppConfigurationPage_ExitBehaviorCard_Title" xml:space="preserve">
+    <value>Confirm before exit</value>
+  </data>
+  <data name="AppConfigurationPage_ExitBehaviorCard_Message" xml:space="preserve">
+    <value>Ask for confirmation before closing the application.</value>
+  </data>
+  <data name="AppConfigurationPage_AppDirectoryPathCard_Title" xml:space="preserve">
+    <value>Application data directory</value>
+  </data>
+  <data name="AppConfigurationPage_AppDirectoryPathCard_Message" xml:space="preserve">
+    <value>Open the folder where the application stores its data.</value>
+  </data>
+  <data name="AppConfigurationPage_AppDirectoryPathCard_Button_Caption" xml:space="preserve">
+    <value>Open directory</value>
+  </data>
+  <data name="AppConfigurationPage_ApplicationLogCard_Title" xml:space="preserve">
+    <value>Application log</value>
+  </data>
+  <data name="AppConfigurationPage_ApplicationLogCard_Message" xml:space="preserve">
+    <value>Open the current application log file.</value>
+  </data>
+  <data name="AppConfigurationPage_ApplicationLogCard_Button_Caption" xml:space="preserve">
+    <value>Open log file</value>
+  </data>
+  <data name="MainWindow_ConfirmApplicationExit_MessageBox_Title" xml:space="preserve">
+    <value>Exit application</value>
+  </data>
+  <data name="MainWindow_ConfirmApplicationExit_MessageBox_Message" xml:space="preserve">
+    <value>Are you sure you want to exit? Choose "No" to stop asking.</value>
+  </data>
+  <data name="OpenCurrentLogFileRequestHandler_Missing_Log_File_Title" xml:space="preserve">
+    <value>Log file not found</value>
+  </data>
+  <data name="OpenCurrentLogFileRequestHandler_Missing_Log_File_Message" xml:space="preserve">
+    <value>No application log file was found yet.</value>
+  </data>
+  <data name="AppConfigurationPage_InvalidSettings_Title" xml:space="preserve">
+    <value>Settings reset</value>
+  </data>
+  <data name="AppConfigurationPage_InvalidSettings_Message" xml:space="preserve">
+    <value>Your saved settings could not be read and were reset to the defaults.</value>
+  </data>
+  <data name="TaskRunnerWindow_CancelButton_Caption" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="TaskRunnerWindow_CloseButton_Caption" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="TaskRunnerWindow_Cancelled_Message" xml:space="preserve">
+    <value>Operation cancelled.</value>
+  </data>
+  <data name="TaskRunnerWindow_CloseBlocked_Message" xml:space="preserve">
+    <value>Please wait until the operation finishes before closing this window.</value>
+  </data>
+  <data name="AppConfigurationPage_Backup_TaskRunnerWindow_Title" xml:space="preserve">
+    <value>Back up application data</value>
+  </data>
+  <data name="AppConfigurationPage_Backup_Success_Message" xml:space="preserve">
+    <value>Backup created: {0}</value>
+  </data>
+  <data name="AppConfigurationPage_Backup_Failure_Message" xml:space="preserve">
+    <value>Backup failed unexpectedly: {0}</value>
+  </data>
+  <data name="AppConfigurationPage_Restore_SelectFile_Title" xml:space="preserve">
+    <value>Select a backup to restore</value>
+  </data>
+  <data name="AppConfigurationPage_Restore_SelectFile_FilterName" xml:space="preserve">
+    <value>InfoPhoenix backups</value>
+  </data>
+  <data name="AppConfigurationPage_Restore_ConfirmOverwrite_Title" xml:space="preserve">
+    <value>Restore backup</value>
+  </data>
+  <data name="AppConfigurationPage_Restore_ConfirmOverwrite_Message" xml:space="preserve">
+    <value>Restoring "{0}" will replace all current application data (database, search index and settings) with the contents of this backup.
 
 Your current data will be overwritten and cannot be recovered unless you have backed it up.
 
 Do you want to continue?</value>
-	</data>
-	<data name="AppConfigurationPage_Restore_Failure_Message" xml:space="preserve">
-		<value>The restore failed unexpectedly: {0}</value>
-	</data>
-	<data name="AppConfigurationPage_Restore_TaskRunnerWindow_Title" xml:space="preserve">
-		<value>Restore application data</value>
-	</data>
-	<data name="AppConfigurationPage_Restore_Relaunch_Title" xml:space="preserve">
-		<value>Restore complete</value>
-	</data>
-	<data name="AppConfigurationPage_Restore_Relaunch_Message" xml:space="preserve">
-		<value>Your backup was restored.
+  </data>
+  <data name="AppConfigurationPage_Restore_Failure_Message" xml:space="preserve">
+    <value>The restore failed unexpectedly: {0}</value>
+  </data>
+  <data name="AppConfigurationPage_Restore_TaskRunnerWindow_Title" xml:space="preserve">
+    <value>Restore application data</value>
+  </data>
+  <data name="AppConfigurationPage_Restore_Relaunch_Title" xml:space="preserve">
+    <value>Restore complete</value>
+  </data>
+  <data name="AppConfigurationPage_Restore_Relaunch_Message" xml:space="preserve">
+    <value>Your backup was restored.
 
 Close and reopen InfoPhoenix to start using the restored data. Until you do, some settings and information on screen may be out of date.</value>
-	</data>
-	<data name="PerformApplicationRestoreRequestHandler_ReadingBackup" xml:space="preserve">
-		<value>Checking the backup file...</value>
-	</data>
-	<data name="PerformApplicationRestoreRequestHandler_ExtractingBackup" xml:space="preserve">
-		<value>Extracting the backup to a temporary folder...</value>
-	</data>
-	<data name="PerformApplicationRestoreRequestHandler_VerifyingBackup" xml:space="preserve">
-		<value>Verifying the extracted data...</value>
-	</data>
-	<data name="PerformApplicationRestoreRequestHandler_PreparingSwap" xml:space="preserve">
-		<value>Preparing to replace the current data...</value>
-	</data>
-	<data name="PerformApplicationRestoreRequestHandler_Swapping" xml:space="preserve">
-		<value>Replacing the current data...</value>
-	</data>
-	<data name="PerformApplicationRestoreRequestHandler_Success" xml:space="preserve">
-		<value>Restore complete. Restart InfoPhoenix to use the restored data.</value>
-	</data>
-	<data name="PerformApplicationRestoreRequestHandler_VersionDiffers_Warning" xml:space="preserve">
-		<value>This backup was created by InfoPhoenix {0}; you are running {1}. The data format is compatible, so the restore continues.</value>
-	</data>
-	<data name="PerformApplicationRestoreRequestHandler_DatabaseAbsent_Warning" xml:space="preserve">
-		<value>This backup has no database; the current database will be removed.</value>
-	</data>
-	<data name="PerformApplicationRestoreRequestHandler_SearchIndexAbsent_Warning" xml:space="preserve">
-		<value>This backup has no search index; the current search index will be removed.</value>
-	</data>
-	<data name="PerformApplicationRestoreRequestHandler_ConfigurationAbsent_Warning" xml:space="preserve">
-		<value>This backup has no settings; your settings will return to their defaults.</value>
-	</data>
-	<data name="PerformApplicationRestoreRequestHandler_CleanupIncomplete_Warning" xml:space="preserve">
-		<value>The previous data at {0} could not be deleted. You can delete it manually.</value>
-	</data>
-	<data name="PerformApplicationRestoreRequestHandler_Rejected_SelectedFileInDataFolder" xml:space="preserve">
-		<value>The selected file is inside InfoPhoenix's own data folders. Move it elsewhere (for example, to the backups folder) and try again. Nothing was changed.</value>
-	</data>
-	<data name="PerformApplicationRestoreRequestHandler_Rejected_NotAnArchive" xml:space="preserve">
-		<value>The selected file is not a valid backup file. Nothing was changed.</value>
-	</data>
-	<data name="PerformApplicationRestoreRequestHandler_Rejected_ManifestMissing" xml:space="preserve">
-		<value>The selected file is not an InfoPhoenix backup. Nothing was changed.</value>
-	</data>
-	<data name="PerformApplicationRestoreRequestHandler_Rejected_ManifestInvalid" xml:space="preserve">
-		<value>The backup information in the selected file is unreadable or incomplete. Nothing was changed.</value>
-	</data>
-	<data name="PerformApplicationRestoreRequestHandler_Rejected_WrongApplication" xml:space="preserve">
-		<value>The selected file is a backup of another application ({0}). Nothing was changed.</value>
-	</data>
-	<data name="PerformApplicationRestoreRequestHandler_Rejected_UnsupportedFormat" xml:space="preserve">
-		<value>This backup uses format version {0}, which this version of InfoPhoenix cannot read. Nothing was changed.</value>
-	</data>
-	<data name="PerformApplicationRestoreRequestHandler_Rejected_SchemaMismatch" xml:space="preserve">
-		<value>This backup's database version ({0}) does not match this version of InfoPhoenix ({1}). Restoring it is not supported. Nothing was changed.</value>
-	</data>
-	<data name="PerformApplicationRestoreRequestHandler_Rejected_UnexpectedEntry" xml:space="preserve">
-		<value>The backup contains an unexpected or unsafe item: {0}. Nothing was changed.</value>
-	</data>
-	<data name="PerformApplicationRestoreRequestHandler_Rejected_TooManyEntries" xml:space="preserve">
-		<value>The backup contains too many items ({0}, maximum {1}). Nothing was changed.</value>
-	</data>
-	<data name="PerformApplicationRestoreRequestHandler_Rejected_ContentsMismatch" xml:space="preserve">
-		<value>The backup's contents do not match its description; the file may be damaged. Nothing was changed.</value>
-	</data>
-	<data name="PerformApplicationRestoreRequestHandler_Rejected_InsufficientSpace" xml:space="preserve">
-		<value>There is not enough free disk space to restore this backup ({0} needed). Nothing was changed.</value>
-	</data>
-	<data name="PerformApplicationRestoreRequestHandler_Rejected_Corrupted" xml:space="preserve">
-		<value>The backup file is damaged: {0}. Nothing was changed.</value>
-	</data>
-	<data name="PerformApplicationRestoreRequestHandler_Rejected_ConfigurationInvalid" xml:space="preserve">
-		<value>The settings in the backup are not valid. Nothing was changed.</value>
-	</data>
-	<data name="PerformApplicationRestoreRequestHandler_Rejected_DatabaseInvalid" xml:space="preserve">
-		<value>The database in the backup failed its integrity check: {0}. Nothing was changed.</value>
-	</data>
-	<data name="PerformApplicationRestoreRequestHandler_ReadingBackup_Failure" xml:space="preserve">
-		<value>Could not read the backup file: {0}. Nothing was changed.</value>
-	</data>
-	<data name="PerformApplicationRestoreRequestHandler_ExtractingBackup_Failure" xml:space="preserve">
-		<value>Could not extract the backup: {0}. Nothing was changed.</value>
-	</data>
-	<data name="PerformApplicationRestoreRequestHandler_VerifyingBackup_Failure" xml:space="preserve">
-		<value>Could not verify the backup: {0}. Nothing was changed.</value>
-	</data>
-	<data name="PerformApplicationRestoreRequestHandler_PreparingSwap_Failure" xml:space="preserve">
-		<value>Could not prepare the restore: {0}. Nothing was changed.</value>
-	</data>
-	<data name="PerformApplicationRestoreRequestHandler_Swapping_Failure" xml:space="preserve">
-		<value>Could not replace the current data: {0}. Your previous data was put back unchanged.</value>
-	</data>
-	<data name="PerformApplicationRestoreRequestHandler_RollbackIncomplete_Failure" xml:space="preserve">
-		<value>The restore failed ({0}) and some of your previous data could not be put back automatically. It is kept at: {1}. Close InfoPhoenix and move these items back before using it again; the log has the details.</value>
-	</data>
-	<data name="PerformApplicationBackupRequestHandler_Preparing" xml:space="preserve">
-		<value>Preparing backup...</value>
-	</data>
-	<data name="PerformApplicationBackupRequestHandler_CopyingConfiguration" xml:space="preserve">
-		<value>Saving and copying settings...</value>
-	</data>
-	<data name="PerformApplicationBackupRequestHandler_CopyingDatabase" xml:space="preserve">
-		<value>Copying database...</value>
-	</data>
-	<data name="PerformApplicationBackupRequestHandler_CopyingSearchIndex" xml:space="preserve">
-		<value>Copying search index...</value>
-	</data>
-	<data name="PerformApplicationBackupRequestHandler_CreatingArchive" xml:space="preserve">
-		<value>Creating backup file...</value>
-	</data>
-	<data name="PerformApplicationBackupRequestHandler_Success" xml:space="preserve">
-		<value>Backup created: {0}</value>
-	</data>
-	<data name="PerformApplicationBackupRequestHandler_ConfigurationMissing_Warning" xml:space="preserve">
-		<value>No settings file found; backup continues without it.</value>
-	</data>
-	<data name="PerformApplicationBackupRequestHandler_DatabaseMissing_Warning" xml:space="preserve">
-		<value>No database found; backup continues without it.</value>
-	</data>
-	<data name="PerformApplicationBackupRequestHandler_SearchIndexMissing_Warning" xml:space="preserve">
-		<value>No search index found; backup continues without it.</value>
-	</data>
-	<data name="PerformApplicationBackupRequestHandler_Preparing_Failure" xml:space="preserve">
-		<value>Backup failed while preparing: {0}</value>
-	</data>
-	<data name="PerformApplicationBackupRequestHandler_CopyingConfiguration_Failure" xml:space="preserve">
-		<value>Backup failed while copying settings: {0}</value>
-	</data>
-	<data name="PerformApplicationBackupRequestHandler_CopyingDatabase_Failure" xml:space="preserve">
-		<value>Backup failed while copying the database: {0}</value>
-	</data>
-	<data name="PerformApplicationBackupRequestHandler_CopyingSearchIndex_Failure" xml:space="preserve">
-		<value>Backup failed while copying the search index: {0}</value>
-	</data>
-	<data name="PerformApplicationBackupRequestHandler_CreatingArchive_Failure" xml:space="preserve">
-		<value>Backup failed while creating the backup file: {0}</value>
-	</data>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_ReadingBackup" xml:space="preserve">
+    <value>Checking the backup file...</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_ExtractingBackup" xml:space="preserve">
+    <value>Extracting the backup to a temporary folder...</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_VerifyingBackup" xml:space="preserve">
+    <value>Verifying the extracted data...</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_PreparingSwap" xml:space="preserve">
+    <value>Preparing to replace the current data...</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_Swapping" xml:space="preserve">
+    <value>Replacing the current data...</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_Success" xml:space="preserve">
+    <value>Restore complete. Restart InfoPhoenix to use the restored data.</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_VersionDiffers_Warning" xml:space="preserve">
+    <value>This backup was created by InfoPhoenix {0}; you are running {1}. The data format is compatible, so the restore continues.</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_DatabaseAbsent_Warning" xml:space="preserve">
+    <value>This backup has no database; the current database will be removed.</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_SearchIndexAbsent_Warning" xml:space="preserve">
+    <value>This backup has no search index; the current search index will be removed.</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_ConfigurationAbsent_Warning" xml:space="preserve">
+    <value>This backup has no settings; your settings will return to their defaults.</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_CleanupIncomplete_Warning" xml:space="preserve">
+    <value>The previous data at {0} could not be deleted. You can delete it manually.</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_Rejected_SelectedFileInDataFolder" xml:space="preserve">
+    <value>The selected file is inside InfoPhoenix's own data folders. Move it elsewhere (for example, to the backups folder) and try again. Nothing was changed.</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_Rejected_NotAnArchive" xml:space="preserve">
+    <value>The selected file is not a valid backup file. Nothing was changed.</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_Rejected_ManifestMissing" xml:space="preserve">
+    <value>The selected file is not an InfoPhoenix backup. Nothing was changed.</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_Rejected_ManifestInvalid" xml:space="preserve">
+    <value>The backup information in the selected file is unreadable or incomplete. Nothing was changed.</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_Rejected_WrongApplication" xml:space="preserve">
+    <value>The selected file is a backup of another application ({0}). Nothing was changed.</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_Rejected_UnsupportedFormat" xml:space="preserve">
+    <value>This backup uses format version {0}, which this version of InfoPhoenix cannot read. Nothing was changed.</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_Rejected_SchemaMismatch" xml:space="preserve">
+    <value>This backup's database version ({0}) does not match this version of InfoPhoenix ({1}). Restoring it is not supported. Nothing was changed.</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_Rejected_UnexpectedEntry" xml:space="preserve">
+    <value>The backup contains an unexpected or unsafe item: {0}. Nothing was changed.</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_Rejected_TooManyEntries" xml:space="preserve">
+    <value>The backup contains too many items ({0}, maximum {1}). Nothing was changed.</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_Rejected_ContentsMismatch" xml:space="preserve">
+    <value>The backup's contents do not match its description; the file may be damaged. Nothing was changed.</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_Rejected_InsufficientSpace" xml:space="preserve">
+    <value>There is not enough free disk space to restore this backup ({0} needed). Nothing was changed.</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_Rejected_Corrupted" xml:space="preserve">
+    <value>The backup file is damaged: {0}. Nothing was changed.</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_Rejected_ConfigurationInvalid" xml:space="preserve">
+    <value>The settings in the backup are not valid. Nothing was changed.</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_Rejected_DatabaseInvalid" xml:space="preserve">
+    <value>The database in the backup failed its integrity check: {0}. Nothing was changed.</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_ReadingBackup_Failure" xml:space="preserve">
+    <value>Could not read the backup file: {0}. Nothing was changed.</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_ExtractingBackup_Failure" xml:space="preserve">
+    <value>Could not extract the backup: {0}. Nothing was changed.</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_VerifyingBackup_Failure" xml:space="preserve">
+    <value>Could not verify the backup: {0}. Nothing was changed.</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_PreparingSwap_Failure" xml:space="preserve">
+    <value>Could not prepare the restore: {0}. Nothing was changed.</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_Swapping_Failure" xml:space="preserve">
+    <value>Could not replace the current data: {0}. Your previous data was put back unchanged.</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_RollbackIncomplete_Failure" xml:space="preserve">
+    <value>The restore failed ({0}) and some of your previous data could not be put back automatically. It is kept at: {1}. Close InfoPhoenix and move these items back before using it again; the log has the details.</value>
+  </data>
+  <data name="PerformApplicationBackupRequestHandler_Preparing" xml:space="preserve">
+    <value>Preparing backup...</value>
+  </data>
+  <data name="PerformApplicationBackupRequestHandler_CopyingConfiguration" xml:space="preserve">
+    <value>Saving and copying settings...</value>
+  </data>
+  <data name="PerformApplicationBackupRequestHandler_CopyingDatabase" xml:space="preserve">
+    <value>Copying database...</value>
+  </data>
+  <data name="PerformApplicationBackupRequestHandler_CopyingSearchIndex" xml:space="preserve">
+    <value>Copying search index...</value>
+  </data>
+  <data name="PerformApplicationBackupRequestHandler_CreatingArchive" xml:space="preserve">
+    <value>Creating backup file...</value>
+  </data>
+  <data name="PerformApplicationBackupRequestHandler_Success" xml:space="preserve">
+    <value>Backup created: {0}</value>
+  </data>
+  <data name="PerformApplicationBackupRequestHandler_ConfigurationMissing_Warning" xml:space="preserve">
+    <value>No settings file found; backup continues without it.</value>
+  </data>
+  <data name="PerformApplicationBackupRequestHandler_DatabaseMissing_Warning" xml:space="preserve">
+    <value>No database found; backup continues without it.</value>
+  </data>
+  <data name="PerformApplicationBackupRequestHandler_SearchIndexMissing_Warning" xml:space="preserve">
+    <value>No search index found; backup continues without it.</value>
+  </data>
+  <data name="PerformApplicationBackupRequestHandler_Preparing_Failure" xml:space="preserve">
+    <value>Backup failed while preparing: {0}</value>
+  </data>
+  <data name="PerformApplicationBackupRequestHandler_CopyingConfiguration_Failure" xml:space="preserve">
+    <value>Backup failed while copying settings: {0}</value>
+  </data>
+  <data name="PerformApplicationBackupRequestHandler_CopyingDatabase_Failure" xml:space="preserve">
+    <value>Backup failed while copying the database: {0}</value>
+  </data>
+  <data name="PerformApplicationBackupRequestHandler_CopyingSearchIndex_Failure" xml:space="preserve">
+    <value>Backup failed while copying the search index: {0}</value>
+  </data>
+  <data name="PerformApplicationBackupRequestHandler_CreatingArchive_Failure" xml:space="preserve">
+    <value>Backup failed while creating the backup file: {0}</value>
+  </data>
+  <data name="DocumentDirectoryWindow_Label" xml:space="preserve">
+    <value>Label</value>
+  </data>
+  <data name="DocumentDirectoryWindow_DirectoryPath" xml:space="preserve">
+    <value>Directory Path</value>
+  </data>
+  <data name="DocumentDirectoryWindow_DisplayPosition" xml:space="preserve">
+    <value>Display Position</value>
+  </data>
 </root>
