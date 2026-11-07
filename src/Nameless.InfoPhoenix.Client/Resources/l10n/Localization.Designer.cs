@@ -59,5 +59,839 @@ namespace Nameless.InfoPhoenix.Client.Resources.l10n {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open directory.
+        /// </summary>
+        internal static string AppConfigurationPage_AppDirectoryPathCard_Button_Caption {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_AppDirectoryPathCard_Button_Caption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open the folder where the application stores its data..
+        /// </summary>
+        internal static string AppConfigurationPage_AppDirectoryPathCard_Message {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_AppDirectoryPathCard_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Application data directory.
+        /// </summary>
+        internal static string AppConfigurationPage_AppDirectoryPathCard_Title {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_AppDirectoryPathCard_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Create backup.
+        /// </summary>
+        internal static string AppConfigurationPage_ApplicationBackupCard_Button_Caption {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_ApplicationBackupCard_Button_Caption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Create a backup of the application data..
+        /// </summary>
+        internal static string AppConfigurationPage_ApplicationBackupCard_Message {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_ApplicationBackupCard_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Backup.
+        /// </summary>
+        internal static string AppConfigurationPage_ApplicationBackupCard_Title {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_ApplicationBackupCard_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose the language used across the application..
+        /// </summary>
+        internal static string AppConfigurationPage_ApplicationLanguageCard_Message {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_ApplicationLanguageCard_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Language.
+        /// </summary>
+        internal static string AppConfigurationPage_ApplicationLanguageCard_Title {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_ApplicationLanguageCard_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open log file.
+        /// </summary>
+        internal static string AppConfigurationPage_ApplicationLogCard_Button_Caption {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_ApplicationLogCard_Button_Caption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open the current application log file..
+        /// </summary>
+        internal static string AppConfigurationPage_ApplicationLogCard_Message {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_ApplicationLogCard_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Application log.
+        /// </summary>
+        internal static string AppConfigurationPage_ApplicationLogCard_Title {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_ApplicationLogCard_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restore backup.
+        /// </summary>
+        internal static string AppConfigurationPage_ApplicationRestoreCard_Button_Caption {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_ApplicationRestoreCard_Button_Caption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restore the application data from a backup..
+        /// </summary>
+        internal static string AppConfigurationPage_ApplicationRestoreCard_Message {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_ApplicationRestoreCard_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restore.
+        /// </summary>
+        internal static string AppConfigurationPage_ApplicationRestoreCard_Title {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_ApplicationRestoreCard_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Backup failed unexpectedly: {0}.
+        /// </summary>
+        internal static string AppConfigurationPage_Backup_Failure_Message {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_Backup_Failure_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Backup created: {0}.
+        /// </summary>
+        internal static string AppConfigurationPage_Backup_Success_Message {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_Backup_Success_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Back up application data.
+        /// </summary>
+        internal static string AppConfigurationPage_Backup_TaskRunnerWindow_Title {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_Backup_TaskRunnerWindow_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Coming soon.
+        /// </summary>
+        internal static string AppConfigurationPage_ComingSoon_Badge {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_ComingSoon_Badge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not available yet. This feature is coming in a future version..
+        /// </summary>
+        internal static string AppConfigurationPage_ComingSoon_Tooltip {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_ComingSoon_Tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ask for confirmation before closing the application..
+        /// </summary>
+        internal static string AppConfigurationPage_ExitBehaviorCard_Message {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_ExitBehaviorCard_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Confirm before exit.
+        /// </summary>
+        internal static string AppConfigurationPage_ExitBehaviorCard_Title {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_ExitBehaviorCard_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your saved settings could not be read and were reset to the defaults..
+        /// </summary>
+        internal static string AppConfigurationPage_InvalidSettings_Message {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_InvalidSettings_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settings reset.
+        /// </summary>
+        internal static string AppConfigurationPage_InvalidSettings_Title {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_InvalidSettings_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restoring &quot;{0}&quot; will replace all current application data (database, search index and settings) with the contents of this backup.
+        ///
+        ///Your current data will be overwritten and cannot be recovered unless you have backed it up.
+        ///
+        ///Do you want to continue?.
+        /// </summary>
+        internal static string AppConfigurationPage_Restore_ConfirmOverwrite_Message {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_Restore_ConfirmOverwrite_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restore backup.
+        /// </summary>
+        internal static string AppConfigurationPage_Restore_ConfirmOverwrite_Title {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_Restore_ConfirmOverwrite_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The restore failed unexpectedly: {0}.
+        /// </summary>
+        internal static string AppConfigurationPage_Restore_Failure_Message {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_Restore_Failure_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your backup was restored.
+        ///
+        ///Close and reopen InfoPhoenix to start using the restored data. Until you do, some settings and information on screen may be out of date..
+        /// </summary>
+        internal static string AppConfigurationPage_Restore_Relaunch_Message {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_Restore_Relaunch_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restore complete.
+        /// </summary>
+        internal static string AppConfigurationPage_Restore_Relaunch_Title {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_Restore_Relaunch_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to InfoPhoenix backups.
+        /// </summary>
+        internal static string AppConfigurationPage_Restore_SelectFile_FilterName {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_Restore_SelectFile_FilterName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select a backup to restore.
+        /// </summary>
+        internal static string AppConfigurationPage_Restore_SelectFile_Title {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_Restore_SelectFile_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restore application data.
+        /// </summary>
+        internal static string AppConfigurationPage_Restore_TaskRunnerWindow_Title {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_Restore_TaskRunnerWindow_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose the color theme used across the application..
+        /// </summary>
+        internal static string AppConfigurationPage_ThemeCard_Message {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_ThemeCard_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Theme.
+        /// </summary>
+        internal static string AppConfigurationPage_ThemeCard_Title {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_ThemeCard_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settings.
+        /// </summary>
+        internal static string AppConfigurationPage_Title {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Check for update.
+        /// </summary>
+        internal static string AppConfigurationPage_VersionCard_Button_Caption {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_VersionCard_Button_Caption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Version.
+        /// </summary>
+        internal static string AppConfigurationPage_VersionCard_Title {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_VersionCard_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Directory Path.
+        /// </summary>
+        internal static string DocumentDirectoryWindow_DirectoryPath {
+            get {
+                return ResourceManager.GetString("DocumentDirectoryWindow_DirectoryPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display Position.
+        /// </summary>
+        internal static string DocumentDirectoryWindow_DisplayPosition {
+            get {
+                return ResourceManager.GetString("DocumentDirectoryWindow_DisplayPosition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Label.
+        /// </summary>
+        internal static string DocumentDirectoryWindow_Label {
+            get {
+                return ResourceManager.GetString("DocumentDirectoryWindow_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to exit? Choose &quot;No&quot; to stop asking..
+        /// </summary>
+        internal static string MainWindow_ConfirmApplicationExit_MessageBox_Message {
+            get {
+                return ResourceManager.GetString("MainWindow_ConfirmApplicationExit_MessageBox_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exit application.
+        /// </summary>
+        internal static string MainWindow_ConfirmApplicationExit_MessageBox_Title {
+            get {
+                return ResourceManager.GetString("MainWindow_ConfirmApplicationExit_MessageBox_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No application log file was found yet..
+        /// </summary>
+        internal static string OpenCurrentLogFileRequestHandler_Missing_Log_File_Message {
+            get {
+                return ResourceManager.GetString("OpenCurrentLogFileRequestHandler_Missing_Log_File_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Log file not found.
+        /// </summary>
+        internal static string OpenCurrentLogFileRequestHandler_Missing_Log_File_Title {
+            get {
+                return ResourceManager.GetString("OpenCurrentLogFileRequestHandler_Missing_Log_File_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No settings file found; backup continues without it..
+        /// </summary>
+        internal static string PerformApplicationBackupRequestHandler_ConfigurationMissing_Warning {
+            get {
+                return ResourceManager.GetString("PerformApplicationBackupRequestHandler_ConfigurationMissing_Warning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Saving and copying settings....
+        /// </summary>
+        internal static string PerformApplicationBackupRequestHandler_CopyingConfiguration {
+            get {
+                return ResourceManager.GetString("PerformApplicationBackupRequestHandler_CopyingConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Backup failed while copying settings: {0}.
+        /// </summary>
+        internal static string PerformApplicationBackupRequestHandler_CopyingConfiguration_Failure {
+            get {
+                return ResourceManager.GetString("PerformApplicationBackupRequestHandler_CopyingConfiguration_Failure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copying database....
+        /// </summary>
+        internal static string PerformApplicationBackupRequestHandler_CopyingDatabase {
+            get {
+                return ResourceManager.GetString("PerformApplicationBackupRequestHandler_CopyingDatabase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Backup failed while copying the database: {0}.
+        /// </summary>
+        internal static string PerformApplicationBackupRequestHandler_CopyingDatabase_Failure {
+            get {
+                return ResourceManager.GetString("PerformApplicationBackupRequestHandler_CopyingDatabase_Failure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copying search index....
+        /// </summary>
+        internal static string PerformApplicationBackupRequestHandler_CopyingSearchIndex {
+            get {
+                return ResourceManager.GetString("PerformApplicationBackupRequestHandler_CopyingSearchIndex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Backup failed while copying the search index: {0}.
+        /// </summary>
+        internal static string PerformApplicationBackupRequestHandler_CopyingSearchIndex_Failure {
+            get {
+                return ResourceManager.GetString("PerformApplicationBackupRequestHandler_CopyingSearchIndex_Failure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Creating backup file....
+        /// </summary>
+        internal static string PerformApplicationBackupRequestHandler_CreatingArchive {
+            get {
+                return ResourceManager.GetString("PerformApplicationBackupRequestHandler_CreatingArchive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Backup failed while creating the backup file: {0}.
+        /// </summary>
+        internal static string PerformApplicationBackupRequestHandler_CreatingArchive_Failure {
+            get {
+                return ResourceManager.GetString("PerformApplicationBackupRequestHandler_CreatingArchive_Failure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No database found; backup continues without it..
+        /// </summary>
+        internal static string PerformApplicationBackupRequestHandler_DatabaseMissing_Warning {
+            get {
+                return ResourceManager.GetString("PerformApplicationBackupRequestHandler_DatabaseMissing_Warning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Preparing backup....
+        /// </summary>
+        internal static string PerformApplicationBackupRequestHandler_Preparing {
+            get {
+                return ResourceManager.GetString("PerformApplicationBackupRequestHandler_Preparing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Backup failed while preparing: {0}.
+        /// </summary>
+        internal static string PerformApplicationBackupRequestHandler_Preparing_Failure {
+            get {
+                return ResourceManager.GetString("PerformApplicationBackupRequestHandler_Preparing_Failure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No search index found; backup continues without it..
+        /// </summary>
+        internal static string PerformApplicationBackupRequestHandler_SearchIndexMissing_Warning {
+            get {
+                return ResourceManager.GetString("PerformApplicationBackupRequestHandler_SearchIndexMissing_Warning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Backup created: {0}.
+        /// </summary>
+        internal static string PerformApplicationBackupRequestHandler_Success {
+            get {
+                return ResourceManager.GetString("PerformApplicationBackupRequestHandler_Success", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The previous data at {0} could not be deleted. You can delete it manually..
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_CleanupIncomplete_Warning {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_CleanupIncomplete_Warning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This backup has no settings; your settings will return to their defaults..
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_ConfigurationAbsent_Warning {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_ConfigurationAbsent_Warning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This backup has no database; the current database will be removed..
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_DatabaseAbsent_Warning {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_DatabaseAbsent_Warning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Extracting the backup to a temporary folder....
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_ExtractingBackup {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_ExtractingBackup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not extract the backup: {0}. Nothing was changed..
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_ExtractingBackup_Failure {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_ExtractingBackup_Failure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Preparing to replace the current data....
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_PreparingSwap {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_PreparingSwap", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not prepare the restore: {0}. Nothing was changed..
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_PreparingSwap_Failure {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_PreparingSwap_Failure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Checking the backup file....
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_ReadingBackup {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_ReadingBackup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not read the backup file: {0}. Nothing was changed..
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_ReadingBackup_Failure {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_ReadingBackup_Failure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The settings in the backup are not valid. Nothing was changed..
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_Rejected_ConfigurationInvalid {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_Rejected_ConfigurationInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The backup&apos;s contents do not match its description; the file may be damaged. Nothing was changed..
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_Rejected_ContentsMismatch {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_Rejected_ContentsMismatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The backup file is damaged: {0}. Nothing was changed..
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_Rejected_Corrupted {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_Rejected_Corrupted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The database in the backup failed its integrity check: {0}. Nothing was changed..
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_Rejected_DatabaseInvalid {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_Rejected_DatabaseInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There is not enough free disk space to restore this backup ({0} needed). Nothing was changed..
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_Rejected_InsufficientSpace {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_Rejected_InsufficientSpace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The backup information in the selected file is unreadable or incomplete. Nothing was changed..
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_Rejected_ManifestInvalid {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_Rejected_ManifestInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The selected file is not an InfoPhoenix backup. Nothing was changed..
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_Rejected_ManifestMissing {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_Rejected_ManifestMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The selected file is not a valid backup file. Nothing was changed..
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_Rejected_NotAnArchive {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_Rejected_NotAnArchive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This backup&apos;s database version ({0}) does not match this version of InfoPhoenix ({1}). Restoring it is not supported. Nothing was changed..
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_Rejected_SchemaMismatch {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_Rejected_SchemaMismatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The selected file is inside InfoPhoenix&apos;s own data folders. Move it elsewhere (for example, to the backups folder) and try again. Nothing was changed..
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_Rejected_SelectedFileInDataFolder {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_Rejected_SelectedFileInDataFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The backup contains too many items ({0}, maximum {1}). Nothing was changed..
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_Rejected_TooManyEntries {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_Rejected_TooManyEntries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The backup contains an unexpected or unsafe item: {0}. Nothing was changed..
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_Rejected_UnexpectedEntry {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_Rejected_UnexpectedEntry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This backup uses format version {0}, which this version of InfoPhoenix cannot read. Nothing was changed..
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_Rejected_UnsupportedFormat {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_Rejected_UnsupportedFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The selected file is a backup of another application ({0}). Nothing was changed..
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_Rejected_WrongApplication {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_Rejected_WrongApplication", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The restore failed ({0}) and some of your previous data could not be put back automatically. It is kept at: {1}. Close InfoPhoenix and move these items back before using it again; the log has the details..
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_RollbackIncomplete_Failure {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_RollbackIncomplete_Failure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This backup has no search index; the current search index will be removed..
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_SearchIndexAbsent_Warning {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_SearchIndexAbsent_Warning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restore complete. Restart InfoPhoenix to use the restored data..
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_Success {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_Success", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Replacing the current data....
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_Swapping {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_Swapping", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not replace the current data: {0}. Your previous data was put back unchanged..
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_Swapping_Failure {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_Swapping_Failure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Verifying the extracted data....
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_VerifyingBackup {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_VerifyingBackup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not verify the backup: {0}. Nothing was changed..
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_VerifyingBackup_Failure {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_VerifyingBackup_Failure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This backup was created by InfoPhoenix {0}; you are running {1}. The data format is compatible, so the restore continues..
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_VersionDiffers_Warning {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_VersionDiffers_Warning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        internal static string TaskRunnerWindow_CancelButton_Caption {
+            get {
+                return ResourceManager.GetString("TaskRunnerWindow_CancelButton_Caption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Operation cancelled..
+        /// </summary>
+        internal static string TaskRunnerWindow_Cancelled_Message {
+            get {
+                return ResourceManager.GetString("TaskRunnerWindow_Cancelled_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please wait until the operation finishes before closing this window..
+        /// </summary>
+        internal static string TaskRunnerWindow_CloseBlocked_Message {
+            get {
+                return ResourceManager.GetString("TaskRunnerWindow_CloseBlocked_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        internal static string TaskRunnerWindow_CloseButton_Caption {
+            get {
+                return ResourceManager.GetString("TaskRunnerWindow_CloseButton_Caption", resourceCulture);
+            }
+        }
     }
 }
