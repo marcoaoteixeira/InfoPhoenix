@@ -1,8 +1,8 @@
 ﻿using System.Windows;
+using Nameless.InfoPhoenix.Client.Infrastructure.UI.Contracts;
 using Nameless.InfoPhoenix.Client.ViewModels.Windows;
 using Nameless.Windows.Events;
 using Nameless.Windows.Notification;
-using Nameless.Windows.UI;
 
 namespace Nameless.InfoPhoenix.Client.Views.Windows;
 
@@ -56,9 +56,4 @@ public partial class DocumentDirectoryWindow : IDocumentDirectoryWindow {
             CloseHandler(this, new RoutedEventArgs());
         }
     }
-}
-
-public interface IDocumentDirectoryWindow : IWindow {
-    void SetTitle(string title);
-    void SetDocumentDirectory(Guid id);
 }

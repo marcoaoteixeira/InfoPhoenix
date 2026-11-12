@@ -17,6 +17,7 @@ internal static class ApplicationHostFeature {
         ConfigureTranslatorHostFeature(features);
         ConfigureEntityFrameworkCoreHostFeature(features);
         ConfigureLoggingFeature(features);
+
         features.Add(new ApplicationThemeApplierHostFeature());
     }
 
@@ -24,9 +25,10 @@ internal static class ApplicationHostFeature {
         // UseAssemblyScan defaults to true, and its getter overrides any explicitly configured
         // Translator with the scan result - disable it so WithTranslator<ResourceTranslator>()
         // actually takes effect instead of only working by scan-result coincidence.
-        features.Get<TranslatorHostFeature>().Configure(opts => opts
-            .WithUseAssemblyScan(false)
-            .WithTranslator<ResourceTranslator>());
+        features.Get<TranslatorHostFeature>().Configure(
+            opts => opts.WithUseAssemblyScan(false)
+                        .WithTranslator<JsonTranslator>()
+        );
     }
 
     private static void ConfigureEntityFrameworkCoreHostFeature(HostFeatureCollection features) {

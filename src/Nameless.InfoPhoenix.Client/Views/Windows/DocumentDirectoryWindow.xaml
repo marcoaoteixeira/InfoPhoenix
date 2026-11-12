@@ -30,7 +30,7 @@
         <StackPanel DockPanel.Dock="Top"
                     HorizontalAlignment="Stretch"
                     Margin="0 0 0 10">
-            <Label Content="{loc:Translator DocumentDirectoryWindow_Label}"
+            <Label Content="{loc:Translator DocumentDirectoryWindow_DocumentDirectory_Label}"
                    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                    Margin="0 0 0 5"
                    Target="{Binding ElementName=LabelTextBox}"/>
@@ -43,7 +43,7 @@
         <StackPanel DockPanel.Dock="Top"
                     HorizontalAlignment="Stretch"
                     Margin="0 0 0 10">
-            <Label Content="{loc:Translator DocumentDirectoryWindow_DirectoryPath}"
+            <Label Content="{loc:Translator DocumentDirectoryWindow_DocumentDirectory_DirectoryPath}"
                    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                    Margin="0 0 0 5"
                    Target="{Binding ElementName=DirectoryPathTextBox}"/>
@@ -74,7 +74,7 @@
         <StackPanel DockPanel.Dock="Top"
                     HorizontalAlignment="Stretch"
                     Margin="0 0 0 10">
-            <Label Content="{loc:Translator DocumentDirectoryWindow_DisplayPosition}"
+            <Label Content="{loc:Translator DocumentDirectoryWindow_DocumentDirectory_DisplayPosition}"
                    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                    Margin="0 0 0 5"
                    Target="{Binding ElementName=DisplayPositionNumberBox}"/>

@@ -3,7 +3,6 @@ using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using Nameless.InfoPhoenix.Client.Infrastructure;
 using Nameless.InfoPhoenix.Client.Views.Windows;
-using Nameless.Windows;
 using Nameless.Windows.AppConfiguration;
 using Nameless.Windows.Hosting;
 using Nameless.Windows.Hosting.Wrappers;
@@ -54,16 +53,15 @@ public partial class App {
     }
 
     private static Task OnCurrentHostStart(IServiceProvider provider, CancellationToken cancellationToken) {
-        TranslatorExtension.SetTranslator(
-            provider.GetService<ITranslator>() ?? NullTranslator.Instance
-        );
+        TranslatorExtension.ResolveTranslator(provider);
 
         // Resolve `main` before the splash. If the splash were created or
         // shown first, it would become `Application.MainWindow`, and
         // closing it would shut the app down (default ShutdownMode).
         var main = provider.GetRequiredService<INavigationWindow>();
 
-        provider.GetRequiredService<ISplashScreenWindow>().Show(WindowStartupLocation.CenterScreen);
+        provider.GetRequiredService<ISplashScreenWindow>()
+                .Show(WindowStartupLocation.CenterScreen);
 
         main.ShowWindow();
 
@@ -75,6 +73,7 @@ public partial class App {
     // handler's "stop asking") and any immediate save that failed. Best-effort: OnExit is
     // async void, so the process may end before this completes.
     private static async Task OnCurrentHostStop(IServiceProvider provider, CancellationToken cancellationToken) {
-        await provider.GetRequiredService<IAppConfigurationManager>().SaveChangesAsync(cancellationToken);
+        await provider.GetRequiredService<IAppConfigurationManager>()
+                      .SaveChangesAsync(cancellationToken);
     }
 }

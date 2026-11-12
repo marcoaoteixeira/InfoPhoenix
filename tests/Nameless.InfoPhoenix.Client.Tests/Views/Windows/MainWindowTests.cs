@@ -292,7 +292,11 @@ public class MainWindowTests {
         FakeApplicationThemeApplier? themeApplier = null,
         FakeEventPublisher? eventPublisher = null,
         ISnackbarService? snackbarService = null) {
-        var viewModel = new MainWindowViewModel(new FakeApplicationContext(), new NoOpNavigationViewItemProvider());
+        var viewModel = new MainWindowViewModel(
+            new FakeApplicationContext(),
+            new NoOpNavigationViewItemProvider(),
+            new FakeEventPublisher()
+        );
 
         return new Nameless.InfoPhoenix.Client.Views.Windows.MainWindow(
             viewModel,
@@ -310,7 +314,10 @@ public class MainWindowTests {
     }
 
     private sealed class NoOpNavigationViewItemProvider : INavigationViewItemProvider {
-        public IEnumerable<NavigationViewItem> GetItems(Placement placement) {
+        public IEnumerable<NavigationViewItem> GetMenuItems() {
+            return [];
+        }
+        public IEnumerable<NavigationViewItem> GetFooterItems() {
             return [];
         }
     }

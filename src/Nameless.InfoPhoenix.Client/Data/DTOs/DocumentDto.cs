@@ -1,6 +1,4 @@
-﻿using Nameless.InfoPhoenix.Client.Data.Entities;
-
-namespace Nameless.InfoPhoenix.Client.Data.DTOs;
+﻿namespace Nameless.InfoPhoenix.Client.Data.DTOs;
 
 public record DocumentDto {
     public static DocumentDto Empty => new();
@@ -20,16 +18,4 @@ public record DocumentDto {
     public DateTime? LastWriteTime { get; init; }
     
     public Guid DocumentDirectoryID { get; init; }
-
-    public DocumentDto() { }
-
-    public DocumentDto(Document document) {
-        ID = document.ID;
-        FilePath = document.FilePath;
-        Content = document.Content;
-        RawFile = document.RawFile;
-        LastIndexingTime = document.LastIndexingTime;
-        LastWriteTime = document.LastWriteTime;
-        DocumentDirectoryID = document.DocumentDirectoryID;
-    }
 }
