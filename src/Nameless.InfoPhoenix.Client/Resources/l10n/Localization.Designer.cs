@@ -268,6 +268,15 @@ namespace Nameless.InfoPhoenix.Client.Resources.l10n {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Settings.
+        /// </summary>
+        internal static string AppConfigurationPage_NavigationViewItem_Title {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_NavigationViewItem_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Restoring &quot;{0}&quot; will replace all current application data (database, search index and settings) with the contents of this backup.
         ///
         ///Your current data will be overwritten and cannot be recovered unless you have backed it up.
@@ -391,6 +400,42 @@ namespace Nameless.InfoPhoenix.Client.Resources.l10n {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Create new Document Directory.
+        /// </summary>
+        internal static string DocumentDirectoryManagementPage_CreateNewDocumentDirectoryButton_Caption {
+            get {
+                return ResourceManager.GetString("DocumentDirectoryManagementPage_CreateNewDocumentDirectoryButton_Caption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Document Directories.
+        /// </summary>
+        internal static string DocumentDirectoryManagementPage_NavigationViewItem_Title {
+            get {
+                return ResourceManager.GetString("DocumentDirectoryManagementPage_NavigationViewItem_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Documents Directories Management.
+        /// </summary>
+        internal static string DocumentDirectoryManagementPage_Title {
+            get {
+                return ResourceManager.GetString("DocumentDirectoryManagementPage_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        internal static string DocumentDirectoryWindow_CloseButton_Caption {
+            get {
+                return ResourceManager.GetString("DocumentDirectoryWindow_CloseButton_Caption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Directory Path.
         /// </summary>
         internal static string DocumentDirectoryWindow_DirectoryPath {
@@ -409,11 +454,74 @@ namespace Nameless.InfoPhoenix.Client.Resources.l10n {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Directory Path.
+        /// </summary>
+        internal static string DocumentDirectoryWindow_DocumentDirectory_DirectoryPath {
+            get {
+                return ResourceManager.GetString("DocumentDirectoryWindow_DocumentDirectory_DirectoryPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Position.
+        /// </summary>
+        internal static string DocumentDirectoryWindow_DocumentDirectory_DisplayPosition {
+            get {
+                return ResourceManager.GetString("DocumentDirectoryWindow_DocumentDirectory_DisplayPosition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Label.
+        /// </summary>
+        internal static string DocumentDirectoryWindow_DocumentDirectory_Label {
+            get {
+                return ResourceManager.GetString("DocumentDirectoryWindow_DocumentDirectory_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Label.
         /// </summary>
         internal static string DocumentDirectoryWindow_Label {
             get {
                 return ResourceManager.GetString("DocumentDirectoryWindow_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save.
+        /// </summary>
+        internal static string DocumentDirectoryWindow_SaveButton_Caption {
+            get {
+                return ResourceManager.GetString("DocumentDirectoryWindow_SaveButton_Caption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Application Database Migration Step.
+        /// </summary>
+        internal static string EntityFrameworkCoreExecuteMigrationStep_DisplayName {
+            get {
+                return ResourceManager.GetString("EntityFrameworkCoreExecuteMigrationStep_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Application Database Migration finished successfully!.
+        /// </summary>
+        internal static string EntityFrameworkCoreExecuteMigrationStep_ExecuteAsync_Finished {
+            get {
+                return ResourceManager.GetString("EntityFrameworkCoreExecuteMigrationStep_ExecuteAsync_Finished", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Initializing application database migration....
+        /// </summary>
+        internal static string EntityFrameworkCoreExecuteMigrationStep_ExecuteAsync_Starting {
+            get {
+                return ResourceManager.GetString("EntityFrameworkCoreExecuteMigrationStep_ExecuteAsync_Starting", resourceCulture);
             }
         }
         
@@ -855,6 +963,15 @@ namespace Nameless.InfoPhoenix.Client.Resources.l10n {
         internal static string PerformApplicationRestoreRequestHandler_VersionDiffers_Warning {
             get {
                 return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_VersionDiffers_Warning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search.
+        /// </summary>
+        internal static string SearchPage_NavigationViewItem_Title {
+            get {
+                return ResourceManager.GetString("SearchPage_NavigationViewItem_Title", resourceCulture);
             }
         }
         

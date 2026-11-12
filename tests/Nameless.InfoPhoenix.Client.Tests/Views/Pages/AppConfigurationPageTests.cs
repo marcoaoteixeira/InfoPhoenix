@@ -22,7 +22,7 @@ public class AppConfigurationPageTests {
         StaWindowTestHarness.Run(() => {
             var provider = new AutoDiscoverableNavigationViewItemProvider([typeof(App).Assembly]);
 
-            var footerItems = provider.GetItems(Placement.Bottom).ToList();
+            var footerItems = provider.GetFooterItems().ToList();
 
             var configurationItems = footerItems.Where(item => item.TargetPageType == typeof(AppConfigurationPage)).ToList();
 

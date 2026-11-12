@@ -399,4 +399,43 @@ Feche e abra novamente o InfoPhoenix para começar a usar os dados restaurados. 
   <data name="DocumentDirectoryWindow_DisplayPosition" xml:space="preserve">
     <value>Posição de Exibição</value>
   </data>
+  <data name="AppConfigurationPage_NavigationViewItem_Title" xml:space="preserve">
+    <value>Configurações</value>
+  </data>
+  <data name="DocumentDirectoryManagementPage_NavigationViewItem_Title" xml:space="preserve">
+    <value>Diretório de Documentos</value>
+  </data>
+  <data name="SearchPage_NavigationViewItem_Title" xml:space="preserve">
+    <value>Pesquisa</value>
+  </data>
+  <data name="DocumentDirectoryWindow_DocumentDirectory_Label" xml:space="preserve">
+    <value>Rótulo</value>
+  </data>
+  <data name="DocumentDirectoryWindow_DocumentDirectory_DirectoryPath" xml:space="preserve">
+    <value>Caminho do Diretório</value>
+  </data>
+  <data name="DocumentDirectoryWindow_DocumentDirectory_DisplayPosition" xml:space="preserve">
+    <value>Posição</value>
+  </data>
+  <data name="DocumentDirectoryWindow_SaveButton_Caption" xml:space="preserve">
+    <value>Salvar</value>
+  </data>
+  <data name="DocumentDirectoryWindow_CloseButton_Caption" xml:space="preserve">
+    <value>Fechar</value>
+  </data>
+  <data name="DocumentDirectoryManagementPage_CreateNewDocumentDirectoryButton_Caption" xml:space="preserve">
+    <value>Criar novo Diretório de Documentos</value>
+  </data>
+  <data name="DocumentDirectoryManagementPage_Title" xml:space="preserve">
+    <value>Gerenciador de Diretórios de Documentos</value>
+  </data>
+  <data name="EntityFrameworkCoreExecuteMigrationStep_DisplayName" xml:space="preserve">
+    <value>Migração da Base de Dados da Aplicação</value>
+  </data>
+  <data name="EntityFrameworkCoreExecuteMigrationStep_ExecuteAsync_Starting" xml:space="preserve">
+    <value>Iniciando a migração da base de dados da aplicação...</value>
+  </data>
+  <data name="EntityFrameworkCoreExecuteMigrationStep_ExecuteAsync_Finished" xml:space="preserve">
+    <value>Migração da Base de Dados da Aplicação concluída com sucesso!</value>
+  </data>
 </root>

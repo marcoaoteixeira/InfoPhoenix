@@ -10,6 +10,7 @@ using Nameless.InfoPhoenix.Client.Features.OpenCurrentLogFile;
 using Nameless.InfoPhoenix.Client.Features.PerformApplicationBackup;
 using Nameless.InfoPhoenix.Client.Features.PerformApplicationRestore;
 using Nameless.InfoPhoenix.Client.Infrastructure;
+using Nameless.InfoPhoenix.Client.Infrastructure.Events;
 using Nameless.Mediator;
 using Nameless.Windows;
 using Nameless.Windows.AppConfiguration;
@@ -442,6 +443,7 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
         var isoCode = (string)newValue.Tag;
 
         T.SetCulture(isoCode);
+        _eventPublisher.PublishAsync(new CultureChangeEvent());
 
         try {
             _appConfigurationManager.Language = isoCode;

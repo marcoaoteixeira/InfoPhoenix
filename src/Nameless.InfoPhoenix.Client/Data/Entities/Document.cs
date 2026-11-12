@@ -40,4 +40,10 @@ public class Document : EntityBase {
     ///     document is bound to.
     /// </summary>
     public Guid DocumentDirectoryID { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the <see cref="DocumentDirectory"/> entity
+    ///     that this document is bounded to.
+    /// </summary>
+    internal DocumentDirectory DocumentDirectory { get; set; } = null!;
 }

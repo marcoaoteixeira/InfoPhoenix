@@ -399,4 +399,43 @@ Close and reopen InfoPhoenix to start using the restored data. Until you do, som
   <data name="DocumentDirectoryWindow_DisplayPosition" xml:space="preserve">
     <value>Display Position</value>
   </data>
+  <data name="AppConfigurationPage_NavigationViewItem_Title" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="DocumentDirectoryManagementPage_NavigationViewItem_Title" xml:space="preserve">
+    <value>Document Directories</value>
+  </data>
+  <data name="SearchPage_NavigationViewItem_Title" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="DocumentDirectoryWindow_DocumentDirectory_Label" xml:space="preserve">
+    <value>Label</value>
+  </data>
+  <data name="DocumentDirectoryWindow_DocumentDirectory_DirectoryPath" xml:space="preserve">
+    <value>Directory Path</value>
+  </data>
+  <data name="DocumentDirectoryWindow_DocumentDirectory_DisplayPosition" xml:space="preserve">
+    <value>Position</value>
+  </data>
+  <data name="DocumentDirectoryWindow_SaveButton_Caption" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="DocumentDirectoryWindow_CloseButton_Caption" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="DocumentDirectoryManagementPage_CreateNewDocumentDirectoryButton_Caption" xml:space="preserve">
+    <value>Create new Document Directory</value>
+  </data>
+  <data name="DocumentDirectoryManagementPage_Title" xml:space="preserve">
+    <value>Documents Directories Management</value>
+  </data>
+  <data name="EntityFrameworkCoreExecuteMigrationStep_DisplayName" xml:space="preserve">
+    <value>Application Database Migration Step</value>
+  </data>
+  <data name="EntityFrameworkCoreExecuteMigrationStep_ExecuteAsync_Starting" xml:space="preserve">
+    <value>Initializing application database migration...</value>
+  </data>
+  <data name="EntityFrameworkCoreExecuteMigrationStep_ExecuteAsync_Finished" xml:space="preserve">
+    <value>Application Database Migration finished successfully!</value>
+  </data>
 </root>

@@ -1,11 +1,17 @@
-﻿using Nameless.InfoPhoenix.Client.ViewModels.Pages;
+﻿using Nameless.InfoPhoenix.Client.Resources.l10n;
+using Nameless.InfoPhoenix.Client.ViewModels.Pages;
 using Nameless.Windows.Navigation;
 using Wpf.Ui.Abstractions.Controls;
 using Wpf.Ui.Controls;
 
 namespace Nameless.InfoPhoenix.Client.Views.Pages;
 
-[NavigationViewItem(Title = "Pesquisar", Icon = SymbolRegular.DocumentSearch24)]
+[NavigationViewItem(
+    Icon = SymbolRegular.DocumentSearch24,
+    Placement = Placement.Menu,
+    TitleResourceName = "SearchPage_NavigationViewItem_Title",
+    ResourceType = typeof(Localization)
+)]
 public partial class SearchPage : INavigableView<SearchPageViewModel> {
     public SearchPageViewModel ViewModel { get; }
 

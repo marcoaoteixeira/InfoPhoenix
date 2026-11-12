@@ -31,4 +31,9 @@ public class DocumentDirectory : EntityBase {
     ///     Gets or sets the last time the document directory was indexed.
     /// </summary>
     public DateTime? LastIndexingTime { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the documents bounded to the document directory.
+    /// </summary>
+    public ICollection<Document> Documents { get; set; } = [];
 }

@@ -1,3 +1,4 @@
+using Nameless.InfoPhoenix.Client.Resources.l10n;
 using Nameless.InfoPhoenix.Client.ViewModels.Pages;
 using Nameless.Windows.Navigation;
 using Wpf.Ui.Abstractions.Controls;
@@ -7,8 +8,9 @@ namespace Nameless.InfoPhoenix.Client.Views.Pages;
 
 [NavigationViewItem(
     Icon = SymbolRegular.Settings48,
-    Title = Constants.Labels.NavigationMenuItems.Configuration,
-    Placement = Placement.Bottom
+    Placement = Placement.Footer,
+    TitleResourceName = "AppConfigurationPage_NavigationViewItem_Title",
+    ResourceType = typeof(Localization)
 )]
 public partial class AppConfigurationPage : INavigableView<AppConfigurationPageViewModel> {
     public AppConfigurationPageViewModel ViewModel { get; }
