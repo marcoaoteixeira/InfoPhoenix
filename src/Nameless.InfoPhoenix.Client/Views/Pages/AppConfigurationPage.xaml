@@ -14,7 +14,7 @@
     <StackPanel Margin="24">
         <ui:TextBlock FontTypography="Title"
                       Margin="0 0 0 20"
-                      Text="{loc:Translator AppConfigurationPage_Title}" />
+                      Text="{loc:Translator UI_TextBlock_Settings}" />
 
         <ui:CardControl Name="AppVersionCard"
                         Icon="{ui:ImageIcon 'pack://application:,,,/Nameless.InfoPhoenix.Client;component/Resources/imgs/application_64x64.png'}"
@@ -28,10 +28,10 @@
                     <StackPanel Grid.Row="0"
                                 Orientation="Horizontal">
                         <ui:TextBlock FontTypography="BodyStrong"
-                                      Text="{loc:Translator AppConfigurationPage_VersionCard_Title}" />
+                                      Text="{loc:Translator UI_TextBlock_Version}" />
                         <ui:Badge Name="CheckForUpdateBadge"
                                   Appearance="Info"
-                                  Content="{loc:Translator AppConfigurationPage_ComingSoon_Badge}"
+                                  Content="{loc:Translator UI_Badge_ComingSoon}"
                                   Margin="8 0 0 0"
                                   VerticalAlignment="Center" />
                     </StackPanel>
@@ -43,10 +43,10 @@
             <ui:Button Name="CheckForUpdateButton"
                        Appearance="Primary"
                        Icon="{ui:SymbolIcon Globe32}"
-                       Content="{loc:Translator AppConfigurationPage_VersionCard_Button_Caption}"
+                       Content="{loc:Translator UI_Button_CheckForUpdate}"
                        Padding="30 8"
                        IsEnabled="False"
-                       ToolTip="{loc:Translator AppConfigurationPage_ComingSoon_Tooltip}"
+                       ToolTip="{loc:Translator UI_ToolTip_NotAvailableYet}"
                        ToolTipService.ShowOnDisabled="True" />
         </ui:CardControl>
 
@@ -60,8 +60,8 @@
                     </Grid.RowDefinitions>
                     <ui:TextBlock FontTypography="BodyStrong"
                                   Grid.Row="0"
-                                  Text="{loc:Translator AppConfigurationPage_ApplicationLanguageCard_Title}" />
-                    <ui:TextBlock Grid.Row="1" Text="{loc:Translator AppConfigurationPage_ApplicationLanguageCard_Message}" />
+                                  Text="{loc:Translator UI_TextBlock_Language}" />
+                    <ui:TextBlock Grid.Row="1" Text="{loc:Translator UI_TextBlock_ChooseLanguage}" />
                 </Grid>
             </ui:CardControl.Header>
             <ComboBox Cursor="Hand"
@@ -82,9 +82,9 @@
                     </Grid.RowDefinitions>
                     <ui:TextBlock FontTypography="BodyStrong"
                                   Grid.Row="0"
-                                  Text="{loc:Translator AppConfigurationPage_ApplicationBackupCard_Title}" />
+                                  Text="{loc:Translator UI_TextBlock_Backup}" />
                     <ui:TextBlock Grid.Row="1"
-                                  Text="{loc:Translator AppConfigurationPage_ApplicationBackupCard_Message}" />
+                                  Text="{loc:Translator UI_TextBlock_CreateBackup}" />
                 </Grid>
             </ui:CardControl.Header>
             <ui:Button Name="ApplicationBackupButton"
@@ -92,7 +92,7 @@
                        Cursor="Hand"
                        Command="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.PerformApplicationBackupCommand, Mode=OneTime}"
                        Icon="{ui:SymbolIcon DatabaseArrowDown20}"
-                       Content="{loc:Translator AppConfigurationPage_ApplicationBackupCard_Button_Caption}"
+                       Content="{loc:Translator UI_Button_CreateBackup}"
                        Padding="30 8" />
         </ui:CardControl>
 
@@ -107,9 +107,9 @@
                     </Grid.RowDefinitions>
                     <ui:TextBlock FontTypography="BodyStrong"
                                   Grid.Row="0"
-                                  Text="{loc:Translator AppConfigurationPage_ApplicationRestoreCard_Title}" />
+                                  Text="{loc:Translator UI_TextBlock_Restore}" />
                     <ui:TextBlock Grid.Row="1"
-                                  Text="{loc:Translator AppConfigurationPage_ApplicationRestoreCard_Message}" />
+                                  Text="{loc:Translator UI_TextBlock_RestoreFromBackup}" />
                 </Grid>
             </ui:CardControl.Header>
             <ui:Button Name="ApplicationRestoreButton"
@@ -117,7 +117,7 @@
                        Cursor="Hand"
                        Command="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.PerformApplicationRestoreCommand, Mode=OneTime}"
                        Icon="{ui:SymbolIcon DatabaseArrowUp20}"
-                       Content="{loc:Translator AppConfigurationPage_ApplicationRestoreCard_Button_Caption}"
+                       Content="{loc:Translator UI_Button_RestoreBackup}"
                        Padding="30 8" />
         </ui:CardControl>
 
@@ -131,9 +131,9 @@
                     </Grid.RowDefinitions>
                     <ui:TextBlock FontTypography="BodyStrong"
                                   Grid.Row="0"
-                                  Text="{loc:Translator AppConfigurationPage_ThemeCard_Title}" />
+                                  Text="{loc:Translator UI_TextBlock_Theme}" />
                     <ui:TextBlock Grid.Row="1"
-                                  Text="{loc:Translator AppConfigurationPage_ThemeCard_Message}" />
+                                  Text="{loc:Translator UI_TextBlock_ChooseTheme}" />
                 </Grid>
             </ui:CardControl.Header>
             <ComboBox Cursor="Hand"
@@ -153,9 +153,9 @@
                     </Grid.RowDefinitions>
                     <ui:TextBlock FontTypography="BodyStrong"
                                   Grid.Row="0"
-                                  Text="{loc:Translator AppConfigurationPage_ExitBehaviorCard_Title}" />
+                                  Text="{loc:Translator UI_TextBlock_ConfirmBeforeExit}" />
                     <ui:TextBlock Grid.Row="1"
-                                  Text="{loc:Translator AppConfigurationPage_ExitBehaviorCard_Message}" />
+                                  Text="{loc:Translator UI_TextBlock_AskBeforeExit}" />
                 </Grid>
             </ui:CardControl.Header>
             <CheckBox Cursor="Hand"
@@ -172,15 +172,15 @@
                     </Grid.RowDefinitions>
                     <ui:TextBlock FontTypography="BodyStrong"
                                   Grid.Row="0"
-                                  Text="{loc:Translator AppConfigurationPage_AppDirectoryPathCard_Title}" />
+                                  Text="{loc:Translator UI_TextBlock_ApplicationDataDirectory}" />
                     <ui:TextBlock Grid.Row="1"
-                                  Text="{loc:Translator AppConfigurationPage_AppDirectoryPathCard_Message}" />
+                                  Text="{loc:Translator UI_TextBlock_OpenDataDirectory}" />
                 </Grid>
             </ui:CardControl.Header>
             <ui:Button Appearance="Primary"
                        Cursor="Hand"
                        Command="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.OpenApplicationDataDirectoryCommand, Mode=OneTime}"
-                       Content="{loc:Translator AppConfigurationPage_AppDirectoryPathCard_Button_Caption}"
+                       Content="{loc:Translator UI_Button_OpenDirectory}"
                        Icon="{ui:SymbolIcon Open48}"
                        Padding="30 8" />
         </ui:CardControl>
@@ -195,15 +195,15 @@
                     </Grid.RowDefinitions>
                     <ui:TextBlock FontTypography="BodyStrong"
                                   Grid.Row="0"
-                                  Text="{loc:Translator AppConfigurationPage_ApplicationLogCard_Title}" />
+                                  Text="{loc:Translator UI_TextBlock_ApplicationLog}" />
                     <ui:TextBlock Grid.Row="1"
-                                  Text="{loc:Translator AppConfigurationPage_ApplicationLogCard_Message}" />
+                                  Text="{loc:Translator UI_TextBlock_OpenLogFile}" />
                 </Grid>
             </ui:CardControl.Header>
             <ui:Button Appearance="Primary"
                        Cursor="Hand"
                        Command="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.OpenApplicationLogFileCommand, Mode=OneTime}"
-                       Content="{loc:Translator AppConfigurationPage_ApplicationLogCard_Button_Caption}"
+                       Content="{loc:Translator UI_Button_OpenLogFile}"
                        Icon="{ui:SymbolIcon Open48}"
                        Padding="30 8" />
         </ui:CardControl>

@@ -16,7 +16,7 @@ namespace Nameless.InfoPhoenix.Client.ViewModels.Windows;
 public partial class DocumentDirectoryWindowViewModel : ViewModel {
     private readonly IFileSystemDialog _fileSystemDialog;
     private readonly IMediator _mediator;
-    private readonly ITranslator _translator;
+    private readonly ITranslator<DocumentDirectoryWindowViewModel> _translator;
     private readonly IValidator _validator;
 
     private Guid DocumentDirectoryID { get; set; }
@@ -43,7 +43,7 @@ public partial class DocumentDirectoryWindowViewModel : ViewModel {
     [Range(minimum: 0, maximum: short.MaxValue)]
     private int _displayPosition;
 
-    public DocumentDirectoryWindowViewModel(IFileSystemDialog fileSystemDialog, IMediator mediator, ITranslator translator, IValidator validator) {
+    public DocumentDirectoryWindowViewModel(IFileSystemDialog fileSystemDialog, IMediator mediator, ITranslator<DocumentDirectoryWindowViewModel> translator, IValidator validator) {
         _fileSystemDialog = Throws.When.Null(fileSystemDialog);
         _mediator = Throws.When.Null(mediator);
         _translator = Throws.When.Null(translator);

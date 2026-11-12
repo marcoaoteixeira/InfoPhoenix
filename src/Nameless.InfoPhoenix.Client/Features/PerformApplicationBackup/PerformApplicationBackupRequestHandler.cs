@@ -32,8 +32,6 @@ namespace Nameless.InfoPhoenix.Client.Features.PerformApplicationBackup;
 /// </remarks>
 public sealed class PerformApplicationBackupRequestHandler
     : IRequestHandler<PerformApplicationBackupRequest, PerformApplicationBackupResult> {
-    private const string Prefix = nameof(PerformApplicationBackupRequestHandler);
-
     private static readonly JsonSerializerOptions ManifestSerializerOptions = new(JsonSerializerDefaults.Web) {
         WriteIndented = true
     };
@@ -45,7 +43,7 @@ public sealed class PerformApplicationBackupRequestHandler
     private readonly LuceneOptions _luceneOptions;
     private readonly TimeProvider _timeProvider;
     private readonly IEventPublisher _eventPublisher;
-    private readonly ITranslator _translator;
+    private readonly ITranslator<PerformApplicationBackupRequestHandler> _translator;
     private readonly ILogger<PerformApplicationBackupRequestHandler> _logger;
 
     public PerformApplicationBackupRequestHandler(
@@ -56,7 +54,7 @@ public sealed class PerformApplicationBackupRequestHandler
         IOptions<LuceneOptions> luceneOptions,
         TimeProvider timeProvider,
         IEventPublisher eventPublisher,
-        ITranslator translator,
+        ITranslator<PerformApplicationBackupRequestHandler> translator,
         ILogger<PerformApplicationBackupRequestHandler> logger) {
         _applicationContext = Throws.When.Null(applicationContext);
         _appConfigurationManager = Throws.When.Null(appConfigurationManager);
@@ -150,7 +148,7 @@ public sealed class PerformApplicationBackupRequestHandler
             finalPath = await Task.Run(() => MoveToBackupDirectory(archivePath, timestamp));
 
             await _eventPublisher.PublishSuccessAsync<BackupRecoveryProgressNotificationEvent>(
-                message: _translator[$"{Prefix}_Success", [finalPath]]);
+                message: _translator["Success", [finalPath]]);
 
             return new PerformApplicationBackupResult(finalPath);
         }
@@ -167,7 +165,7 @@ public sealed class PerformApplicationBackupRequestHandler
             _logger.LogError(ex, "Application backup failed at step '{Step}'.", step);
 
             await _eventPublisher.PublishFailureAsync<BackupRecoveryProgressNotificationEvent>(
-                message: _translator[$"{Prefix}_{step}_Failure", [ex.Message]]);
+                message: _translator[$"{step}_Failure", [ex.Message]]);
 
             return PerformApplicationBackupResult.Failed;
         }
@@ -180,12 +178,12 @@ public sealed class PerformApplicationBackupRequestHandler
 
     private Task PublishStepAsync(string step) {
         return _eventPublisher.PublishInformationAsync<BackupRecoveryProgressNotificationEvent>(
-            message: _translator[$"{Prefix}_{step}"]);
+            message: _translator[step]);
     }
 
     private Task PublishWarningAsync(string warningKey) {
         return _eventPublisher.PublishWarningAsync<BackupRecoveryProgressNotificationEvent>(
-            message: _translator[$"{Prefix}_{warningKey}_Warning"]);
+            message: _translator[$"{warningKey}_Warning"]);
     }
 
     /// <summary>

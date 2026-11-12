@@ -36,8 +36,6 @@ namespace Nameless.InfoPhoenix.Client.Features.PerformApplicationRestore;
 /// </remarks>
 public sealed class PerformApplicationRestoreRequestHandler
     : IRequestHandler<PerformApplicationRestoreRequest, RestoreOutcome> {
-    private const string Prefix = nameof(PerformApplicationRestoreRequestHandler);
-
     private static readonly JsonSerializerOptions ManifestSerializerOptions = new(JsonSerializerDefaults.Web) {
         RespectNullableAnnotations = true,
         RespectRequiredConstructorParameters = true
@@ -59,7 +57,7 @@ public sealed class PerformApplicationRestoreRequestHandler
     private readonly LuceneOptions _luceneOptions;
     private readonly AppDbContext _dbContext;
     private readonly IEventPublisher _eventPublisher;
-    private readonly ITranslator _translator;
+    private readonly ITranslator<PerformApplicationRestoreRequestHandler> _translator;
     private readonly ILogger<PerformApplicationRestoreRequestHandler> _logger;
 
     public PerformApplicationRestoreRequestHandler(
@@ -70,7 +68,7 @@ public sealed class PerformApplicationRestoreRequestHandler
         IOptions<LuceneOptions> luceneOptions,
         AppDbContext dbContext,
         IEventPublisher eventPublisher,
-        ITranslator translator,
+        ITranslator<PerformApplicationRestoreRequestHandler> translator,
         ILogger<PerformApplicationRestoreRequestHandler> logger) {
         _applicationContext = Throws.When.Null(applicationContext);
         _appConfigurationManager = Throws.When.Null(appConfigurationManager);
@@ -255,7 +253,7 @@ public sealed class PerformApplicationRestoreRequestHandler
 
             try {
                 await _eventPublisher.PublishSuccessAsync<BackupRecoveryProgressNotificationEvent>(
-                    message: _translator[$"{Prefix}_Success"]);
+                    message: _translator["Success"]);
             }
             catch (Exception ex) {
                 _logger.LogError(ex, "Restore committed successfully, but the success notification failed.");
@@ -294,17 +292,17 @@ public sealed class PerformApplicationRestoreRequestHandler
 
     private Task PublishStepAsync(string stepName) {
         return _eventPublisher.PublishInformationAsync<BackupRecoveryProgressNotificationEvent>(
-            message: _translator[$"{Prefix}_{stepName}"]);
+            message: _translator[stepName]);
     }
 
     private Task PublishWarningAsync(string key, object[]? args = null) {
         return _eventPublisher.PublishWarningAsync<BackupRecoveryProgressNotificationEvent>(
-            message: args is null ? _translator[$"{Prefix}_{key}"] : _translator[$"{Prefix}_{key}", args]);
+            message: args is null ? _translator[key] : _translator[key, args]);
     }
 
     private Task PublishFailureAsync(string key, object[] args) {
         return _eventPublisher.PublishFailureAsync<BackupRecoveryProgressNotificationEvent>(
-            message: _translator[$"{Prefix}_{key}", args]);
+            message: _translator[key, args]);
     }
 
     // ----- Step 1: ReadingBackup (plan D2) -----------------------------------------------------

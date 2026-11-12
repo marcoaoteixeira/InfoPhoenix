@@ -17,7 +17,7 @@ namespace Nameless.InfoPhoenix.Client.ViewModels.Pages;
 
 public partial class DocumentDirectoryManagementPageViewModel : ViewModel, INavigationAware {
     private readonly IMediator _mediator;
-    private readonly ITranslator _translator;
+    private readonly ITranslator<DocumentDirectoryManagementPageViewModel> _translator;
     private readonly IWindowFactory _windowFactory;
 
     private bool _initialized;
@@ -25,7 +25,7 @@ public partial class DocumentDirectoryManagementPageViewModel : ViewModel, INavi
     [ObservableProperty]
     private ObservableCollection<DocumentDirectoryDto> _entries = [];
 
-    public DocumentDirectoryManagementPageViewModel(IMediator mediator, ITranslator translator, IWindowFactory windowFactory) {
+    public DocumentDirectoryManagementPageViewModel(IMediator mediator, ITranslator<DocumentDirectoryManagementPageViewModel> translator, IWindowFactory windowFactory) {
         _mediator = Throws.When.Null(mediator);
         _translator = Throws.When.Null(translator);
         _windowFactory = Throws.When.Null(windowFactory);

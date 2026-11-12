@@ -24,6 +24,14 @@
 		<Content Include="appsettings.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
+		<!-- JSON translation files read by JsonTranslator's disk-backed
+		     ITranslationFileProvider (see TranslatorOptions.RootPath). -->
+		<Content Include="Resources\loc\default.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Resources\loc\pt-BR.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
 	</ItemGroup>
 
 	<ItemGroup>
