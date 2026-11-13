@@ -30,7 +30,7 @@
         <StackPanel DockPanel.Dock="Top"
                     HorizontalAlignment="Stretch"
                     Margin="0 0 0 10">
-            <Label Content="{loc:Translator DocumentDirectoryWindow_DocumentDirectory_Label}"
+            <Label Content="{loc:Translator UI_Label_Label}"
                    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                    Margin="0 0 0 5"
                    Target="{Binding ElementName=LabelTextBox}"/>
@@ -43,7 +43,7 @@
         <StackPanel DockPanel.Dock="Top"
                     HorizontalAlignment="Stretch"
                     Margin="0 0 0 10">
-            <Label Content="{loc:Translator DocumentDirectoryWindow_DocumentDirectory_DirectoryPath}"
+            <Label Content="{loc:Translator UI_Label_DirectoryPath}"
                    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                    Margin="0 0 0 5"
                    Target="{Binding ElementName=DirectoryPathTextBox}"/>
@@ -74,7 +74,7 @@
         <StackPanel DockPanel.Dock="Top"
                     HorizontalAlignment="Stretch"
                     Margin="0 0 0 10">
-            <Label Content="{loc:Translator DocumentDirectoryWindow_DocumentDirectory_DisplayPosition}"
+            <Label Content="{loc:Translator UI_Label_Position}"
                    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                    Margin="0 0 0 5"
                    Target="{Binding ElementName=DisplayPositionNumberBox}"/>
@@ -95,14 +95,14 @@
             <ui:Button Appearance="Success"
                        Command="{Binding ElementName=DocumentDirectoryWindowRoot, Path=ViewModel.SaveCommand, Mode=OneTime}"
                        CommandParameter="{Binding ElementName=DocumentDirectoryWindowRoot}"
-                       Content="{loc:Translator DocumentDirectoryWindow_SaveButton_Caption}"
+                       Content="{loc:Translator UI_Button_Save}"
                        Cursor="Hand"
                        Foreground="WhiteSmoke"
                        Icon="{ui:SymbolIcon Save20}"
                        Padding="30 8"
                        Margin="10 0 0 0" />
             <ui:Button Appearance="Danger"
-                       Content="{loc:Translator DocumentDirectoryWindow_CloseButton_Caption}"
+                       Content="{loc:Translator UI_Button_Close}"
                        Cursor="Hand"
                        Click="CloseHandler"
                        Foreground="WhiteSmoke"

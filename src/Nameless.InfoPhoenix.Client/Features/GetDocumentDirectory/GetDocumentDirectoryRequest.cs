@@ -18,10 +18,10 @@ public class GetDocumentDirectoryRequest : IRequest<DocumentDirectoryDto> {
 public class GetDocumentDirectoryRequestHandler : IRequestHandler<GetDocumentDirectoryRequest, DocumentDirectoryDto> {
     private readonly AppDbContext _dbContext;
     private readonly IEventPublisher _eventPublisher;
-    private readonly ITranslator _translator;
+    private readonly ITranslator<GetDocumentDirectoryRequestHandler> _translator;
     private readonly ILogger<GetDocumentDirectoryRequestHandler> _logger;
 
-    public GetDocumentDirectoryRequestHandler(AppDbContext dbContext, IEventPublisher eventPublisher, ITranslator translator, ILogger<GetDocumentDirectoryRequestHandler> logger) {
+    public GetDocumentDirectoryRequestHandler(AppDbContext dbContext, IEventPublisher eventPublisher, ITranslator<GetDocumentDirectoryRequestHandler> translator, ILogger<GetDocumentDirectoryRequestHandler> logger) {
         _dbContext = Throws.When.Null(dbContext);
         _eventPublisher = Throws.When.Null(eventPublisher);
         _translator = Throws.When.Null(translator);
@@ -40,7 +40,7 @@ public class GetDocumentDirectoryRequestHandler : IRequestHandler<GetDocumentDir
         }
 
         await _eventPublisher.PublishWarningAsync<SnackBarNotificationEvent>(
-            message: _translator[$"{nameof(GetDocumentDirectoryRequestHandler)}_{nameof(HandleAsync)}_MissingDocumentDirectory", request.ID]
+            message: _translator[$"{nameof(HandleAsync)}_MissingDocumentDirectory", request.ID]
         );
 
         CommonLog.Warning(_logger, $"Missing Document Directory: {request.ID}");

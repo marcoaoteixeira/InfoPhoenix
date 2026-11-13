@@ -495,7 +495,7 @@ public sealed class PerformApplicationBackupRequestHandlerTests : IDisposable {
             Options.Create(new LuceneOptions { DirectoryRelativePath = LuceneRelativePath }),
             timeProvider ?? new FakeTimeProvider(),
             eventPublisher ?? new FakeEventPublisher(),
-            new FormattingTranslator(),
+            new FormattingTranslator().For<PerformApplicationBackupRequestHandler>(),
             NullLogger<PerformApplicationBackupRequestHandler>.Instance
         );
     }
@@ -587,7 +587,7 @@ public sealed class PerformApplicationBackupRequestHandlerTests : IDisposable {
 
         public string this[string key] => key;
 
-        public string this[string key, object[] args] => $"{key}: {string.Join(", ", args)}";
+        public string this[string key, object[] args] => args.Length == 0 ? key : $"{key}: {string.Join(", ", args)}";
 
         public void SetCulture(CultureInfo culture) {
             CurrentCulture = culture;

@@ -49,8 +49,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   swap fails, leaving the previous data untouched either way.
   ([IPX-0011](https://github.com/marcoaoteixeira/InfoPhoenix/issues/27))
 
+### Changed
+
+- Migrated `ITranslator` usage from the old resx-backed translator to
+  `Nameless.Windows`'s JSON-file-backed `JsonTranslator`. Nine classes
+  (view models, request handlers, a validator and a migration step) now
+  depend on `ITranslator<T>` instead of the non-generic `ITranslator`, and
+  their localized strings — plus a shared "UI" section used by three XAML
+  views — now live in `Resources/loc/default.json` and
+  `Resources/loc/pt-BR.json`. As an interim side effect, editing
+  `Resources/l10n/Localization.resx`/`.pt-BR.resx` no longer has any
+  runtime effect except on the three page navigation titles that still
+  read from it; the rest of the UI ignores those files until the
+  remaining `*.xaml.cs` code-behind is migrated in a follow-up ticket.
+  ([IPX-0015](https://github.com/marcoaoteixeira/InfoPhoenix/issues/39))
+
 ### Fixed
 
+- `Translator` configuration in `appsettings.json` pointed only at a dead
+  `ResourceFullName` key, which made `JsonTranslator`'s file provider throw
+  `MissingConfigurationException` as soon as anything resolved
+  `ITranslator`, crashing startup. Replaced it with a `Translator:RootPath`
+  pointing at the new `Resources\loc` JSON files.
+  ([IPX-0015](https://github.com/marcoaoteixeira/InfoPhoenix/issues/39))
 - The main window now actually subscribes to snackbar notifications
   published through the event publisher, so notifications (including
   IPX-0004's "missing log file" warning) are shown instead of silently

@@ -47,7 +47,7 @@ public sealed class AppConfigurationPageViewModelRestoreTests : IDisposable {
             Assert.EndsWith("|*.zip", options.Filter);
             Assert.Contains("(*.zip)", options.Filter);
             Assert.False(options.Multiselect);
-            Assert.Equal("AppConfigurationPage_Restore_SelectFile_Title", options.Title);
+            Assert.Equal("AppConfigurationPageViewModel_Restore_SelectFile_Title", options.Title);
         });
     }
 
@@ -105,9 +105,9 @@ public sealed class AppConfigurationPageViewModelRestoreTests : IDisposable {
             var call = Assert.Single(messageDialog.Calls);
             Assert.Equal(MessageDialogIcon.Warning, call.Options.Icon);
             Assert.Equal(MessageDialogButtons.YesNo, call.Options.Buttons);
-            Assert.Equal("AppConfigurationPage_Restore_ConfirmOverwrite_Title", call.Options.Title);
+            Assert.Equal("AppConfigurationPageViewModel_Restore_ConfirmOverwrite_Title", call.Options.Title);
 
-            var request = Assert.Single(translator.Requests, r => r.Key == "AppConfigurationPage_Restore_ConfirmOverwrite_Message");
+            var request = Assert.Single(translator.Requests, r => r.Key == "AppConfigurationPageViewModel_Restore_ConfirmOverwrite_Message");
             Assert.Equal(["InfoPhoenix-backup-20261105T143012Z.zip"], request.Args);
         });
     }
@@ -167,7 +167,7 @@ public sealed class AppConfigurationPageViewModelRestoreTests : IDisposable {
             Assert.Equal(1, taskRunner.CreateBuilderCount);
             var notification = Assert.Single(eventPublisher.PublishedEvents.OfType<SnackBarNotificationEvent>());
             Assert.Equal(NotificationType.Failure, notification.Type);
-            Assert.Equal("AppConfigurationPage_Restore_Failure_Message", notification.Message);
+            Assert.Equal("AppConfigurationPageViewModel_Restore_Failure_Message", notification.Message);
             Assert.Empty(mediator.ExecutedRequests);
             Assert.Empty(manager.CallLog);
             Assert.Equal(bytesBefore, File.ReadAllBytes(zipPath));
@@ -219,8 +219,8 @@ public sealed class AppConfigurationPageViewModelRestoreTests : IDisposable {
             Assert.Null(exception);
             var notification = Assert.Single(eventPublisher.PublishedEvents.OfType<SnackBarNotificationEvent>());
             Assert.Equal(NotificationType.Failure, notification.Type);
-            Assert.Equal("AppConfigurationPage_Restore_Failure_Message", notification.Message);
-            var request = Assert.Single(translator.Requests, r => r.Key == "AppConfigurationPage_Restore_Failure_Message");
+            Assert.Equal("AppConfigurationPageViewModel_Restore_Failure_Message", notification.Message);
+            var request = Assert.Single(translator.Requests, r => r.Key == "AppConfigurationPageViewModel_Restore_Failure_Message");
             Assert.Equal(["boom"], request.Args);
         });
     }
@@ -244,8 +244,8 @@ public sealed class AppConfigurationPageViewModelRestoreTests : IDisposable {
             Assert.Null(exception);
             var notification = Assert.Single(eventPublisher.PublishedEvents.OfType<SnackBarNotificationEvent>());
             Assert.Equal(NotificationType.Failure, notification.Type);
-            Assert.Equal("AppConfigurationPage_Restore_Failure_Message", notification.Message);
-            var request = Assert.Single(translator.Requests, r => r.Key == "AppConfigurationPage_Restore_Failure_Message");
+            Assert.Equal("AppConfigurationPageViewModel_Restore_Failure_Message", notification.Message);
+            var request = Assert.Single(translator.Requests, r => r.Key == "AppConfigurationPageViewModel_Restore_Failure_Message");
             Assert.Equal(["boom"], request.Args);
         });
     }
@@ -310,7 +310,7 @@ public sealed class AppConfigurationPageViewModelRestoreTests : IDisposable {
             new FakeApplicationThemeApplier(),
             fileSystemDialog ?? new FakeFileSystemDialog(),
             messageDialog ?? new FakeMessageDialog(),
-            translator ?? new FakeTranslator(),
+            (translator ?? new FakeTranslator()).For<AppConfigurationPageViewModel>(),
             mediator ?? new FakeMediator(),
             eventPublisher ?? new FakeEventPublisher(),
             taskRunner ?? new FakeTaskRunner(),

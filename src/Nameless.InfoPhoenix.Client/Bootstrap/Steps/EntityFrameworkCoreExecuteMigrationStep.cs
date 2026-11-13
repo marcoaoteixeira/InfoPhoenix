@@ -13,10 +13,10 @@ namespace Nameless.InfoPhoenix.Client.Bootstrap.Steps;
 /// </summary>
 public class EntityFrameworkCoreExecuteMigrationStep : StepBase {
     private readonly IServiceProvider _provider;
-    private readonly ITranslator _translator;
+    private readonly ITranslator<EntityFrameworkCoreExecuteMigrationStep> _translator;
 
     /// <inheritdoc />
-    public override string DisplayName => _translator["EntityFrameworkCoreExecuteMigrationStep_DisplayName"];
+    public override string DisplayName => _translator["DisplayName"];
 
     /// <summary>
     ///     Initializes a new instance of
@@ -28,14 +28,14 @@ public class EntityFrameworkCoreExecuteMigrationStep : StepBase {
     /// <param name="translator">
     ///     The translator.
     /// </param>
-    public EntityFrameworkCoreExecuteMigrationStep(IServiceProvider provider, ITranslator translator) {
+    public EntityFrameworkCoreExecuteMigrationStep(IServiceProvider provider, ITranslator<EntityFrameworkCoreExecuteMigrationStep> translator) {
         _provider = Throws.When.Null(provider);
         _translator = Throws.When.Null(translator);
     }
-    
+
     /// <inheritdoc />
     public override async Task ExecuteAsync(IProgress<StepProgress> progress, CancellationToken cancellationToken) {
-        progress.ReportInformation(DisplayName, _translator["EntityFrameworkCoreExecuteMigrationStep_ExecuteAsync_Starting"]);
+        progress.ReportInformation(DisplayName, _translator["ExecuteAsync_Starting"]);
 
         await using var scope = _provider.CreateAsyncScope();
 
@@ -43,6 +43,6 @@ public class EntityFrameworkCoreExecuteMigrationStep : StepBase {
 
         await db.Database.MigrateAsync(cancellationToken);
 
-        progress.ReportInformation(DisplayName, _translator["EntityFrameworkCoreExecuteMigrationStep_ExecuteAsync_Finished"]);
+        progress.ReportInformation(DisplayName, _translator["ExecuteAsync_Finished"]);
     }
 }

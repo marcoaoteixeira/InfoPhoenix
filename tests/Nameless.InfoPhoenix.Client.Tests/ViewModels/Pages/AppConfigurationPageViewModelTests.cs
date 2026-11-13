@@ -488,6 +488,10 @@ public class AppConfigurationPageViewModelTests {
 
         public string? CultureAtFirstTranslatorRead { get; private set; }
 
+        // The real SectionTranslator's single-key indexer always forwards through the
+        // params-array overload (plan IPX-0015), so both overloads must record the read -
+        // relying on only the single-key one would never fire once this fake sits behind
+        // `.For<T>()` composition.
         public string this[string key] {
             get {
                 CultureAtFirstTranslatorRead ??= CurrentCulture.Name;
@@ -496,7 +500,13 @@ public class AppConfigurationPageViewModelTests {
             }
         }
 
-        public string this[string key, object[] args] => key;
+        public string this[string key, object[] args] {
+            get {
+                CultureAtFirstTranslatorRead ??= CurrentCulture.Name;
+
+                return key;
+            }
+        }
 
         public void SetCulture(CultureInfo culture) {
             CurrentCulture = culture;
@@ -524,7 +534,7 @@ public class AppConfigurationPageViewModelTests {
             themeApplier ?? new FakeApplicationThemeApplier(),
             fileSystemDialog ?? new FakeFileSystemDialog(),
             messageDialog ?? new FakeMessageDialog(),
-            translator ?? new FakeTranslator(),
+            (translator ?? new FakeTranslator()).For<AppConfigurationPageViewModel>(),
             mediator ?? new FakeMediator(),
             eventPublisher ?? new FakeEventPublisher(),
             new FakeTaskRunner(),

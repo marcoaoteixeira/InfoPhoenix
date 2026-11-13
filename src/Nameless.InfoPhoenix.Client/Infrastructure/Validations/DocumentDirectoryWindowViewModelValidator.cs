@@ -10,7 +10,7 @@ namespace Nameless.InfoPhoenix.Client.Infrastructure.Validations;
 public class DocumentDirectoryWindowViewModelValidator : AbstractValidator<DocumentDirectoryWindowViewModel> {
     private readonly AppDbContext _dbContext;
 
-    public DocumentDirectoryWindowViewModelValidator(AppDbContext dbContext, ITranslator translator) {
+    public DocumentDirectoryWindowViewModelValidator(AppDbContext dbContext, ITranslator<DocumentDirectoryWindowViewModelValidator> translator) {
         _dbContext = Throws.When.Null(dbContext);
 
         RuleFor(obj => obj.Label).NotEmpty()

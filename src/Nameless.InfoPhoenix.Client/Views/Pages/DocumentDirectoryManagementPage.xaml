@@ -20,11 +20,11 @@
             </Grid.ColumnDefinitions>
             <ui:TextBlock FontTypography="Title"
                           Grid.Column="0"
-                          Text="{loc:Translator DocumentDirectoryManagementPage_Title}" />
+                          Text="{loc:Translator UI_TextBlock_DocumentsDirectoriesManagement}" />
 
             <ui:Button Appearance="Success"
                        Command="{Binding ElementName=DocumentDirectoryManagementPageRoot, Path=ViewModel.CreateNewDocumentDirectoryCommand, Mode=OneTime}"
-                       Content="{loc:Translator DocumentDirectoryManagementPage_CreateNewDocumentDirectoryButton_Caption}"
+                       Content="{loc:Translator UI_Button_CreateNewDocumentDirectory}"
                        Cursor="Hand"
                        Foreground="#F5F5F5"
                        Grid.Column="1"

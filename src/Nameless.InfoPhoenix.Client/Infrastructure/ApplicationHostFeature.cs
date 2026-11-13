@@ -23,7 +23,7 @@ internal static class ApplicationHostFeature {
 
     private static void ConfigureTranslatorHostFeature(HostFeatureCollection features) {
         // UseAssemblyScan defaults to true, and its getter overrides any explicitly configured
-        // Translator with the scan result - disable it so WithTranslator<ResourceTranslator>()
+        // Translator with the scan result - disable it so WithTranslator<JsonTranslator>()
         // actually takes effect instead of only working by scan-result coincidence.
         features.Get<TranslatorHostFeature>().Configure(
             opts => opts.WithUseAssemblyScan(false)

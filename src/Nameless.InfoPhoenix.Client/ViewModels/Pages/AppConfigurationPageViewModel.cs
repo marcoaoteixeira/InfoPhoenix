@@ -54,7 +54,7 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
     // happen on the same (UI) thread that calls Set.
     private Task _pendingSave = Task.CompletedTask;
 
-    private ITranslator T { get; }
+    private ITranslator<AppConfigurationPageViewModel> T { get; }
 
     [ObservableProperty]
     public partial ComboBoxItem CurrentTheme { get; set; } = ComboBoxItemHelper.EmptyComboBoxItem;
@@ -85,7 +85,7 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
         IApplicationThemeApplier applicationThemeApplier,
         IFileSystemDialog fileSystemDialog,
         IMessageDialog messageDialog,
-        ITranslator translator,
+        ITranslator<AppConfigurationPageViewModel> translator,
         IMediator mediator,
         IEventPublisher eventPublisher,
         ITaskRunner taskRunner,
@@ -111,8 +111,8 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
         // A failing notification must not break navigation (plan 2.3 step 5).
         try {
             await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
-                message: T["AppConfigurationPage_InvalidSettings_Message"],
-                title: T["AppConfigurationPage_InvalidSettings_Title"]);
+                message: T["InvalidSettings_Message"],
+                title: T["InvalidSettings_Title"]);
         }
         catch (Exception ex) {
             _logger.LogWarning(ex, "Failed to publish the application configuration recovery notification.");
@@ -151,14 +151,14 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
 
         try {
             var outcome = await _taskRunner.CreateBuilder()
-                .SetName(T["AppConfigurationPage_Backup_TaskRunnerWindow_Title"])
+                .SetName(T["Backup_TaskRunnerWindow_Title"])
                 .SubscribeFor<BackupRecoveryProgressNotificationEvent>()
                 .SetDelegate(async ct => result = await _mediator.ExecuteAsync(new PerformApplicationBackupRequest(), ct))
                 .RunAsync();
 
             if (outcome is TaskRunnerOutcome.Completed && result is { Succeeded: true }) {
                 await _eventPublisher.PublishSuccessAsync<SnackBarNotificationEvent>(
-                    message: T["AppConfigurationPage_Backup_Success_Message", [result.BackupFilePath!]]);
+                    message: T["Backup_Success_Message", [result.BackupFilePath!]]);
             }
             // Failed or Cancelled: already shown in the TaskRunner window, nothing more to do.
         }
@@ -167,7 +167,7 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
             _logger.LogError(ex, "Backup failed unexpectedly.");
 
             await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
-                message: T["AppConfigurationPage_Backup_Failure_Message", [ex.Message]]);
+                message: T["Backup_Failure_Message", [ex.Message]]);
         }
     }
 
@@ -200,7 +200,7 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
             RestoreOutcome? restoreOutcome = null;
 
             await _taskRunner.CreateBuilder()
-                .SetName(T["AppConfigurationPage_Restore_TaskRunnerWindow_Title"])
+                .SetName(T["Restore_TaskRunnerWindow_Title"])
                 .SubscribeFor<BackupRecoveryProgressNotificationEvent>()
                 .SetDelegate(async ct => restoreOutcome = await _mediator.ExecuteAsync(
                     new PerformApplicationRestoreRequest(backupFilePath), ct))
@@ -211,8 +211,8 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
             // is already shown in the TaskRunner window.
             if (restoreOutcome is RestoreOutcome.Completed) {
                 _messageDialog.ShowInformation(
-                    message: T["AppConfigurationPage_Restore_Relaunch_Message"],
-                    title: T["AppConfigurationPage_Restore_Relaunch_Title"]);
+                    message: T["Restore_Relaunch_Message"],
+                    title: T["Restore_Relaunch_Title"]);
             }
         }
         catch (Exception ex) {
@@ -221,7 +221,7 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
             _logger.LogError(ex, "Restore failed unexpectedly.");
 
             await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
-                message: T["AppConfigurationPage_Restore_Failure_Message", [ex.Message]]);
+                message: T["Restore_Failure_Message", [ex.Message]]);
         }
     }
 
@@ -243,9 +243,9 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
         var filterPattern = Constants.BackupRecovery.ArchiveFileFilterPattern;
 
         var backupFilePath = _fileSystemDialog.OpenFile(options => {
-            options.Title = T["AppConfigurationPage_Restore_SelectFile_Title"];
+            options.Title = T["Restore_SelectFile_Title"];
             options.Root = backupDirectory.Path;
-            options.Filter = $"{T["AppConfigurationPage_Restore_SelectFile_FilterName"]} ({filterPattern})|{filterPattern}";
+            options.Filter = $"{T["Restore_SelectFile_FilterName"]} ({filterPattern})|{filterPattern}";
             options.Multiselect = false;
         }).FirstOrDefault();
 
@@ -258,8 +258,8 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
     /// </summary>
     private bool ConfirmOverwrite(string backupFilePath) {
         var result = _messageDialog.ShowWarning(
-            message: T["AppConfigurationPage_Restore_ConfirmOverwrite_Message", [Path.GetFileName(backupFilePath)]],
-            title: T["AppConfigurationPage_Restore_ConfirmOverwrite_Title"],
+            message: T["Restore_ConfirmOverwrite_Message", [Path.GetFileName(backupFilePath)]],
+            title: T["Restore_ConfirmOverwrite_Title"],
             buttons: MessageDialogButtons.YesNo);
 
         return result is MessageDialogResult.Yes;

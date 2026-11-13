@@ -164,7 +164,7 @@ public sealed class AppConfigurationPageViewModelIntegrationTests : IDisposable 
             new FakeApplicationThemeApplier(),
             new FakeFileSystemDialog(),
             new FakeMessageDialog(),
-            new FakeTranslator(),
+            new FakeTranslator().For<AppConfigurationPageViewModel>(),
             new FakeMediator(),
             eventPublisher ?? new FakeEventPublisher(),
             new FakeTaskRunner(),
