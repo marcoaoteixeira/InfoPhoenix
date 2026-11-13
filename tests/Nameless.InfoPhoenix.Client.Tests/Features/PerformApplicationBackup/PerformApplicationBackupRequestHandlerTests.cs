@@ -350,12 +350,7 @@ public sealed class PerformApplicationBackupRequestHandlerTests : IDisposable {
         using var cts = new CancellationTokenSource();
         var eventPublisher = new FakeEventPublisher {
             OnPublish = @event => {
-                // Plan IPX-0015 note: the real SectionTranslator's single-key indexer always
-                // forwards through the params-array overload (even with zero args), so this
-                // fake's info-step messages carry a trailing ": " - StartsWith, not an exact
-                // match, is what survives the real composition.
-                if (@event is BackupRecoveryProgressNotificationEvent evt &&
-                    evt.Message.StartsWith("PerformApplicationBackupRequestHandler_CreatingArchive", StringComparison.Ordinal)) {
+                if (@event is BackupRecoveryProgressNotificationEvent { Message: "PerformApplicationBackupRequestHandler_CreatingArchive" }) {
                     cts.Cancel();
                 }
             }
@@ -592,7 +587,7 @@ public sealed class PerformApplicationBackupRequestHandlerTests : IDisposable {
 
         public string this[string key] => key;
 
-        public string this[string key, object[] args] => $"{key}: {string.Join(", ", args)}";
+        public string this[string key, object[] args] => args.Length == 0 ? key : $"{key}: {string.Join(", ", args)}";
 
         public void SetCulture(CultureInfo culture) {
             CurrentCulture = culture;

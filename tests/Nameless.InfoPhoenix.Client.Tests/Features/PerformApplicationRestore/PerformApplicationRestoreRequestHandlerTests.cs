@@ -1288,7 +1288,7 @@ public sealed class PerformApplicationRestoreRequestHandlerTests : IDisposable {
 
         public string this[string key] => key;
 
-        public string this[string key, object[] args] => $"{key}: {string.Join(", ", args)}";
+        public string this[string key, object[] args] => args.Length == 0 ? key : $"{key}: {string.Join(", ", args)}";
 
         public void SetCulture(System.Globalization.CultureInfo culture) {
             CurrentCulture = culture;

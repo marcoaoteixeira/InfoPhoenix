@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
@@ -6,7 +5,6 @@ using System.Text.RegularExpressions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
-using Nameless.InfoPhoenix.Client.Bootstrap.Steps;
 using Nameless.InfoPhoenix.Client.Features.PerformApplicationBackup;
 using Nameless.Windows.Localization;
 using Nameless.Windows.Localization.Json;
@@ -24,20 +22,150 @@ public class LocalizationFitnessTests {
 
     // ----- F1/B7: every (section, key) pair is present, non-empty and differs -------------------
 
+    // Pinned from plan IPX-0015 appendix A/B (106 entries across 12 sections) - fixed, independent
+    // of whatever the deployed JSON files currently contain. This is what lets this theory (and
+    // RequiredKeys_HaveNoExtraEntries_InEitherCultureFile below) actually catch a key silently
+    // dropped from both files, instead of just re-checking the files against themselves.
+    private static readonly (string Section, string Key)[] RequiredSectionKeyPairs = [
+        ("AppConfigurationPageViewModel", "InvalidSettings_Title"),
+        ("AppConfigurationPageViewModel", "InvalidSettings_Message"),
+        ("AppConfigurationPageViewModel", "Backup_TaskRunnerWindow_Title"),
+        ("AppConfigurationPageViewModel", "Backup_Success_Message"),
+        ("AppConfigurationPageViewModel", "Backup_Failure_Message"),
+        ("AppConfigurationPageViewModel", "Restore_SelectFile_Title"),
+        ("AppConfigurationPageViewModel", "Restore_SelectFile_FilterName"),
+        ("AppConfigurationPageViewModel", "Restore_ConfirmOverwrite_Title"),
+        ("AppConfigurationPageViewModel", "Restore_ConfirmOverwrite_Message"),
+        ("AppConfigurationPageViewModel", "Restore_Failure_Message"),
+        ("AppConfigurationPageViewModel", "Restore_TaskRunnerWindow_Title"),
+        ("AppConfigurationPageViewModel", "Restore_Relaunch_Title"),
+        ("AppConfigurationPageViewModel", "Restore_Relaunch_Message"),
+        ("DocumentDirectoryWindowViewModel", "FileSystemDialog_Title"),
+        ("DocumentDirectoryWindowViewModelValidator", "Label_Empty_Error_Message"),
+        ("DocumentDirectoryWindowViewModelValidator", "DirectoryPath_Empty_Error_Message"),
+        ("DocumentDirectoryWindowViewModelValidator", "DirectoryPath_MaximumLength_Error_Message"),
+        ("DocumentDirectoryWindowViewModelValidator", "DirectoryPath_Unique_Error_Message"),
+        ("DocumentDirectoryWindowViewModelValidator", "DisplayPosition_LowerOrEqualTo_Error_Message"),
+        ("EntityFrameworkCoreExecuteMigrationStep", "DisplayName"),
+        ("EntityFrameworkCoreExecuteMigrationStep", "ExecuteAsync_Starting"),
+        ("EntityFrameworkCoreExecuteMigrationStep", "ExecuteAsync_Finished"),
+        ("GetDocumentDirectoryRequestHandler", "HandleAsync_MissingDocumentDirectory"),
+        ("MainWindow", "ConfirmApplicationExit_MessageBox_Title"),
+        ("MainWindow", "ConfirmApplicationExit_MessageBox_Message"),
+        ("OpenCurrentLogFileRequestHandler", "Missing_Log_File_Title"),
+        ("OpenCurrentLogFileRequestHandler", "Missing_Log_File_Message"),
+        ("PerformApplicationBackupRequestHandler", "Preparing"),
+        ("PerformApplicationBackupRequestHandler", "CopyingConfiguration"),
+        ("PerformApplicationBackupRequestHandler", "CopyingDatabase"),
+        ("PerformApplicationBackupRequestHandler", "CopyingSearchIndex"),
+        ("PerformApplicationBackupRequestHandler", "CreatingArchive"),
+        ("PerformApplicationBackupRequestHandler", "Success"),
+        ("PerformApplicationBackupRequestHandler", "ConfigurationMissing_Warning"),
+        ("PerformApplicationBackupRequestHandler", "DatabaseMissing_Warning"),
+        ("PerformApplicationBackupRequestHandler", "SearchIndexMissing_Warning"),
+        ("PerformApplicationBackupRequestHandler", "Preparing_Failure"),
+        ("PerformApplicationBackupRequestHandler", "CopyingConfiguration_Failure"),
+        ("PerformApplicationBackupRequestHandler", "CopyingDatabase_Failure"),
+        ("PerformApplicationBackupRequestHandler", "CopyingSearchIndex_Failure"),
+        ("PerformApplicationBackupRequestHandler", "CreatingArchive_Failure"),
+        ("PerformApplicationRestoreRequestHandler", "ReadingBackup"),
+        ("PerformApplicationRestoreRequestHandler", "ExtractingBackup"),
+        ("PerformApplicationRestoreRequestHandler", "VerifyingBackup"),
+        ("PerformApplicationRestoreRequestHandler", "PreparingSwap"),
+        ("PerformApplicationRestoreRequestHandler", "Swapping"),
+        ("PerformApplicationRestoreRequestHandler", "Success"),
+        ("PerformApplicationRestoreRequestHandler", "VersionDiffers_Warning"),
+        ("PerformApplicationRestoreRequestHandler", "DatabaseAbsent_Warning"),
+        ("PerformApplicationRestoreRequestHandler", "SearchIndexAbsent_Warning"),
+        ("PerformApplicationRestoreRequestHandler", "ConfigurationAbsent_Warning"),
+        ("PerformApplicationRestoreRequestHandler", "CleanupIncomplete_Warning"),
+        ("PerformApplicationRestoreRequestHandler", "Rejected_SelectedFileInDataFolder"),
+        ("PerformApplicationRestoreRequestHandler", "Rejected_NotAnArchive"),
+        ("PerformApplicationRestoreRequestHandler", "Rejected_ManifestMissing"),
+        ("PerformApplicationRestoreRequestHandler", "Rejected_ManifestInvalid"),
+        ("PerformApplicationRestoreRequestHandler", "Rejected_WrongApplication"),
+        ("PerformApplicationRestoreRequestHandler", "Rejected_UnsupportedFormat"),
+        ("PerformApplicationRestoreRequestHandler", "Rejected_SchemaMismatch"),
+        ("PerformApplicationRestoreRequestHandler", "Rejected_UnexpectedEntry"),
+        ("PerformApplicationRestoreRequestHandler", "Rejected_TooManyEntries"),
+        ("PerformApplicationRestoreRequestHandler", "Rejected_ContentsMismatch"),
+        ("PerformApplicationRestoreRequestHandler", "Rejected_InsufficientSpace"),
+        ("PerformApplicationRestoreRequestHandler", "Rejected_Corrupted"),
+        ("PerformApplicationRestoreRequestHandler", "Rejected_ConfigurationInvalid"),
+        ("PerformApplicationRestoreRequestHandler", "Rejected_DatabaseInvalid"),
+        ("PerformApplicationRestoreRequestHandler", "ReadingBackup_Failure"),
+        ("PerformApplicationRestoreRequestHandler", "ExtractingBackup_Failure"),
+        ("PerformApplicationRestoreRequestHandler", "VerifyingBackup_Failure"),
+        ("PerformApplicationRestoreRequestHandler", "PreparingSwap_Failure"),
+        ("PerformApplicationRestoreRequestHandler", "Swapping_Failure"),
+        ("PerformApplicationRestoreRequestHandler", "RollbackIncomplete_Failure"),
+        ("TaskRunnerWindow", "CancelButton_Caption"),
+        ("TaskRunnerWindow", "CloseButton_Caption"),
+        ("TaskRunnerWindow", "Cancelled_Message"),
+        ("TaskRunnerWindow", "CloseBlocked_Message"),
+        ("UI", "TextBlock_Settings"),
+        ("UI", "TextBlock_Version"),
+        ("UI", "Badge_ComingSoon"),
+        ("UI", "Button_CheckForUpdate"),
+        ("UI", "ToolTip_NotAvailableYet"),
+        ("UI", "TextBlock_Language"),
+        ("UI", "TextBlock_ChooseLanguage"),
+        ("UI", "TextBlock_Backup"),
+        ("UI", "TextBlock_CreateBackup"),
+        ("UI", "Button_CreateBackup"),
+        ("UI", "TextBlock_Restore"),
+        ("UI", "TextBlock_RestoreFromBackup"),
+        ("UI", "Button_RestoreBackup"),
+        ("UI", "TextBlock_Theme"),
+        ("UI", "TextBlock_ChooseTheme"),
+        ("UI", "TextBlock_ConfirmBeforeExit"),
+        ("UI", "TextBlock_AskBeforeExit"),
+        ("UI", "TextBlock_ApplicationDataDirectory"),
+        ("UI", "TextBlock_OpenDataDirectory"),
+        ("UI", "Button_OpenDirectory"),
+        ("UI", "TextBlock_ApplicationLog"),
+        ("UI", "TextBlock_OpenLogFile"),
+        ("UI", "Button_OpenLogFile"),
+        ("UI", "TextBlock_DocumentsDirectoriesManagement"),
+        ("UI", "Button_CreateNewDocumentDirectory"),
+        ("UI", "Label_Label"),
+        ("UI", "Label_DirectoryPath"),
+        ("UI", "Label_Position"),
+        ("UI", "Button_Save"),
+        ("UI", "Button_Close"),
+    ];
+
     public static TheoryData<string, string> SectionKeyPairs() {
         var data = new TheoryData<string, string>();
-        var (defaultSections, ptBrSections) = LoadBothFiles();
 
-        foreach (var sectionName in defaultSections.Keys.Union(ptBrSections.Keys, StringComparer.Ordinal)) {
-            IEnumerable<string> defaultKeys = defaultSections.TryGetValue(sectionName, out var d) ? d.Keys : [];
-            IEnumerable<string> ptBrKeys = ptBrSections.TryGetValue(sectionName, out var p) ? p.Keys : [];
-
-            foreach (var key in defaultKeys.Union(ptBrKeys, StringComparer.Ordinal)) {
-                data.Add(sectionName, key);
-            }
+        foreach (var (section, key) in RequiredSectionKeyPairs) {
+            data.Add(section, key);
         }
 
         return data;
+    }
+
+    [Fact]
+    public void RequiredKeys_HaveNoExtraEntries_InEitherCultureFile() {
+        var (defaultSections, ptBrSections) = LoadBothFiles();
+        var required = RequiredSectionKeyPairs.ToHashSet();
+
+        AssertNoExtraKeys("default.json", defaultSections, required);
+        AssertNoExtraKeys("pt-BR.json", ptBrSections, required);
+    }
+
+    private static void AssertNoExtraKeys(
+        string fileName,
+        Dictionary<string, Dictionary<string, string>> sections,
+        HashSet<(string Section, string Key)> required) {
+        foreach (var (sectionName, entries) in sections) {
+            foreach (var key in entries.Keys) {
+                Assert.True(
+                    required.Contains((sectionName, key)),
+                    $"'{fileName}' has '{sectionName}.{key}', which is not in the pinned required-key list (plan appendix A/B). " +
+                    "Add it there, or remove it if it's dead.");
+            }
+        }
     }
 
     [Theory]
@@ -59,7 +187,6 @@ public class LocalizationFitnessTests {
     // ----- F2/B8: placeholder parity, no stray non-{digit} braces ---------------------------------
 
     private static readonly Regex PlaceholderPattern = new(@"\{(\d+)\}", RegexOptions.Compiled);
-    private static readonly Regex AnyBracePattern = new(@"\{[^}]*\}", RegexOptions.Compiled);
 
     [Theory]
     [MemberData(nameof(SectionKeyPairs))]
@@ -87,12 +214,15 @@ public class LocalizationFitnessTests {
     }
 
     private static void AssertNoStrayBraces(string section, string key, string culture, string value) {
-        foreach (Match match in AnyBracePattern.Matches(value)) {
-            Assert.True(
-                PlaceholderPattern.IsMatch(match.Value),
-                $"'{culture}.json' entry '{section}.{key}' has a brace that is not a bare {{digits}} placeholder: '{match.Value}'. " +
-                "A literal '{' reaches string.Format at lookup time and throws FormatException (plan D4).");
-        }
+        // A lone unescaped '{' or '}' (not part of a balanced "{digits}" placeholder) would never
+        // match AnyBracePattern's old balanced-brace shape, so strip every valid placeholder first
+        // and check what's left for any remaining brace character at all (plan D4 / review 🟡 #3).
+        var withoutPlaceholders = PlaceholderPattern.Replace(value, string.Empty);
+
+        Assert.True(
+            !withoutPlaceholders.Contains('{') && !withoutPlaceholders.Contains('}'),
+            $"'{culture}.json' entry '{section}.{key}' has a brace that is not a bare {{digits}} placeholder: '{value}'. " +
+            "A literal '{' reaches string.Format at lookup time and throws FormatException (plan D4).");
     }
 
     // ----- F3/B9: composed key uniqueness within each file -----------------------------------------
