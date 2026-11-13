@@ -350,7 +350,12 @@ public sealed class PerformApplicationBackupRequestHandlerTests : IDisposable {
         using var cts = new CancellationTokenSource();
         var eventPublisher = new FakeEventPublisher {
             OnPublish = @event => {
-                if (@event is BackupRecoveryProgressNotificationEvent { Message: "PerformApplicationBackupRequestHandler_CreatingArchive" }) {
+                // Plan IPX-0015 note: the real SectionTranslator's single-key indexer always
+                // forwards through the params-array overload (even with zero args), so this
+                // fake's info-step messages carry a trailing ": " - StartsWith, not an exact
+                // match, is what survives the real composition.
+                if (@event is BackupRecoveryProgressNotificationEvent evt &&
+                    evt.Message.StartsWith("PerformApplicationBackupRequestHandler_CreatingArchive", StringComparison.Ordinal)) {
                     cts.Cancel();
                 }
             }
@@ -495,7 +500,7 @@ public sealed class PerformApplicationBackupRequestHandlerTests : IDisposable {
             Options.Create(new LuceneOptions { DirectoryRelativePath = LuceneRelativePath }),
             timeProvider ?? new FakeTimeProvider(),
             eventPublisher ?? new FakeEventPublisher(),
-            new FormattingTranslator(),
+            new FormattingTranslator().For<PerformApplicationBackupRequestHandler>(),
             NullLogger<PerformApplicationBackupRequestHandler>.Instance
         );
     }

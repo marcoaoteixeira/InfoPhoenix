@@ -49,3 +49,15 @@ internal sealed class FakeTranslator : ITranslator {
         SetCulture(CultureInfo.GetCultureInfo(isoCode));
     }
 }
+
+/// <summary>
+/// Test helper (plan IPX-0015 §3.1) that wraps any root <see cref="ITranslator"/> fake (or the
+/// real root) with the library's real <c>{Section}_{Key}</c> composition, through
+/// <see cref="Translator{T}"/> and <see cref="TranslatorFactory"/>. Using this instead of a
+/// hand-rolled generic fake catches a key that keeps its old class-name prefix, which would
+/// otherwise compose to <c>Section_Section_Key</c> and surface only as a wrong string, not a
+/// compile error.
+/// </summary>
+internal static class TranslatorTestExtensions {
+    public static ITranslator<T> For<T>(this ITranslator root) => new Translator<T>(new TranslatorFactory(root));
+}

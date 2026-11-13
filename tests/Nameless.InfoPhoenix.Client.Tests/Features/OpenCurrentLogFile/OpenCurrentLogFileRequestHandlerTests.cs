@@ -78,7 +78,7 @@ public sealed class OpenCurrentLogFileRequestHandlerTests : IDisposable {
         return new OpenCurrentLogFileRequestHandler(
             eventPublisher,
             new PhysicalFileManagerFactory(),
-            new FakeTranslator()
+            new FakeTranslator().For<OpenCurrentLogFileRequestHandler>()
         );
     }
 

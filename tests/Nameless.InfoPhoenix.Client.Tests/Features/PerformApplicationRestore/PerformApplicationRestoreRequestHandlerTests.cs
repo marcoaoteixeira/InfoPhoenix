@@ -456,14 +456,17 @@ public sealed class PerformApplicationRestoreRequestHandlerTests : IDisposable {
         var progress = eventPublisher.PublishedEvents.OfType<BackupRecoveryProgressNotificationEvent>().ToList();
         Assert.Equal(NotificationType.Success, progress.Last().Type);
         Assert.Single(progress, e => e.Type == NotificationType.Success);
+        // The real SectionTranslator's single-key indexer always forwards through the
+        // params-array overload (even with zero args, plan IPX-0015), so PassthroughTranslator's
+        // two-arg formatting (a trailing ": ") applies here too - StartsWith, not an exact match.
         var informationSteps = progress.Where(e => e.Type == NotificationType.Information).Select(e => e.Message).ToList();
-        Assert.Equal(
-            ["PerformApplicationRestoreRequestHandler_ReadingBackup",
-             "PerformApplicationRestoreRequestHandler_ExtractingBackup",
-             "PerformApplicationRestoreRequestHandler_VerifyingBackup",
-             "PerformApplicationRestoreRequestHandler_PreparingSwap",
-             "PerformApplicationRestoreRequestHandler_Swapping"],
-            informationSteps);
+        Assert.Collection(
+            informationSteps,
+            m => Assert.StartsWith("PerformApplicationRestoreRequestHandler_ReadingBackup", m, StringComparison.Ordinal),
+            m => Assert.StartsWith("PerformApplicationRestoreRequestHandler_ExtractingBackup", m, StringComparison.Ordinal),
+            m => Assert.StartsWith("PerformApplicationRestoreRequestHandler_VerifyingBackup", m, StringComparison.Ordinal),
+            m => Assert.StartsWith("PerformApplicationRestoreRequestHandler_PreparingSwap", m, StringComparison.Ordinal),
+            m => Assert.StartsWith("PerformApplicationRestoreRequestHandler_Swapping", m, StringComparison.Ordinal));
     }
 
     [Fact]
@@ -950,7 +953,7 @@ public sealed class PerformApplicationRestoreRequestHandlerTests : IDisposable {
             Options.Create(new LuceneOptions { DirectoryRelativePath = LuceneRelativePath }),
             new FakeTimeProvider(),
             new FakeEventPublisher(),
-            new FakeTranslator(),
+            new FakeTranslator().For<PerformApplicationBackupRequestHandler>(),
             NullLogger<PerformApplicationBackupRequestHandler>.Instance);
         var backupResult = await backupHandler.HandleAsync(new PerformApplicationBackupRequest(), CancellationToken.None);
         Assert.True(backupResult.Succeeded);
@@ -1031,7 +1034,7 @@ public sealed class PerformApplicationRestoreRequestHandlerTests : IDisposable {
             Options.Create(new LuceneOptions { DirectoryRelativePath = LuceneRelativePath }),
             CreateDbContext(expectedMigrationId),
             eventPublisher ?? new FakeEventPublisher(),
-            new PassthroughTranslator(),
+            new PassthroughTranslator().For<PerformApplicationRestoreRequestHandler>(),
             NullLogger<PerformApplicationRestoreRequestHandler>.Instance);
     }
 

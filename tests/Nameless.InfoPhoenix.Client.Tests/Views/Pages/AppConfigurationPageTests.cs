@@ -43,7 +43,7 @@ public class AppConfigurationPageTests {
                 new FakeApplicationThemeApplier(),
                 new FakeFileSystemDialog(),
                 new FakeMessageDialog(),
-                new FakeTranslator(),
+                new FakeTranslator().For<AppConfigurationPageViewModel>(),
                 new FakeMediator(),
                 new FakeEventPublisher(),
                 new FakeTaskRunner(),
@@ -174,7 +174,7 @@ public class AppConfigurationPageTests {
 
             var badge = Assert.IsType<Wpf.Ui.Controls.Badge>(page.FindName(badgeName));
 
-            Assert.Equal("AppConfigurationPage_ComingSoon_Badge", badge.Content);
+            Assert.Equal("UI_Badge_ComingSoon", badge.Content);
         });
     }
 
@@ -189,7 +189,7 @@ public class AppConfigurationPageTests {
             new FakeApplicationThemeApplier(),
             new FakeFileSystemDialog(),
             new FakeMessageDialog(),
-            new FakeTranslator(),
+            new FakeTranslator().For<AppConfigurationPageViewModel>(),
             new FakeMediator(),
             new FakeEventPublisher(),
             new FakeTaskRunner(),
