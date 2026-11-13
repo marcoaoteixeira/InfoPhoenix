@@ -1,126 +1,290 @@
 using System.Globalization;
-using Nameless.InfoPhoenix.Client.Resources.l10n;
+using System.IO;
+using System.Runtime.CompilerServices;
+using System.Text.Json;
+using System.Text.RegularExpressions;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
+using Nameless.InfoPhoenix.Client.Bootstrap.Steps;
+using Nameless.InfoPhoenix.Client.Features.PerformApplicationBackup;
+using Nameless.Windows.Localization;
+using Nameless.Windows.Localization.Json;
 
 namespace Nameless.InfoPhoenix.Client.Tests.Views.Pages;
 
 /// <summary>
-/// Fitness function F2 (plan §4): every <c>{loc:Translator Key}</c> key referenced by
-/// <c>AppConfigurationPage.xaml</c>, the closing confirmation dialog
-/// (<c>MainWindow</c>) and <c>OpenCurrentLogFileRequestHandler</c>'s warning must resolve to a
-/// non-empty string for both the neutral (English) and pt-BR resources, and the pt-BR value
-/// must differ from the neutral one - catching a missing translation before it shows up as a
-/// raw <c>[Key]</c> placeholder at runtime.
+/// Fitness functions F1-F6 (plan IPX-0015 section 4): retargeted from the resx-backed
+/// <c>Localization.ResourceManager</c> to the JSON files <c>JsonTranslator</c> actually reads at
+/// runtime (D1/D3). The resx check these replaced proved nothing about the runtime translator -
+/// the resx files are no longer the source of truth for the keys covered here (D5).
 /// </summary>
 public class LocalizationFitnessTests {
-    public static TheoryData<string> Keys => new() {
-        "AppConfigurationPage_Title",
-        "AppConfigurationPage_VersionCard_Title",
-        "AppConfigurationPage_ApplicationLanguageCard_Title",
-        "AppConfigurationPage_ApplicationLanguageCard_Message",
-        "AppConfigurationPage_VersionCard_Button_Caption",
-        "AppConfigurationPage_ApplicationBackupCard_Title",
-        "AppConfigurationPage_ApplicationBackupCard_Message",
-        "AppConfigurationPage_ApplicationBackupCard_Button_Caption",
-        "AppConfigurationPage_ApplicationRestoreCard_Title",
-        "AppConfigurationPage_ApplicationRestoreCard_Message",
-        "AppConfigurationPage_ApplicationRestoreCard_Button_Caption",
-        "AppConfigurationPage_ComingSoon_Badge",
-        "AppConfigurationPage_ComingSoon_Tooltip",
-        "AppConfigurationPage_ThemeCard_Title",
-        "AppConfigurationPage_ThemeCard_Message",
-        "AppConfigurationPage_ExitBehaviorCard_Title",
-        "AppConfigurationPage_ExitBehaviorCard_Message",
-        "AppConfigurationPage_AppDirectoryPathCard_Title",
-        "AppConfigurationPage_AppDirectoryPathCard_Message",
-        "AppConfigurationPage_AppDirectoryPathCard_Button_Caption",
-        "AppConfigurationPage_ApplicationLogCard_Title",
-        "AppConfigurationPage_ApplicationLogCard_Message",
-        "AppConfigurationPage_ApplicationLogCard_Button_Caption",
-        "MainWindow_ConfirmApplicationExit_MessageBox_Title",
-        "MainWindow_ConfirmApplicationExit_MessageBox_Message",
-        "OpenCurrentLogFileRequestHandler_Missing_Log_File_Title",
-        "OpenCurrentLogFileRequestHandler_Missing_Log_File_Message",
-        "AppConfigurationPage_InvalidSettings_Title",
-        "AppConfigurationPage_InvalidSettings_Message",
+    private static readonly string[] CultureFiles = ["default.json", "pt-BR.json"];
 
-        // IPX-0008 §3.4: TaskRunner window generic keys.
-        "TaskRunnerWindow_CancelButton_Caption",
-        "TaskRunnerWindow_CloseButton_Caption",
-        "TaskRunnerWindow_Cancelled_Message",
-        "TaskRunnerWindow_CloseBlocked_Message",
+    // ----- F1/B7: every (section, key) pair is present, non-empty and differs -------------------
 
-        // IPX-0009 §3.5: backup feature keys.
-        "AppConfigurationPage_Backup_TaskRunnerWindow_Title",
-        "AppConfigurationPage_Backup_Success_Message",
-        "AppConfigurationPage_Backup_Failure_Message",
-        "PerformApplicationBackupRequestHandler_Preparing",
-        "PerformApplicationBackupRequestHandler_CopyingConfiguration",
-        "PerformApplicationBackupRequestHandler_CopyingDatabase",
-        "PerformApplicationBackupRequestHandler_CopyingSearchIndex",
-        "PerformApplicationBackupRequestHandler_CreatingArchive",
-        "PerformApplicationBackupRequestHandler_Success",
-        "PerformApplicationBackupRequestHandler_ConfigurationMissing_Warning",
-        "PerformApplicationBackupRequestHandler_DatabaseMissing_Warning",
-        "PerformApplicationBackupRequestHandler_SearchIndexMissing_Warning",
-        "PerformApplicationBackupRequestHandler_Preparing_Failure",
-        "PerformApplicationBackupRequestHandler_CopyingConfiguration_Failure",
-        "PerformApplicationBackupRequestHandler_CopyingDatabase_Failure",
-        "PerformApplicationBackupRequestHandler_CopyingSearchIndex_Failure",
-        "PerformApplicationBackupRequestHandler_CreatingArchive_Failure",
+    public static TheoryData<string, string> SectionKeyPairs() {
+        var data = new TheoryData<string, string>();
+        var (defaultSections, ptBrSections) = LoadBothFiles();
 
-        // IPX-0010 §3.4: restore selection/confirmation keys.
-        "AppConfigurationPage_Restore_SelectFile_Title",
-        "AppConfigurationPage_Restore_SelectFile_FilterName",
-        "AppConfigurationPage_Restore_ConfirmOverwrite_Title",
-        "AppConfigurationPage_Restore_ConfirmOverwrite_Message",
-        "AppConfigurationPage_Restore_Failure_Message",
+        foreach (var sectionName in defaultSections.Keys.Union(ptBrSections.Keys, StringComparer.Ordinal)) {
+            IEnumerable<string> defaultKeys = defaultSections.TryGetValue(sectionName, out var d) ? d.Keys : [];
+            IEnumerable<string> ptBrKeys = ptBrSections.TryGetValue(sectionName, out var p) ? p.Keys : [];
 
-        // IPX-0011 §3.5: restore run/relaunch and handler keys.
-        "AppConfigurationPage_Restore_TaskRunnerWindow_Title",
-        "AppConfigurationPage_Restore_Relaunch_Title",
-        "AppConfigurationPage_Restore_Relaunch_Message",
-        "PerformApplicationRestoreRequestHandler_ReadingBackup",
-        "PerformApplicationRestoreRequestHandler_ExtractingBackup",
-        "PerformApplicationRestoreRequestHandler_VerifyingBackup",
-        "PerformApplicationRestoreRequestHandler_PreparingSwap",
-        "PerformApplicationRestoreRequestHandler_Swapping",
-        "PerformApplicationRestoreRequestHandler_Success",
-        "PerformApplicationRestoreRequestHandler_VersionDiffers_Warning",
-        "PerformApplicationRestoreRequestHandler_DatabaseAbsent_Warning",
-        "PerformApplicationRestoreRequestHandler_SearchIndexAbsent_Warning",
-        "PerformApplicationRestoreRequestHandler_ConfigurationAbsent_Warning",
-        "PerformApplicationRestoreRequestHandler_CleanupIncomplete_Warning",
-        "PerformApplicationRestoreRequestHandler_Rejected_SelectedFileInDataFolder",
-        "PerformApplicationRestoreRequestHandler_Rejected_NotAnArchive",
-        "PerformApplicationRestoreRequestHandler_Rejected_ManifestMissing",
-        "PerformApplicationRestoreRequestHandler_Rejected_ManifestInvalid",
-        "PerformApplicationRestoreRequestHandler_Rejected_WrongApplication",
-        "PerformApplicationRestoreRequestHandler_Rejected_UnsupportedFormat",
-        "PerformApplicationRestoreRequestHandler_Rejected_SchemaMismatch",
-        "PerformApplicationRestoreRequestHandler_Rejected_UnexpectedEntry",
-        "PerformApplicationRestoreRequestHandler_Rejected_ContentsMismatch",
-        "PerformApplicationRestoreRequestHandler_Rejected_InsufficientSpace",
-        "PerformApplicationRestoreRequestHandler_Rejected_Corrupted",
-        "PerformApplicationRestoreRequestHandler_Rejected_ConfigurationInvalid",
-        "PerformApplicationRestoreRequestHandler_Rejected_DatabaseInvalid",
-        "PerformApplicationRestoreRequestHandler_ReadingBackup_Failure",
-        "PerformApplicationRestoreRequestHandler_ExtractingBackup_Failure",
-        "PerformApplicationRestoreRequestHandler_VerifyingBackup_Failure",
-        "PerformApplicationRestoreRequestHandler_PreparingSwap_Failure",
-        "PerformApplicationRestoreRequestHandler_Swapping_Failure",
-        "PerformApplicationRestoreRequestHandler_RollbackIncomplete_Failure",
-    };
+            foreach (var key in defaultKeys.Union(ptBrKeys, StringComparer.Ordinal)) {
+                data.Add(sectionName, key);
+            }
+        }
+
+        return data;
+    }
 
     [Theory]
-    [MemberData(nameof(Keys))]
-    public void Key_ResolvesToNonEmptyAndDistinctValues_ForNeutralAndPtBr(string key) {
-        var resourceManager = Localization.ResourceManager;
+    [MemberData(nameof(SectionKeyPairs))]
+    public void Key_IsPresentNonEmptyAndDistinct_InBothCultureFiles(string section, string key) {
+        var (defaultSections, ptBrSections) = LoadBothFiles();
 
-        var neutral = resourceManager.GetString(key, CultureInfo.InvariantCulture);
-        var ptBr = resourceManager.GetString(key, CultureInfo.GetCultureInfo("pt-BR"));
+        var defaultValue = defaultSections.TryGetValue(section, out var defaultEntries) ? defaultEntries.GetValueOrDefault(key) : null;
+        var ptBrValue = ptBrSections.TryGetValue(section, out var ptBrEntries) ? ptBrEntries.GetValueOrDefault(key) : null;
 
-        Assert.False(string.IsNullOrWhiteSpace(neutral), $"Missing neutral (English) value for '{key}'.");
-        Assert.False(string.IsNullOrWhiteSpace(ptBr), $"Missing pt-BR value for '{key}'.");
-        Assert.NotEqual(neutral, ptBr);
+        Assert.True(defaultValue is not null, $"default.json is missing section '{section}' key '{key}'.");
+        Assert.True(ptBrValue is not null, $"pt-BR.json is missing section '{section}' key '{key}'.");
+
+        Assert.False(string.IsNullOrWhiteSpace(defaultValue), $"default.json has an empty value for '{section}.{key}'.");
+        Assert.False(string.IsNullOrWhiteSpace(ptBrValue), $"pt-BR.json has an empty value for '{section}.{key}'.");
+        Assert.NotEqual(defaultValue, ptBrValue);
+    }
+
+    // ----- F2/B8: placeholder parity, no stray non-{digit} braces ---------------------------------
+
+    private static readonly Regex PlaceholderPattern = new(@"\{(\d+)\}", RegexOptions.Compiled);
+    private static readonly Regex AnyBracePattern = new(@"\{[^}]*\}", RegexOptions.Compiled);
+
+    [Theory]
+    [MemberData(nameof(SectionKeyPairs))]
+    public void Key_PlaceholdersMatchBetweenCultures_AndHaveNoStrayBraces(string section, string key) {
+        var (defaultSections, ptBrSections) = LoadBothFiles();
+
+        if (!defaultSections.TryGetValue(section, out var defaultEntries) || !defaultEntries.TryGetValue(key, out var defaultValue) ||
+            !ptBrSections.TryGetValue(section, out var ptBrEntries) || !ptBrEntries.TryGetValue(key, out var ptBrValue)) {
+            return; // Already reported as missing by the presence test above.
+        }
+
+        var defaultPlaceholders = ExtractPlaceholders(defaultValue);
+        var ptBrPlaceholders = ExtractPlaceholders(ptBrValue);
+
+        Assert.True(
+            defaultPlaceholders.SetEquals(ptBrPlaceholders),
+            $"Placeholder sets differ for '{section}.{key}': default has [{string.Join(",", defaultPlaceholders)}], pt-BR has [{string.Join(",", ptBrPlaceholders)}].");
+
+        AssertNoStrayBraces(section, key, "default", defaultValue);
+        AssertNoStrayBraces(section, key, "pt-BR", ptBrValue);
+    }
+
+    private static HashSet<string> ExtractPlaceholders(string value) {
+        return PlaceholderPattern.Matches(value).Select(m => m.Groups[1].Value).ToHashSet();
+    }
+
+    private static void AssertNoStrayBraces(string section, string key, string culture, string value) {
+        foreach (Match match in AnyBracePattern.Matches(value)) {
+            Assert.True(
+                PlaceholderPattern.IsMatch(match.Value),
+                $"'{culture}.json' entry '{section}.{key}' has a brace that is not a bare {{digits}} placeholder: '{match.Value}'. " +
+                "A literal '{' reaches string.Format at lookup time and throws FormatException (plan D4).");
+        }
+    }
+
+    // ----- F3/B9: composed key uniqueness within each file -----------------------------------------
+
+    [Fact]
+    public void ComposedKeys_AreUnique_WithinEachCultureFile() {
+        var (defaultSections, ptBrSections) = LoadBothFiles();
+
+        AssertComposedKeysUnique("default.json", defaultSections);
+        AssertComposedKeysUnique("pt-BR.json", ptBrSections);
+    }
+
+    private static void AssertComposedKeysUnique(string fileName, Dictionary<string, Dictionary<string, string>> sections) {
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+
+        foreach (var (sectionName, entries) in sections) {
+            foreach (var key in entries.Keys) {
+                var composed = TranslationKey.Compose(sectionName, key);
+
+                Assert.True(seen.Add(composed), $"'{fileName}' has a composed-key collision at '{composed}' (section '{sectionName}').");
+            }
+        }
+    }
+
+    // ----- F3b/B10: UI key naming rule + identical UI key sets -------------------------------------
+
+    private static readonly Regex UiKeyPattern = new(
+        @"^([A-Za-z]+_)?(TextBlock|Button|Label|Badge|ToolTip|MessageBox)_[A-Za-z]+$", RegexOptions.Compiled);
+
+    [Fact]
+    public void UiSectionKeys_MatchTheComponentNamingRule_AndAreIdenticalAcrossBothFiles() {
+        var (defaultSections, ptBrSections) = LoadBothFiles();
+
+        Assert.True(defaultSections.TryGetValue("UI", out var defaultUi), "default.json has no 'UI' section.");
+        Assert.True(ptBrSections.TryGetValue("UI", out var ptBrUi), "pt-BR.json has no 'UI' section.");
+
+        foreach (var key in defaultUi.Keys) {
+            Assert.True(UiKeyPattern.IsMatch(key), $"UI key '{key}' (default.json) does not match the naming rule.");
+        }
+
+        foreach (var key in ptBrUi.Keys) {
+            Assert.True(UiKeyPattern.IsMatch(key), $"UI key '{key}' (pt-BR.json) does not match the naming rule.");
+        }
+
+        Assert.Equal(
+            defaultUi.Keys.OrderBy(k => k, StringComparer.Ordinal),
+            ptBrUi.Keys.OrderBy(k => k, StringComparer.Ordinal));
+    }
+
+    // ----- F3c/B11: every UI_* XAML key exists in both JSON files ----------------------------------
+
+    private static readonly Regex XamlTranslatorKeyPattern = new(@"\{loc:Translator\s+([A-Za-z0-9_]+)\}", RegexOptions.Compiled);
+
+    [Fact]
+    public void EveryUiKeyReferencedFromXaml_ExistsInBothCultureFiles() {
+        var (defaultSections, ptBrSections) = LoadBothFiles();
+        var composedKeys = ComposeAllKeys(defaultSections);
+        var ptBrComposedKeys = ComposeAllKeys(ptBrSections);
+
+        var viewsPath = Path.Combine(GetRepositoryRootPath(), "src", "Nameless.InfoPhoenix.Client", "Views");
+        Assert.True(Directory.Exists(viewsPath), $"Expected the source Views folder to exist at '{viewsPath}'.");
+
+        var referencedUiKeys = Directory.EnumerateFiles(viewsPath, "*.xaml", SearchOption.AllDirectories)
+            .SelectMany(path => XamlTranslatorKeyPattern.Matches(File.ReadAllText(path)).Select(m => m.Groups[1].Value))
+            .Where(key => key.StartsWith("UI_", StringComparison.Ordinal))
+            .Distinct(StringComparer.Ordinal)
+            .ToList();
+
+        Assert.NotEmpty(referencedUiKeys); // Sanity: the scan itself must actually find something.
+
+        foreach (var key in referencedUiKeys) {
+            Assert.Contains(key, composedKeys);
+            Assert.Contains(key, ptBrComposedKeys);
+        }
+    }
+
+    private static HashSet<string> ComposeAllKeys(Dictionary<string, Dictionary<string, string>> sections) {
+        var composed = new HashSet<string>(StringComparer.Ordinal);
+
+        foreach (var (sectionName, entries) in sections) {
+            foreach (var key in entries.Keys) {
+                composed.Add(TranslationKey.Compose(sectionName, key));
+            }
+        }
+
+        return composed;
+    }
+
+    // ----- F4/B12: appsettings.json wires a real, existing RootPath ---------------------------------
+
+    [Fact]
+    public void Appsettings_HasANonEmptyTranslatorRootPath_AndBothCultureFilesExistThere() {
+        var configuration = new ConfigurationBuilder()
+            .SetBasePath(AppContext.BaseDirectory)
+            .AddJsonFile("appsettings.json", optional: false)
+            .Build();
+
+        var rootPath = configuration["Translator:RootPath"];
+
+        Assert.False(string.IsNullOrWhiteSpace(rootPath), "Translator:RootPath must be set (plan D1 - the startup-crash regression test).");
+
+        foreach (var fileName in CultureFiles) {
+            var resolvedPath = Path.Combine(AppContext.BaseDirectory, rootPath!, fileName);
+            Assert.True(File.Exists(resolvedPath), $"Expected '{resolvedPath}' to exist.");
+        }
+    }
+
+    // ----- F5/B13: a REAL JsonTranslator resolves real keys for real classes ------------------------
+
+    [Fact]
+    public void RealJsonTranslator_ResolvesUiTaskRunnerAndHandlerKeys_WithoutMissingKeyPlaceholders() {
+        var rootPath = Path.Combine(AppContext.BaseDirectory, "Resources", "loc");
+        var options = Options.Create(new TranslatorOptions { RootPath = rootPath });
+
+        using var fileProvider = new FileSystemTranslationFileProvider(options, NullLogger<FileSystemTranslationFileProvider>.Instance);
+        using var translator = new JsonTranslator(fileProvider, NullLogger<JsonTranslator>.Instance);
+
+        // No SetCulture call (plan F5): mutating CultureInfo.CurrentCulture/CurrentUICulture
+        // process-wide from a test is unacceptable - either active culture must resolve real text.
+        AssertResolved(translator["UI_TextBlock_Settings"]);
+        AssertResolved(translator["TaskRunnerWindow_CancelButton_Caption"]);
+
+        var factory = new TranslatorFactory(translator);
+        var handlerTranslator = factory.Create<PerformApplicationBackupRequestHandler>();
+        AssertResolved(handlerTranslator["Preparing"]);
+    }
+
+    private static void AssertResolved(string value) {
+        Assert.False(string.IsNullOrWhiteSpace(value));
+        Assert.False(value.StartsWith('['), $"Expected a resolved value, got the missing-key placeholder '{value}'.");
+    }
+
+    // ----- F6/B14: no public constructor takes the raw, non-generic ITranslator (except views) -----
+
+    [Fact]
+    public void NoPublicConstructor_TakesTheRawNonGenericITranslator_ExceptWindowPageOrUserControlTypes() {
+        var assembly = typeof(App).Assembly;
+        var offenders = new List<string>();
+
+        foreach (var type in assembly.GetTypes()) {
+            if (IsExemptView(type)) {
+                continue;
+            }
+
+            foreach (var constructor in type.GetConstructors()) {
+                if (constructor.GetParameters().Any(p => p.ParameterType == typeof(ITranslator))) {
+                    offenders.Add($"{type.FullName}.{constructor}");
+                }
+            }
+        }
+
+        Assert.Empty(offenders);
+    }
+
+    private static bool IsExemptView(Type type) {
+        return typeof(System.Windows.Window).IsAssignableFrom(type) ||
+            typeof(System.Windows.Controls.Page).IsAssignableFrom(type) ||
+            typeof(System.Windows.Controls.UserControl).IsAssignableFrom(type);
+    }
+
+    // ----- helpers ----------------------------------------------------------------------------------
+
+    private static (Dictionary<string, Dictionary<string, string>> Default, Dictionary<string, Dictionary<string, string>> PtBr) LoadBothFiles() {
+        var rootPath = Path.Combine(AppContext.BaseDirectory, "Resources", "loc");
+
+        return (
+            LoadFile(Path.Combine(rootPath, "default.json")),
+            LoadFile(Path.Combine(rootPath, "pt-BR.json")));
+    }
+
+    // Mirrors JsonTranslator's own strict parse options (plan D1/§4): a duplicate property
+    // anywhere in the file must fail loudly here too, not be silently resolved by keeping the
+    // last value the way the default JsonSerializerOptions would.
+    private static readonly JsonSerializerOptions StrictParseOptions = new() { AllowDuplicateProperties = false };
+
+    private static Dictionary<string, Dictionary<string, string>> LoadFile(string path) {
+        Assert.True(File.Exists(path), $"Expected '{path}' to exist.");
+
+        var json = File.ReadAllText(path);
+        var sections = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(json, StrictParseOptions);
+
+        Assert.NotNull(sections);
+
+        return sections;
+    }
+
+    private static string GetRepositoryRootPath([CallerFilePath] string? testFilePath = null) {
+        // This file lives at tests/Nameless.InfoPhoenix.Client.Tests/Views/Pages/*.cs - four
+        // levels up from its own compile-time path is the repository root, regardless of
+        // whatever the test runner's current or output directory happens to be.
+        var directory = Path.GetDirectoryName(testFilePath)!;
+
+        return Path.GetFullPath(Path.Combine(directory, "..", "..", "..", ".."));
     }
 }
